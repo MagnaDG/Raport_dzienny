@@ -1,2 +1,2 @@
-// Tu później można dodać logikę np. wypełniania tabeli danymi
-console.log("Strona załadowana - tabela gotowa.");
+// przyszłościowo np. zapis danych do bazy
+console.log("Tabela gotowa do edycji.");
