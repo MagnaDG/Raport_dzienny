@@ -2,36 +2,52 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Raport Produkcji – Zmiana</title>
+  <title>Raport dzienny</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Raport Produkcji – Zmiana 1</h1>
-    <p>Data: <span id="current-date"></span></p>
-  </header>
 
-  <main>
-    <section class="hour-block">
-      <h2>6:00 – 7:00</h2>
-      <div class="form-row">
-        <input type="text" placeholder="Kod 1">
-        <input type="text" placeholder="Kod 2">
-        <input type="number" placeholder="OK">
-        <input type="number" placeholder="NOK">
-        <input type="number" step="0.01" placeholder="Czas cyklu (s)">
-        <input type="number" placeholder="Osoby">
-        <input type="number" step="0.01" placeholder="Czas dostępny (s)">
-        <input type="number" step="0.01" placeholder="Czas pracy (s)">
-        <output>OEE: --%</output>
-      </div>
-    </section>
+<table>
+  <tr>
+    <td>DATA: środa 27.09.2023</td>
+    <td>IMIĘ: MP4</td>
+    <td>LIDER:</td>
+  </tr>
+</table>
 
-    <!-- Dodaj kolejne godziny według potrzeby -->
+<table>
+  <thead>
+    <tr>
+      <th>GODZ.</th>
+      <th>LUZ</th>
+      <th>PT1</th>
+      <th>LUZ2</th>
+      <th>WYNIK1</th>
+      <th>OSÓB / ROLA 1</th>
+      <th>OSÓB / ROLA 2</th>
+      <th>T1 (min)</th>
+      <th>T2 (min)</th>
+      <th>LUZ3 PLAN A</th>
+      <th>LUZ4 PLAN B</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>07:00 - 08:00</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>08:00 - 09:00</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>09:00 - 10:00</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>10:30 - 11:30</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>11:30 - 12:30</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+  </tbody>
+</table>
 
-    <button id="save-button">Zapisz raport</button>
-  </main>
+<table>
+  <tr>
+    <td>KOMENTARZ DO WYŚWIETLENIA NA TV:</td>
+  </tr>
+  <tr>
+    <td><textarea rows="4" cols="100" placeholder="Wpisz komentarz..."></textarea></td>
+  </tr>
+</table>
 
-  <script src="script.js"></script>
 </body>
 </html>
