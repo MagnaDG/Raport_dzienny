@@ -1,5 +1,2 @@
-document.getElementById("current-date").textContent = new Date().toLocaleDateString("pl-PL");
-
-document.getElementById("save-button").addEventListener("click", () => {
-  alert("Funkcja zapisu zostanie dodana później.");
-});
+// Tu później można dodać logikę np. wypełniania tabeli danymi
+console.log("Strona załadowana - tabela gotowa.");
