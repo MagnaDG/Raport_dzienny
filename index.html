@@ -8,84 +8,73 @@
 <body>
   <div class="container">
     <h1>Raport Produkcji</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>GODZ</th>
-          <th>OEE</th>
-          <th>FTT</th>
-          <th>DOST.</th>
-          <th>WYDAJ.</th>
-          <th>OBÓB N</th>
-          <th>OSÓB R</th>
-          <th>Ilość T.L</th>
-          <th>Tt NOM</th>
-          <th>Tt real</th>
-          <th>zl</th>
-          <th>KOD</th>
-          <th>Ilość plan</th>
-          <th>Ilość max</th>
-          <th>OK</th>
-          <th>NOK</th>
-          <th>Czas dost.</th>
-          <th>Czas pracy</th>
-          <th>Postoje</th>
-          <th>Mikro</th>
-          <th>Brak wyd</th>
-          <th>Rozlicz. czasu</th>
-          <th>Powód</th>
-          <th>Op</th>
-          <th>Czas</th>
-          <th>Iz</th>
-          <th>Opis</th>
-          <th>Kol 28</th>
-          <th>Kol 29</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- 8 wierszy pustych -->
-        <tr>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        </tr>
-        <tr>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        </tr>
-        <tr>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        </tr>
-        <tr>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        </tr>
-        <tr>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        </tr>
-        <tr>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        </tr>
-        <tr>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        </tr>
-        <tr>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>GODZ</th>
+            <th>OEE</th>
+            <th>FTT</th>
+            <th>DOST.</th>
+            <th>WYDAJ.</th>
+            <th>OBÓB N</th>
+            <th>OSÓB R</th>
+            <th>Ilość T.L</th>
+            <th>Tt NOM</th>
+            <th>Tt real</th>
+            <th>zl</th>
+            <th>KOD</th>
+            <th>Ilość plan</th>
+            <th>Ilość max</th>
+            <th>OK</th>
+            <th>NOK</th>
+            <th>Czas dost.</th>
+            <th>Czas pracy</th>
+            <th>Postoje</th>
+            <th>Mikro</th>
+            <th>Brak wyd</th>
+            <th>Rozlicz. czasu</th>
+            <th>Powód</th>
+            <th>Op</th>
+            <th>Czas</th>
+            <th>Iz</th>
+            <th>Opis</th>
+            <th>Kol 28</th>
+            <th>Kol 29</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 8 wierszy pustych z możliwością edycji -->
+          <!-- razem 29 kolumn -->
+          <tr>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
+          <!-- skopiuj 7 razy -->
+          <tr>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
+          <!-- dodaj jeszcze 6 takich samych -->
+        </tbody>
+      </table>
+    </div>
   </div>
   <script src="scripts.js"></script>
 </body>
