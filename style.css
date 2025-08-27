@@ -7,13 +7,14 @@ body {
 
 .container {
   width: 100%;
-  overflow-x: auto;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 15px;
-  font-size: 16px;
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;   /* przewijanie poziome */
+  overflow-y: auto;   /* przewijanie pionowe */
+  max-height: 80vh;   /* tabela nie większa niż ekran */
+  border: 1px solid #ccc;
 }
 
 table {
@@ -21,7 +22,6 @@ table {
   width: 100%;
   table-layout: fixed;
   background: white;
-  box-shadow: 0 0 4px rgba(0,0,0,0.2);
 }
 
 thead th {
@@ -31,6 +31,9 @@ thead th {
   border: 1px solid #ccc;
   text-align: center;
   font-size: 11px;
+  position: sticky;   /* nagłówek przyklejony */
+  top: 0;
+  z-index: 2;
 }
 
 tbody td {
