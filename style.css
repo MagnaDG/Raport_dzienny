@@ -6,6 +6,7 @@ body {
 
 .controls {
     display: flex;
+    flex-wrap: wrap; /* Pozwala na przechodzenie do nowej linii na mniejszych ekranach */
     gap: 20px;
     margin-bottom: 20px;
     background-color: white;
@@ -24,7 +25,8 @@ table {
     width: 100%;
     border-collapse: collapse;
     background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0 0, 0, 0.1);
+    table-layout: fixed; /* Zapewnia stałą szerokość kolumn */
 }
 
 th, td {
@@ -44,7 +46,17 @@ tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-select, input[type="date"], input[type="number"] {
+/* Ustawienie szerokości kolumn na ~20% */
+th:nth-child(1), td:nth-child(1) { width: 16%; } /* OEE */
+th:nth-child(2), td:nth-child(2) { width: 18%; } /* KOD */
+th:nth-child(3), td:nth-child(3) { width: 16%; } /* OK */
+th:nth-child(4), td:nth-child(4) { width: 16%; } /* NOK */
+th:nth-child(5), td:nth-child(5) { width: 16%; } /* CC */
+th:nth-child(6), td:nth-child(6) { width: 18%; } /* CZAS */
+
+select, input[type="date"], input[type="number"], input[type="text"] {
+    width: 100%; /* Zapewnia, że inputy zajmują całą szerokość komórki */
+    box-sizing: border-box; /* Utrzymuje stałą szerokość z paddingiem i borderem */
     padding: 8px;
     border-radius: 4px;
     border: 1px solid #ccc;
