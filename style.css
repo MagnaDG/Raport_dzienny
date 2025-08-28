@@ -73,4 +73,32 @@ table td:nth-child(12),
 table th:nth-child(12) {
   width: 10.17%;
 }
+/* Pasek nagłówka z listami */
+.header-bar {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.header-bar h1 {
+  margin: 0;
+  font-size: 18px;
+  color: #2c3e50;
+}
+
+.header-bar label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+}
+
+.header-bar select {
+  font-size: 12px;
+  padding: 2px 6px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  background: #fff;
+}
+
 
