@@ -15,32 +15,31 @@
       <!-- Lista rozwijana nr 1 -->
       <label for="linia">Linia:</label>
       <select id="linia">
-        <option>MP4</option>
-        <option>M4</option>
-        <option>NHL</option>
+        <option value="MP4">MP4</option>
+        <option value="M4">M4</option>
+        <option value="NHL">NHL</option>
       </select>
 
       <!-- Lista rozwijana nr 2 -->
       <label for="zmiana">Zmiana:</label>
       <select id="zmiana">
-        <option>I</option>
-        <option>II</option>
-        <option>III</option>
+        <option value="I">I</option>
+        <option value="II">II</option>
+        <option value="III">III</option>
       </select>
 
       <!-- Lista rozwijana nr 3 -->
-      <label for="produkt">brygada:</label>
+      <label for="produkt">Brygada:</label>
       <select id="produkt">
-        <option>A</option>
-        <option>B</option>
-        <option>C</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
       </select>
     </div>
 
     <!-- Tabela -->
     <div class="table-wrapper">
       <table>
-
         <thead>
           <tr>
             <th>GODZ</th>
@@ -75,13 +74,18 @@
           </tr>
         </thead>
         <tbody>
-          <!-- 8 wierszy pustych z możliwością edycji -->
-          <!-- razem 29 kolumn -->
+          <!-- 8 wierszy -->
+          <!-- zamiast contenteditable w kolumnie KOD będzie select -->
+          <!-- reszta pól zostaje edytowalna -->
+          <!-- PRZYKŁAD jednego wiersza -->
           <tr>
             <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
             <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
             <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td>
+            <td>
+              <select class="kod-select"></select>
+            </td>
             <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
             <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
             <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
@@ -89,20 +93,7 @@
             <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
             <td contenteditable="true"></td><td contenteditable="true"></td>
           </tr>
-          <!-- skopiuj 7 razy -->
-          <tr>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-          </tr>
-          <!-- dodaj jeszcze 6 takich samych -->
+          <!-- skopiuj jeszcze 7 razy -->
         </tbody>
       </table>
     </div>
@@ -110,5 +101,3 @@
   <script src="scripts.js"></script>
 </body>
 </html>
-
-
