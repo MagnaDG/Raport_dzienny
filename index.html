@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Raport Produkcji</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
@@ -12,7 +12,6 @@
     <div class="header-bar">
       <h1>RAPORT</h1>
 
-      <!-- Lista rozwijana nr 1 -->
       <label for="linia">Linia:</label>
       <select id="linia">
         <option value="MP4">MP4</option>
@@ -20,7 +19,6 @@
         <option value="NHL">NHL</option>
       </select>
 
-      <!-- Lista rozwijana nr 2 -->
       <label for="zmiana">Zmiana:</label>
       <select id="zmiana">
         <option value="I">I</option>
@@ -28,7 +26,6 @@
         <option value="III">III</option>
       </select>
 
-      <!-- Lista rozwijana nr 3 -->
       <label for="produkt">Brygada:</label>
       <select id="produkt">
         <option value="A">A</option>
@@ -73,19 +70,16 @@
             <th>Kol 29</th>
           </tr>
         </thead>
+
         <tbody>
-          <!-- 8 wierszy -->
-          <!-- zamiast contenteditable w kolumnie KOD będzie select -->
-          <!-- reszta pól zostaje edytowalna -->
-          <!-- PRZYKŁAD jednego wiersza -->
+          <!-- 8 WIERSZY, kol. 12 = select .kod-select -->
+          <!-- wiersz 1 -->
           <tr>
             <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
             <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
             <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
             <td contenteditable="true"></td><td contenteditable="true"></td>
-            <td>
-              <select class="kod-select"></select>
-            </td>
+            <td class="select-cell"><select class="kod-select"></select></td>
             <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
             <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
             <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
@@ -93,11 +87,26 @@
             <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
             <td contenteditable="true"></td><td contenteditable="true"></td>
           </tr>
-          <!-- skopiuj jeszcze 7 razy -->
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <script src="scripts.js"></script>
-</body>
-</html>
+          <!-- wiersz 2 -->
+          <tr>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td>
+            <td class="select-cell"><select class="kod-select"></select></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td>
+          </tr>
+          <!-- wiersz 3 -->
+          <tr>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td>
+            <td class="select-cell"><select class="kod-select"></select></td>
+            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+            <td contenteditable="
