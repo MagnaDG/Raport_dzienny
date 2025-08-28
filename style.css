@@ -1,7 +1,67 @@
-body { font-family: Arial, sans-serif; }
-.container { padding: 10px; }
-.header-bar { margin-bottom: 10px; }
-table { border-collapse: collapse; width: 100%; font-size: 12px; }
-th, td { border: 1px solid #ccc; text-align: center; vertical-align: middle; padding: 4px; }
-td select { width: 100%; height: 100%; text-align-last: center; text-align: center; border: none; background: transparent; }
-button { margin-top: 5px; padding: 5px 10px; }
+/* Podstawowy styl body */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 10px;
+}
+
+/* Kontener całego raportu */
+.container {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Pasek nagłówka */
+.header-bar {
+  margin-bottom: 10px;
+}
+
+/* Nagłówki i selecty w pasku */
+.header-bar h1 {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.header-bar label {
+  margin-left: 10px;
+}
+
+.header-bar select {
+  margin-left: 5px;
+  padding: 2px 5px;
+}
+
+/* Tabela */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12px;
+  table-layout: fixed; /* ważne dla szerokości kolumn */
+}
+
+/* Komórki */
+th, td {
+  border: 1px solid #ccc;
+  text-align: center;      /* poziome wyśrodkowanie */
+  vertical-align: middle;  /* pionowe wyśrodkowanie */
+  padding: 4px;
+  overflow: hidden;
+}
+
+/* Komórka z selectem w kolumnie KOD */
+td select {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  text-align-last: center; /* tekst w środku */
+  text-align: center;
+  appearance: none;        /* ukrywa domyślny styl przeglądarki */
+}
+
+/* Przycisk dodawania wiersza */
+button {
+  margin-top: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
