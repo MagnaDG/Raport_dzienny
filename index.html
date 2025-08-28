@@ -1,195 +1,67 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Raport Produkcji</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
+  <header>
+    <label for="linia">Linia: </label>
+    <select id="linia">
+      <option value="MP4">MP4</option>
+      <option value="M4">M4</option>
+      <option value="NHL">NHL</option>
+    </select>
+  </header>
 
-    <!-- Pasek nagłówka -->
-    <div class="header-bar">
-      <h1>RAPORT</h1>
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>GODZ</th>
+          <th>OEE</th>
+          <th>FTT</th>
+          <th>DOST.</th>
+          <th>WYDAJ.</th>
+          <th>OBÓB N</th>
+          <th>OSÓB R</th>
+          <th>Ilość T.L</th>
+          <th>Tt NOM</th>
+          <th>Tt real</th>
+          <th>zl</th>
+          <th>KOD</th>
+          <th>Ilość plan</th>
+          <th>Ilość max</th>
+          <th>OK</th>
+          <th>NOK</th>
+          <th>CZas dost.</th>
+          <th>czas pracy</th>
+          <th>postoje</th>
+          <th>mikro</th>
+          <th>brak wyd</th>
+          <th>rozlicz.czasu</th>
+          <th>powód</th>
+          <th>op</th>
+          <th>czas</th>
+          <th>iz</th>
+          <th>opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 8 wierszy do wpisywania danych -->
+        <tr></tr>
+        <tr></tr>
+        <tr></tr>
+        <tr></tr>
+        <tr></tr>
+        <tr></tr>
+        <tr></tr>
+        <tr></tr>
+      </tbody>
+    </table>
+  </main>
 
-      <label for="linia">Linia:</label>
-      <select id="linia">
-        <option value="MP4">MP4</option>
-        <option value="M4">M4</option>
-        <option value="NHL">NHL</option>
-      </select>
-
-      <label for="zmiana">Zmiana:</label>
-      <select id="zmiana">
-        <option value="I">I</option>
-        <option value="II">II</option>
-        <option value="III">III</option>
-      </select>
-
-      <label for="produkt">Brygada:</label>
-      <select id="produkt">
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-      </select>
-    </div>
-
-    <!-- Tabela -->
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>GODZ</th>
-            <th>OEE</th>
-            <th>FTT</th>
-            <th>DOST.</th>
-            <th>WYDAJ.</th>
-            <th>OBÓB N</th>
-            <th>OSÓB R</th>
-            <th>Ilość T.L</th>
-            <th>Tt NOM</th>
-            <th>Tt real</th>
-            <th>zl</th>
-            <th>KOD</th>
-            <th>Ilość plan</th>
-            <th>Ilość max</th>
-            <th>OK</th>
-            <th>NOK</th>
-            <th>Czas dost.</th>
-            <th>Czas pracy</th>
-            <th>Postoje</th>
-            <th>Mikro</th>
-            <th>Brak wyd</th>
-            <th>Rozlicz. czasu</th>
-            <th>Powód</th>
-            <th>Op</th>
-            <th>Czas</th>
-            <th>Iz</th>
-            <th>Opis</th>
-            <th>Kol 28</th>
-            <th>Kol 29</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <!-- 8 WIERSZY, kol. 12 = select .kod-select -->
-          <!-- wiersz 1 -->
-          <tr>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-            <td class="select-cell"><select class="kod-select"></select></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-          </tr>
-          <!-- wiersz 2 -->
-          <tr>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-            <td class="select-cell"><select class="kod-select"></select></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-          </tr>
-          <!-- wiersz 3 -->
-          <tr>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-            <td class="select-cell"><select class="kod-select"></select></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-          </tr>
-          <!-- wiersz 4 -->
-          <tr>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-            <td class="select-cell"><select class="kod-select"></select></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-          </tr>
-          <!-- wiersz 5 -->
-          <tr>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-            <td class="select-cell"><select class="kod-select"></select></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-          </tr>
-          <!-- wiersz 6 -->
-          <tr>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-            <td class="select-cell"><select class="kod-select"></select></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-          </tr>
-          <!-- wiersz 7 -->
-          <tr>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-            <td class="select-cell"><select class="kod-select"></select></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-          </tr>
-          <!-- wiersz 8 -->
-          <tr>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-            <td class="select-cell"><select class="kod-select"></select></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
-            <td contenteditable="true"></td><td contenteditable="true"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-  </div>
   <script src="scripts.js"></script>
 </body>
 </html>
