@@ -7,9 +7,40 @@
 </head>
 <body>
   <div class="container">
-    <h1>Raport Produkcji</h1>
+
+    <!-- Pasek nagłówka -->
+    <div class="header-bar">
+      <h1>Raport Produkcji</h1>
+
+      <!-- Lista rozwijana nr 1 -->
+      <label for="linia">Linia:</label>
+      <select id="linia">
+        <option>Linia 1</option>
+        <option>Linia 2</option>
+        <option>Linia 3</option>
+      </select>
+
+      <!-- Lista rozwijana nr 2 -->
+      <label for="zmiana">Zmiana:</label>
+      <select id="zmiana">
+        <option>Zmiana A</option>
+        <option>Zmiana B</option>
+        <option>Zmiana C</option>
+      </select>
+
+      <!-- Lista rozwijana nr 3 -->
+      <label for="produkt">Produkt:</label>
+      <select id="produkt">
+        <option>TV 32"</option>
+        <option>TV 42"</option>
+        <option>TV 55"</option>
+      </select>
+    </div>
+
+    <!-- Tabela -->
     <div class="table-wrapper">
       <table>
+
         <thead>
           <tr>
             <th>GODZ</th>
@@ -79,3 +110,4 @@
   <script src="scripts.js"></script>
 </body>
 </html>
+
