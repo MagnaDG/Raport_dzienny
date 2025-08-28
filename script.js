@@ -23,11 +23,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // Funkcja do generowania wierszy tabeli
     function generateTableRows() {
         tableBody.innerHTML = ''; // Wyczyść tabelę przed generowaniem
+        const selectedLine = lineSelect.value;
+        const codes = productionData[selectedLine] || [];
+        const datalistId = 'kod-list-' + selectedLine;
+
+        // Tworzymy datalistę na podstawie wybranej linii
+        const datalist = document.createElement('datalist');
+        datalist.id = datalistId;
+        codes.forEach(data => {
+            const option = document.createElement('option');
+            option.value = data.kod;
+            datalist.appendChild(option);
+        });
+        document.body.appendChild(datalist);
+
         for (let i = 0; i < numRows; i++) {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td></td>
-                <td><select class="kod-select"><option value="">Wybierz kod</option></select></td>
+                <td>
+                    <input list="${datalistId}" class="kod-input" type="text" placeholder="Wybierz lub wpisz kod">
+                </td>
                 <td><input type="number" class="ok-input" min="0" value="0"></td>
                 <td><input type="number" class="nok-input" min="0" value="0"></td>
                 <td><input type="number" class="cc-input" disabled value="0"></td>
@@ -35,31 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             tableBody.appendChild(row);
         }
-        updateKodOptions();
-    }
-
-    // Funkcja do aktualizowania opcji w listach 'KOD'
-    function updateKodOptions() {
-        const kodSelects = document.querySelectorAll('.kod-select');
-        const selectedLine = lineSelect.value;
-        const codes = productionData[selectedLine] || [];
-
-        kodSelects.forEach(select => {
-            // Wyczyść stare opcje
-            select.innerHTML = '<option value="">Wybierz kod</option>';
-            // Dodaj nowe opcje
-            codes.forEach(data => {
-                const option = document.createElement('option');
-                option.value = data.kod;
-                option.textContent = data.kod;
-                select.appendChild(option);
-            });
-        });
     }
 
     // Funkcja do aktualizowania wartości CC i obliczania OEE
     function updateValues(row) {
-        const kodSelect = row.querySelector('.kod-select');
+        const kodInput = row.querySelector('.kod-input');
         const okInput = row.querySelector('.ok-input');
         const nokInput = row.querySelector('.nok-input');
         const ccInput = row.querySelector('.cc-input');
@@ -67,14 +63,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const oeeCell = row.querySelector('td:first-child');
 
         const selectedLine = lineSelect.value;
-        const selectedKod = kodSelect.value;
+        const selectedKod = kodInput.value;
 
-        // Znajdź wartość CC dla wybranego kodu
+        // Znajdź wartość CC dla wpisanego/wybranego kodu
         const foundCode = productionData[selectedLine]?.find(data => data.kod === selectedKod);
         if (foundCode) {
             ccInput.value = foundCode.cc;
         } else {
-            ccInput.value = 0;
+            ccInput.value = 0; // Ustaw 0, jeśli kod nie pasuje
         }
 
         // Obliczanie OEE
@@ -99,11 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Nasłuchuj na zmiany wewnątrz tabeli (delegowanie zdarzeń)
-    tableBody.addEventListener('change', (event) => {
+    tableBody.addEventListener('input', (event) => { // Zmieniono na 'input' dla lepszej responsywności
         const target = event.target;
         const row = target.closest('tr');
 
-        if (target.classList.contains('kod-select') ||
+        if (target.classList.contains('kod-input') ||
             target.classList.contains('ok-input') ||
             target.classList.contains('nok-input') ||
             target.classList.contains('time-input')) {
