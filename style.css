@@ -1,134 +1,45 @@
-/* Ogólne */
 body {
   font-family: Arial, sans-serif;
-  font-size: 12px;
-  margin: 10px;
-  background: #f5f5f5;
+  margin: 20px;
 }
 
-.container {
-  width: 100%;
-}
-
-/* Pasek nagłówka */
-.header-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.header-bar h1 {
-  margin: 0;
-  font-size: 18px;
-  color: #2c3e50;
-}
-
-.header-bar label {
-  font-size: 12px;
-  font-weight: bold;
-  color: #333;
-}
-
-.header-bar select {
-  font-size: 12px;
-  padding: 2px 6px;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  background: #fff;
-}
-
-/* Tabela */
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: auto;
-  max-height: 80vh;
-  border: 1px solid #ccc;
-  background: #fff;
+header {
+  margin-bottom: 15px;
 }
 
 table {
-  border-collapse: collapse;
   width: 100%;
+  border-collapse: collapse;
   table-layout: fixed;
 }
 
-thead th {
-  background: #2c3e50;
-  color: white;
-  padding: 4px;
+th, td {
   border: 1px solid #ccc;
-  text-align: center;
-  font-size: 11px;
-  position: sticky;
-  top: 0;
-  z-index: 2;
-}
-
-tbody td {
-  border: 1px solid #ccc;
-  padding: 0;
-  height: 30px;
-  text-align: center;       /* poziome wyśrodkowanie */
-  vertical-align: middle;   /* pionowe wyśrodkowanie */
-  line-height: 30px;        /* pomaga w pionowym centrowaniu */
-}
-
-/* podczas edycji komórek contenteditable */
-tbody td:focus {
-  outline: 2px solid #3498db;
-  line-height: normal;
   padding: 4px;
   text-align: center;
   vertical-align: middle;
+  font-size: 12px;
+  height: 28px;
 }
 
-/* --- SZEROKOŚCI KOLUMN --- */
-/* kolumny 1-10, 13-29 */
-table td:nth-child(-n+10),
-table td:nth-child(n+13):nth-child(-n+29),
-table th:nth-child(-n+10),
-table th:nth-child(n+13):nth-child(-n+29) {
-  width: 3.39%;
+th {
+  background: #f0f0f0;
+  font-weight: bold;
 }
 
-/* kolumna 11 (wąska) */
-table td:nth-child(11),
-table th:nth-child(11) {
-  width: 1.70%;
-}
-
-/* kolumna 12 (szeroka) = KOD */
-table td:nth-child(12),
-table th:nth-child(12) {
-  width: 10.17%;
-}
-
-/* --- WYGLĄD SELECTA W KOLUMIE KOD --- */
-td.select-cell {
-  padding: 0;
-  line-height: normal;   /* nie wymuszamy line-height na select */
-}
-
-td.select-cell .kod-select {
-  display: block;
+td input, td select {
   width: 100%;
-  height: 30px;               /* wypełnia całą wysokość komórki */
-  margin: 0;
-  padding: 0 24px 0 4px;      /* miejsce na „ptaszka” po prawej */
-  border: none;               /* bez ramki – spójnie z komórką */
-  background: transparent;
   box-sizing: border-box;
-  text-align: center;         /* tekst wyśrodkowany */
-  text-align-last: center;    /* wyśrodkowanie wybranej opcji (Chromium) */
+  text-align: center;
+  text-align-last: center;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  height: 100%;
+  background: transparent;
 }
 
-td.select-cell .kod-select:focus {
-  outline: 2px solid #3498db;
-}
-
-/* Zapobiega kurczeniu się selecta w Safari/Edge */
-td.select-cell .kod-select option {
-  padding: 2px 4px;
+/* przewijanie poziome jeśli całość się nie mieści */
+main {
+  overflow-x: auto;
 }
