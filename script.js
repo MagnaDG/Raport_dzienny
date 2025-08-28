@@ -1,12 +1,15 @@
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   const tbody = document.getElementById("table-body");
   const liniaSelect = document.getElementById("linia");
 
-  // Wczytaj dane JSON
-  const response = await fetch("data.json");
-  const data = await response.json();
+  // WSZYSTKIE DANE: linia -> kody -> Tt NOM
+  const data = {
+    "MP4": { "codes": { "MP4-101": 12, "MP4-102": 15, "MP4-103": 18 } },
+    "M4":  { "codes": { "M4-201": 10, "M4-202": 20 } },
+    "NHL": { "codes": { "NHL-301": 8, "NHL-302": 14, "NHL-303": 16 } }
+  };
 
-  // Funkcja do tworzenia wierszy
+  // Funkcja tworząca wiersz
   const createRow = () => {
     const tr = document.createElement("tr");
     for (let i = 0; i < 29; i++) {
@@ -17,14 +20,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         select.classList.add("kod-select");
         td.appendChild(select);
 
+        // Aktualizacja Tt NOM po wyborze kodu
         select.addEventListener("change", () => {
-          const chosenCode = select.value;
+          const code = select.value;
           const line = liniaSelect.value;
-          if (line && chosenCode) {
-            tr.children[8].textContent = data[line].codes[chosenCode]; // Tt NOM
-          } else {
-            tr.children[8].textContent = "";
-          }
+          tr.children[8].textContent = code ? data[line].codes[code] : "";
         });
 
       } else {
@@ -36,13 +36,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     tbody.appendChild(tr);
   };
 
-  // Stwórz 8 wierszy
+  // Tworzymy 8 wierszy
   for (let i = 0; i < 8; i++) createRow();
 
-  // Odświeżanie kodów po zmianie linii
+  // Aktualizacja list KOD po zmianie linii
   liniaSelect.addEventListener("change", () => {
     const line = liniaSelect.value;
-    document.querySelectorAll(".kod-select").forEach(select => {
+    const kodSelects = document.querySelectorAll(".kod-select");
+    kodSelects.forEach(select => {
       select.innerHTML = "";
       if (line && data[line]) {
         Object.keys(data[line].codes).forEach(code => {
@@ -54,4 +55,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
   });
+
+  // Opcjonalnie: od razu wypełnij KOD dla pierwszej linii
+  if (liniaSelect.value) liniaSelect.dispatchEvent(new Event("change"));
 });
