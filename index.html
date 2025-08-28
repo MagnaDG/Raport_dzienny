@@ -7,14 +7,11 @@
 </head>
 <body>
   <div class="container">
-
-    <!-- Pasek nagłówka -->
     <div class="header-bar">
       <h1>RAPORT PRODUKCJI</h1>
 
       <label for="linia">Linia:</label>
       <select id="linia">
-        <option value="">-- wybierz --</option>
         <option value="MP4">MP4</option>
         <option value="M4">M4</option>
         <option value="NHL">NHL</option>
@@ -35,7 +32,6 @@
       </select>
     </div>
 
-    <!-- Tabela -->
     <div class="table-wrapper">
       <table>
         <thead>
@@ -49,11 +45,10 @@
           </tr>
         </thead>
         <tbody id="table-body">
-          <!-- Wiersze generowane JS -->
         </tbody>
       </table>
+      <button id="add-row">Dodaj wiersz</button>
     </div>
-
   </div>
   <script src="scripts.js"></script>
 </body>
