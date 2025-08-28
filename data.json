@@ -1,0 +1,22 @@
+{
+  "MP4": {
+    "KODY": [
+      { "kod": "MP4-100", "tt_nom": 12 },
+      { "kod": "MP4-200", "tt_nom": 20 },
+      { "kod": "MP4-300", "tt_nom": 35 }
+    ]
+  },
+  "M4": {
+    "KODY": [
+      { "kod": "M4-10", "tt_nom": 15 },
+      { "kod": "M4-20", "tt_nom": 25 }
+    ]
+  },
+  "NHL": {
+    "KODY": [
+      { "kod": "NHL-1", "tt_nom": 10 },
+      { "kod": "NHL-2", "tt_nom": 30 },
+      { "kod": "NHL-3", "tt_nom": 50 }
+    ]
+  }
+}
