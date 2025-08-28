@@ -7,6 +7,8 @@
 </head>
 <body>
   <div class="container">
+
+    <!-- Pasek nagłówka -->
     <div class="header-bar">
       <h1>RAPORT PRODUKCJI</h1>
 
@@ -30,6 +32,7 @@
       </select>
     </div>
 
+    <!-- Tabela -->
     <div class="table-wrapper">
       <table>
         <thead>
@@ -43,12 +46,15 @@
           </tr>
         </thead>
         <tbody id="table-body">
+          <!-- wiersze generowane JS -->
         </tbody>
       </table>
       <button id="add-row">Dodaj wiersz</button>
     </div>
+
   </div>
 
+  <!-- Najpierw dane, potem logika -->
   <script src="data.js"></script>
   <script src="scripts.js"></script>
 </body>
