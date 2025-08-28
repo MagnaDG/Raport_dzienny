@@ -3,27 +3,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const liniaSelect = document.getElementById("linia");
   const addRowBtn = document.getElementById("add-row");
 
-  const data = {
-    "MP4": { "MP4-101": 12, "MP4-102": 15, "MP4-103": 18 },
-    "M4":  { "M4-201": 10, "M4-202": 20 },
-    "NHL": { "NHL-301": 8, "NHL-302": 14, "NHL-303": 16 }
-  };
+  // Wypełniamy select linii na podstawie reportData
+  Object.keys(reportData).forEach(line => {
+    const opt = document.createElement("option");
+    opt.value = line;
+    opt.textContent = line;
+    liniaSelect.appendChild(opt);
+  });
 
-  // Funkcja tworząca wiersz
+  // Funkcja tworzenia wiersza
   function createRow() {
     const tr = document.createElement("tr");
-
     for (let i = 0; i < 29; i++) {
       const td = document.createElement("td");
-
       if (i === 11) { // kolumna KOD
         const select = document.createElement("select");
         select.classList.add("kod-select");
 
         // wypełnienie od razu opcjami
         const line = liniaSelect.value;
-        if (line && data[line]) {
-          Object.keys(data[line]).forEach(code => {
+        if (line && reportData[line]) {
+          Object.keys(reportData[line]).forEach(code => {
             const opt = document.createElement("option");
             opt.value = code;
             opt.textContent = code;
@@ -31,11 +31,10 @@ document.addEventListener("DOMContentLoaded", () => {
           });
         }
 
-        // event zmiany KOD → Tt NOM
         select.addEventListener("change", () => {
           const code = select.value;
           const line = liniaSelect.value;
-          tr.children[8].textContent = code ? data[line][code] : "";
+          tr.children[8].textContent = code ? reportData[line][code] : "";
         });
 
         td.appendChild(select);
@@ -43,32 +42,28 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         td.contentEditable = true;
       }
-
       tr.appendChild(td);
     }
-
     tbody.appendChild(tr);
   }
 
   // Początkowe 8 wierszy
   for (let i = 0; i < 8; i++) createRow();
 
-  // Aktualizacja list KOD po zmianie linii
+  // Zmiana linii aktualizuje listy KOD
   liniaSelect.addEventListener("change", () => {
     document.querySelectorAll(".kod-select").forEach(select => {
       const currentValue = select.value;
-      select.innerHTML = ""; // wyczyść
-
+      select.innerHTML = "";
       const line = liniaSelect.value;
-      if (line && data[line]) {
-        Object.keys(data[line]).forEach(code => {
+      if (line && reportData[line]) {
+        Object.keys(reportData[line]).forEach(code => {
           const opt = document.createElement("option");
           opt.value = code;
           opt.textContent = code;
           select.appendChild(opt);
         });
       }
-
       select.value = currentValue || "";
     });
   });
