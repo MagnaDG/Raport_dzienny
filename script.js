@@ -1,33 +1,59 @@
-// Kody przypisane do linii
-const kodyLinii = {
-  MP4: ["K01", "K02", "K03", "K04"],
-  M4:  ["M41", "M42", "M43", "M44"],
-  NHL: ["N1", "N2", "N3"]
-};
+let dane = {};
 
-// Uzupełnia wszystkie selecty .kod-select kodami dla wybranej linii
-function updateKodSelects(linia) {
-  const selects = document.querySelectorAll(".kod-select");
-  selects.forEach(sel => {
-    sel.innerHTML = ""; // czyścimy stare opcje
-    const list = kodyLinii[linia] || [];
-    list.forEach(kod => {
-      const opt = document.createElement("option");
-      opt.value = kod;
-      opt.textContent = kod;
-      sel.appendChild(opt);
-    });
-  });
+async function loadData() {
+  const response = await fetch("data.json");
+  dane = await response.json();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadData();
+
   const liniaSelect = document.getElementById("linia");
+  const tableBody = document.querySelector("table tbody");
 
-  // Inicjalne wypełnienie KOD na starcie
-  updateKodSelects(liniaSelect.value);
-
-  // Zmiana linii -> aktualizacja KOD we wszystkich wierszach
-  liniaSelect.addEventListener("change", (e) => {
-    updateKodSelects(e.target.value);
+  // tworzymy wiersze i komórki edytowalne
+  tableBody.querySelectorAll("tr").forEach(row => {
+    for (let i = 0; i < 27; i++) {
+      const cell = document.createElement("td");
+      // domyślnie wszystkie komórki mają input
+      const input = document.createElement("input");
+      input.type = "text";
+      cell.appendChild(input);
+      row.appendChild(cell);
+    }
   });
+
+  function aktualizujKody() {
+    const linia = liniaSelect.value;
+    const kody = dane[linia]?.KODY || [];
+
+    tableBody.querySelectorAll("tr").forEach(row => {
+      const komorki = row.querySelectorAll("td");
+      const kodCell = komorki[11]; // KOD
+      const ttNomCell = komorki[8]; // Tt NOM
+
+      // reset komórki kodu
+      kodCell.innerHTML = "";
+      const select = document.createElement("select");
+      select.innerHTML = `<option value="">--</option>`;
+      kody.forEach(k => {
+        const opt = document.createElement("option");
+        opt.value = k.kod;
+        opt.textContent = k.kod;
+        select.appendChild(opt);
+      });
+
+      // event na wybór kodu
+      select.addEventListener("change", () => {
+        const kodWybrany = select.value;
+        const znaleziony = kody.find(k => k.kod === kodWybrany);
+        ttNomCell.querySelector("input").value = znaleziony ? znaleziony.tt_nom : "";
+      });
+
+      kodCell.appendChild(select);
+    });
+  }
+
+  liniaSelect.addEventListener("change", aktualizujKody);
+  aktualizujKody();
 });
