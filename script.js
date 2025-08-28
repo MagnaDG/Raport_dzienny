@@ -1,73 +1,116 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const tbody = document.getElementById("table-body");
-  const liniaSelect = document.getElementById("linia");
-  const addRowBtn = document.getElementById("add-row");
+// Dane, które powinny być wczytane np. z pliku JSON
+const productionData = {
+    liniaA: [
+        { kod: "KOD-A1", cc: 50 },
+        { kod: "KOD-A2", cc: 65 }
+    ],
+    liniaB: [
+        { kod: "KOD-B1", cc: 40 },
+        { kod: "KOD-B2", cc: 70 }
+    ]
+};
 
-  // Wypełniamy select linii na podstawie reportData
-  Object.keys(reportData).forEach(line => {
-    const opt = document.createElement("option");
-    opt.value = line;
-    opt.textContent = line;
-    liniaSelect.appendChild(opt);
-  });
+document.addEventListener('DOMContentLoaded', () => {
+    const datePicker = document.getElementById('date-picker');
+    const lineSelect = document.getElementById('line-select');
+    const tableBody = document.querySelector('#report-table tbody');
+    const numRows = 8;
 
-  // Funkcja tworzenia wiersza
-  function createRow() {
-    const tr = document.createElement("tr");
-    for (let i = 0; i < 29; i++) {
-      const td = document.createElement("td");
-      if (i === 11) { // kolumna KOD
-        const select = document.createElement("select");
-        select.classList.add("kod-select");
+    // Ustawienie domyślnej daty na dzisiejszą
+    const today = new Date().toISOString().split('T')[0];
+    datePicker.value = today;
 
-        // wypełnienie od razu opcjami
-        const line = liniaSelect.value;
-        if (line && reportData[line]) {
-          Object.keys(reportData[line]).forEach(code => {
-            const opt = document.createElement("option");
-            opt.value = code;
-            opt.textContent = code;
-            select.appendChild(opt);
-          });
+    // Funkcja do generowania wierszy tabeli
+    function generateTableRows() {
+        tableBody.innerHTML = ''; // Wyczyść tabelę przed generowaniem
+        for (let i = 0; i < numRows; i++) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td></td>
+                <td><select class="kod-select"><option value="">Wybierz kod</option></select></td>
+                <td><input type="number" class="ok-input" min="0" value="0"></td>
+                <td><input type="number" class="nok-input" min="0" value="0"></td>
+                <td><input type="number" class="cc-input" disabled value="0"></td>
+                <td><input type="number" class="time-input" min="0" value="0"></td>
+            `;
+            tableBody.appendChild(row);
+        }
+        updateKodOptions();
+    }
+
+    // Funkcja do aktualizowania opcji w listach 'KOD'
+    function updateKodOptions() {
+        const kodSelects = document.querySelectorAll('.kod-select');
+        const selectedLine = lineSelect.value;
+        const codes = productionData[selectedLine] || [];
+
+        kodSelects.forEach(select => {
+            // Wyczyść stare opcje
+            select.innerHTML = '<option value="">Wybierz kod</option>';
+            // Dodaj nowe opcje
+            codes.forEach(data => {
+                const option = document.createElement('option');
+                option.value = data.kod;
+                option.textContent = data.kod;
+                select.appendChild(option);
+            });
+        });
+    }
+
+    // Funkcja do aktualizowania wartości CC i obliczania OEE
+    function updateValues(row) {
+        const kodSelect = row.querySelector('.kod-select');
+        const okInput = row.querySelector('.ok-input');
+        const nokInput = row.querySelector('.nok-input');
+        const ccInput = row.querySelector('.cc-input');
+        const timeInput = row.querySelector('.time-input');
+        const oeeCell = row.querySelector('td:first-child');
+
+        const selectedLine = lineSelect.value;
+        const selectedKod = kodSelect.value;
+
+        // Znajdź wartość CC dla wybranego kodu
+        const foundCode = productionData[selectedLine]?.find(data => data.kod === selectedKod);
+        if (foundCode) {
+            ccInput.value = foundCode.cc;
+        } else {
+            ccInput.value = 0;
         }
 
-        select.addEventListener("change", () => {
-          const code = select.value;
-          const line = liniaSelect.value;
-          tr.children[8].textContent = code ? reportData[line][code] : "";
-        });
+        // Obliczanie OEE
+        const ok = parseInt(okInput.value) || 0;
+        const nok = parseInt(nokInput.value) || 0;
+        const time = parseInt(timeInput.value) || 0;
+        const cc = parseInt(ccInput.value) || 0;
 
-        td.appendChild(select);
-
-      } else {
-        td.contentEditable = true;
-      }
-      tr.appendChild(td);
+        let oee = 0;
+        if (time > 0 && cc > 0) {
+            const plannedProduction = time * cc;
+            if (plannedProduction > 0) {
+                oee = ((ok + nok) / plannedProduction) * 100;
+            }
+        }
+        oeeCell.textContent = oee.toFixed(2) + '%';
     }
-    tbody.appendChild(tr);
-  }
 
-  // Początkowe 8 wierszy
-  for (let i = 0; i < 8; i++) createRow();
-
-  // Zmiana linii aktualizuje listy KOD
-  liniaSelect.addEventListener("change", () => {
-    document.querySelectorAll(".kod-select").forEach(select => {
-      const currentValue = select.value;
-      select.innerHTML = "";
-      const line = liniaSelect.value;
-      if (line && reportData[line]) {
-        Object.keys(reportData[line]).forEach(code => {
-          const opt = document.createElement("option");
-          opt.value = code;
-          opt.textContent = code;
-          select.appendChild(opt);
-        });
-      }
-      select.value = currentValue || "";
+    // Nasłuchuj na zmiany w liście 'Linia'
+    lineSelect.addEventListener('change', () => {
+        generateTableRows();
     });
-  });
 
-  // Dodawanie wiersza
-  addRowBtn.addEventListener("click", createRow);
+    // Nasłuchuj na zmiany wewnątrz tabeli (delegowanie zdarzeń)
+    tableBody.addEventListener('change', (event) => {
+        const target = event.target;
+        const row = target.closest('tr');
+
+        if (target.classList.contains('kod-select') ||
+            target.classList.contains('ok-input') ||
+            target.classList.contains('nok-input') ||
+            target.classList.contains('time-input')) {
+            updateValues(row);
+        }
+    });
+
+    // Inicjalne generowanie tabeli po załadowaniu strony
+    generateTableRows();
 });
