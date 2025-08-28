@@ -1,70 +1,57 @@
-let dane = {};
-
-async function loadData() {
-  try {
-    const res = await fetch("data.json");
-    if (!res.ok) throw new Error("Błąd wczytywania data.json: " + res.status);
-    dane = await res.json();
-  } catch (err) {
-    console.error(err);
-    dane = {}; // zabezpieczenie
-  }
-}
-
-function populateKodSelects(linia) {
-  const kodList = (dane[linia] && dane[linia].KODY) ? dane[linia].KODY : [];
-  const selects = document.querySelectorAll(".kod-select");
-
-  selects.forEach(sel => {
-    const row = sel.closest("tr");
-    const ttNomDiv = row.querySelectorAll("td")[8].querySelector(".cell"); // kolumna Tt NOM (index 8)
-    const previous = sel.value;
-
-    // odbuduj listę opcji
-    sel.innerHTML = "";
-    const emptyOpt = document.createElement("option");
-    emptyOpt.value = "";
-    emptyOpt.textContent = "--";
-    sel.appendChild(emptyOpt);
-
-    kodList.forEach(k => {
-      const opt = document.createElement("option");
-      opt.value = k.kod;
-      opt.textContent = k.kod;
-      sel.appendChild(opt);
-    });
-
-    // jeśli poprzednio wybrany kod jest nadal dostępny - zachowaj i ustaw Tt NOM
-    if (previous && Array.from(sel.options).some(o => o.value === previous)) {
-      sel.value = previous;
-      const found = kodList.find(x => x.kod === previous);
-      ttNomDiv.innerText = found ? found.tt_nom : "";
-    } else {
-      sel.value = "";
-      // nie nadpisuj, ale jeśli chcesz czyścić Tt NOM przy zmianie linii, odkomentuj poniższą:
-      ttNomDiv.innerText = "";
-    }
-
-    // przypisz onchange (nadpisywane przy każdej odbudowie, więc nie narastają handler-y)
-    sel.onchange = () => {
-      const chosen = sel.value;
-      const found = kodList.find(x => x.kod === chosen);
-      ttNomDiv.innerText = found ? found.tt_nom : "";
-    };
-  });
-}
-
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadData();
-
+  const tbody = document.getElementById("table-body");
   const liniaSelect = document.getElementById("linia");
 
-  // jeśli nie ma .kod-select jeszcze (np. ktoś zmienił HTML), nic się nie stanie
-  // inicjalne wypełnienie selectów KOD
-  populateKodSelects(liniaSelect.value);
+  // Wczytaj dane z pliku JSON
+  const response = await fetch("data.json");
+  const data = await response.json();
 
-  // zmiana linii -> aktualizacja wszystkich KOD
-  liniaSelect.addEventListener("change", (e) => {
-    populateKodSelects(e.target.value);
+  // Utwórz 8 wierszy
+  for (let i = 0; i < 8; i++) {
+    const tr = document.createElement("tr");
+    for (let j = 0; j < 29; j++) {
+      const td = document.createElement("td");
+
+      if (j === 11) { 
+        // Kolumna "KOD"
+        const select = document.createElement("select");
+        select.classList.add("kod-select");
+        td.appendChild(select);
+
+        // Zdarzenie wyboru kodu -> wpisanie Tt NOM
+        select.addEventListener("change", () => {
+          const chosenCode = select.value;
+          const line = liniaSelect.value;
+          if (line && chosenCode) {
+            const ttNom = data[line].codes[chosenCode];
+            tr.children[8].textContent = ttNom; // kolumna Tt NOM (index 8)
+          }
+        });
+      } else {
+        td.contentEditable = true;
+      }
+
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+
+  // Reagowanie na wybór linii – odświeżenie kodów
+  liniaSelect.addEventListener("change", () => {
+    const line = liniaSelect.value;
+    const selects = document.querySelectorAll(".kod-select");
+
+    selects.forEach(select => {
+      select.innerHTML = ""; // wyczyść
+      if (line && data[line]) {
+        const codes = Object.keys(data[line].codes);
+        codes.forEach(code => {
+          const opt = document.createElement("option");
+          opt.value = code;
+          opt.textContent = code;
+          select.appendChild(opt);
+        });
+      }
+    });
   });
 });
