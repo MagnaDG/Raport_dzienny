@@ -33,9 +33,9 @@ th, td {
     border: 1px solid #ddd;
     padding: 12px;
     text-align: center;
-    white-space: nowrap; /* Zapobiega łamaniu wierszy w komórkach */
-    overflow: hidden; /* Ukrywa zawartość, która nie mieści się w komórce */
-    text-overflow: ellipsis; /* Dodaje '...' dla ukrytego tekstu */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 th {
@@ -45,19 +45,28 @@ th {
     font-weight: bold;
 }
 
+/* Styl dla nowej kolumny "Godz." */
+th:first-child {
+    background-color: #999;
+    color: white;
+}
+
 tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
 /* Ustawienie szerokości kolumn */
-th:nth-child(1), td:nth-child(1) { width: 6%; } /* OEE */
-th:nth-child(2), td:nth-child(2) { width: 10%; } /* KOD */
-th:nth-child(3), td:nth-child(3) { width: 5%; } /* OK */
-th:nth-child(4), td:nth-child(4) { width: 5%; } /* NOK */
-th:nth-child(5), td:nth-child(5) { width: 5%; } /* CC */
-th:nth-child(6), td:nth-child(6) { width: 5%; } /* CZAS */
-/* Szerokość dla 10 nowych kolumn (~6.4% każda) */
-th:nth-child(n+7), td:nth-child(n+7) { width: 6.4%; }
+th:nth-child(1), td:nth-child(1) { width: 6%; } /* Godz. */
+th:nth-child(2), td:nth-child(2) { width: 5%; } /* OEE */
+th:nth-child(3), td:nth-child(3) { width: 10%; } /* KOD */
+th:nth-child(4), td:nth-child(4) { width: 5%; } /* OK */
+th:nth-child(5), td:nth-child(5) { width: 5%; } /* NOK */
+th:nth-child(6), td:nth-child(6) { width: 5%; } /* CC */
+th:nth-child(7), td:nth-child(7) { width: 5%; } /* CZAS */
+/* Szerokość dla 9 kolumn DANE1-DANE9 */
+th:nth-child(n+8):not(:nth-last-child(1)), td:nth-child(n+8):not(:nth-last-child(1)) { width: 6.2%; }
+/* Szerokość dla DANE10 (dwa razy szersza) */
+th:nth-last-child(1), td:nth-last-child(1) { width: 12.4%; }
 
 select, input[type="date"], input[type="number"], input[type="text"] {
     width: 100%;
