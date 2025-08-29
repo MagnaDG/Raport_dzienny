@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().toISOString().split('T')[0];
     datePicker.value = today;
 
+    // Godziny pracy do wypełnienia pierwszej kolumny
+    const workHours = ["6-7", "7-8", "8-9", "9-10", "10-11", "11-12", "12-13", "13-14"];
+
     // Funkcja do generowania wierszy tabeli
     function generateTableRows() {
         tableBody.innerHTML = '';
@@ -34,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
             option.value = data.kod;
             datalist.appendChild(option);
         });
-        // Upewnij się, że datalista jest unikalna i dodana tylko raz
         const oldDatalist = document.getElementById(datalistId);
         if (oldDatalist) {
             oldDatalist.remove();
@@ -44,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < numRows; i++) {
             const row = document.createElement('tr');
             row.innerHTML = `
+                <td>${workHours[i] || ''}</td>
                 <td></td>
                 <td>
                     <input list="${datalistId}" class="kod-input" type="text" placeholder="Wybierz lub wpisz kod">
@@ -74,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const nokInput = row.querySelector('.nok-input');
         const ccInput = row.querySelector('.cc-input');
         const timeInput = row.querySelector('.time-input');
-        const oeeCell = row.querySelector('td:first-child');
+        const oeeCell = row.querySelector('td:nth-child(2)'); // Zmieniono indeks na 2
 
         const selectedLine = lineSelect.value;
         const selectedKod = kodInput.value;
