@@ -6,7 +6,7 @@ body {
 
 .controls {
     display: flex;
-    flex-wrap: wrap; /* Pozwala na przechodzenie do nowej linii na mniejszych ekranach */
+    flex-wrap: wrap;
     gap: 20px;
     margin-bottom: 20px;
     background-color: white;
@@ -25,14 +25,17 @@ table {
     width: 100%;
     border-collapse: collapse;
     background-color: white;
-    box-shadow: 0 2px 4px rgba(0 0, 0, 0.1);
-    table-layout: fixed; /* Zapewnia stałą szerokość kolumn */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    table-layout: fixed;
 }
 
 th, td {
     border: 1px solid #ddd;
     padding: 12px;
     text-align: center;
+    white-space: nowrap; /* Zapobiega łamaniu wierszy w komórkach */
+    overflow: hidden; /* Ukrywa zawartość, która nie mieści się w komórce */
+    text-overflow: ellipsis; /* Dodaje '...' dla ukrytego tekstu */
 }
 
 th {
@@ -46,17 +49,19 @@ tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-/* Ustawienie szerokości kolumn na ~20% */
-th:nth-child(1), td:nth-child(1) { width: 16%; } /* OEE */
-th:nth-child(2), td:nth-child(2) { width: 18%; } /* KOD */
-th:nth-child(3), td:nth-child(3) { width: 16%; } /* OK */
-th:nth-child(4), td:nth-child(4) { width: 16%; } /* NOK */
-th:nth-child(5), td:nth-child(5) { width: 16%; } /* CC */
-th:nth-child(6), td:nth-child(6) { width: 18%; } /* CZAS */
+/* Ustawienie szerokości kolumn */
+th:nth-child(1), td:nth-child(1) { width: 6%; } /* OEE */
+th:nth-child(2), td:nth-child(2) { width: 10%; } /* KOD */
+th:nth-child(3), td:nth-child(3) { width: 5%; } /* OK */
+th:nth-child(4), td:nth-child(4) { width: 5%; } /* NOK */
+th:nth-child(5), td:nth-child(5) { width: 5%; } /* CC */
+th:nth-child(6), td:nth-child(6) { width: 5%; } /* CZAS */
+/* Szerokość dla 10 nowych kolumn (~6.4% każda) */
+th:nth-child(n+7), td:nth-child(n+7) { width: 6.4%; }
 
 select, input[type="date"], input[type="number"], input[type="text"] {
-    width: 100%; /* Zapewnia, że inputy zajmują całą szerokość komórki */
-    box-sizing: border-box; /* Utrzymuje stałą szerokość z paddingiem i borderem */
+    width: 100%;
+    box-sizing: border-box;
     padding: 8px;
     border-radius: 4px;
     border: 1px solid #ccc;
