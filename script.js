@@ -13,7 +13,7 @@ const defaultProductionData = {
 };
 
 // Stałe hasło do edycji danych
-const EDIT_PASSWORD = 'z';
+const EDIT_PASSWORD = 'haslo123';
 
 // Funkcja do pobierania danych z localStorage lub domyślnych
 function getProductionData() {
@@ -187,24 +187,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Obsługa przycisku "MENU" - pokazuje modal
     menuButton.addEventListener('click', () => {
-        menuModal.classList.remove('hidden');
+        menuModal.classList.add('active'); // Zmieniona klasa
     });
 
     // Obsługa zamknięcia modala
     closeModalButton.addEventListener('click', () => {
-        menuModal.classList.add('hidden');
+        menuModal.classList.remove('active'); // Zmieniona klasa
     });
 
     // Obsługa kliknięcia poza modalem, aby go zamknąć
     window.addEventListener('click', (event) => {
         if (event.target === menuModal) {
-            menuModal.classList.add('hidden');
+            menuModal.classList.remove('active'); // Zmieniona klasa
         }
     });
 
     // Obsługa kliknięcia przycisku "Edytuj dane"
     editDataButton.addEventListener('click', () => {
-        menuModal.classList.add('hidden');
+        menuModal.classList.remove('active'); // Zmieniona klasa
         const password = prompt('Wprowadź hasło do edycji danych:');
         if (password === EDIT_PASSWORD) {
             reportTable.classList.add('hidden');
@@ -288,4 +288,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // Początkowe generowanie wierszy
     generateTableRows();
 });
-
