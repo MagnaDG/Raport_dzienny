@@ -127,27 +127,24 @@ td:nth-child(8), td:nth-child(9), td:nth-child(10), td:nth-child(11), td:nth-chi
 
 /* Nowe style dla Modala (okienka pop-up) */
 .modal-overlay {
-    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
     background-color: rgba(0,0,0,0.5); /* Półprzezroczyste tło */
-    padding-top: 60px;
-    justify-content: center;
-    align-items: flex-start;
-}
-
-.show-modal {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Domyślnie ukryte */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: 5% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
@@ -158,6 +155,15 @@ td:nth-child(8), td:nth-child(9), td:nth-child(10), td:nth-child(11), td:nth-chi
     flex-direction: column;
     gap: 15px;
     text-align: center;
+    transform: translateY(-50px);
+    transition: transform 0.3s ease;
+}
+
+/* Klasa do pokazywania okna modalnego */
+.modal-overlay.hidden {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
 .close-button {
@@ -188,10 +194,6 @@ td:nth-child(8), td:nth-child(9), td:nth-child(10), td:nth-child(11), td:nth-chi
 #menu-modal h2 {
     margin: 0;
     color: #007bff;
-}
-
-.hidden {
-    display: none;
 }
 
 #edit-section {
