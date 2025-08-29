@@ -118,3 +118,21 @@ td:nth-child(5) > div {
     flex-direction: column;
     gap: 5px;
 }
+
+/* Usunięcie ramki z komórek nieedytowalnych */
+td:nth-child(1), /* Godz. */
+td:nth-child(2), /* OEE */
+td:nth-child(6), /* CC */
+td:nth-child(8), /* DANE1 */
+td:nth-child(9), /* DANE2 */
+td:nth-child(10), /* DANE3 */
+td:nth-child(11), /* DANE4 */
+td:nth-child(12), /* DANE5 */
+td:nth-child(13), /* DANE6 */
+td:nth-child(14), /* DANE7 */
+td:nth-child(15), /* DANE8 */
+td:nth-child(16), /* DANE9 */
+td:nth-child(17) /* DANE10 */
+{
+    border: none;
+}
