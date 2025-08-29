@@ -187,24 +187,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Obsługa przycisku "MENU" - pokazuje modal
     menuButton.addEventListener('click', () => {
-        menuModal.classList.add('show-modal');
+        menuModal.classList.remove('hidden');
     });
 
     // Obsługa zamknięcia modala
     closeModalButton.addEventListener('click', () => {
-        menuModal.classList.remove('show-modal');
+        menuModal.classList.add('hidden');
     });
 
     // Obsługa kliknięcia poza modalem, aby go zamknąć
     window.addEventListener('click', (event) => {
         if (event.target === menuModal) {
-            menuModal.classList.remove('show-modal');
+            menuModal.classList.add('hidden');
         }
     });
 
     // Obsługa kliknięcia przycisku "Edytuj dane"
     editDataButton.addEventListener('click', () => {
-        menuModal.classList.remove('show-modal');
+        menuModal.classList.add('hidden');
         const password = prompt('Wprowadź hasło do edycji danych:');
         if (password === EDIT_PASSWORD) {
             reportTable.classList.add('hidden');
