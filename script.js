@@ -13,7 +13,7 @@ const defaultProductionData = {
 };
 
 // Stałe hasło do edycji danych
-const EDIT_PASSWORD = 'haslo123';
+const EDIT_PASSWORD = 'z';
 
 // Funkcja do pobierania danych z localStorage lub domyślnych
 function getProductionData() {
@@ -288,3 +288,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Początkowe generowanie wierszy
     generateTableRows();
 });
+
