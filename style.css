@@ -160,7 +160,7 @@ td:nth-child(8), td:nth-child(9), td:nth-child(10), td:nth-child(11), td:nth-chi
 }
 
 /* Klasa do pokazywania okna modalnego */
-.modal-overlay.hidden {
+.modal-overlay.active {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
@@ -194,6 +194,10 @@ td:nth-child(8), td:nth-child(9), td:nth-child(10), td:nth-child(11), td:nth-chi
 #menu-modal h2 {
     margin: 0;
     color: #007bff;
+}
+
+.hidden {
+    display: none;
 }
 
 #edit-section {
