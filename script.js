@@ -1,14 +1,25 @@
 // Dane, które powinny być wczytane np. z pliku JSON
 const productionData = {
-    liniaA: [
-        { kod: "KOD-A1", cc: 50 },
-        { kod: "KOD-A2", cc: 65 },
-        { kod: "KOD-A3", cc: 45 }
+    M4: [
+        { kod: "36000121MXX", cc: 10,5 },
+        { kod: "36000126MXX", cc: 10,5 },
+        { kod: "36000128MXX", cc: 10,5 },
+        { kod: "36000152MXX", cc: 10,5 },
+        { kod: "36000158MXX", cc: 10,5 }
     ],
-    liniaB: [
-        { kod: "KOD-B1", cc: 40 },
-        { kod: "KOD-B2", cc: 70 },
-        { kod: "KOD-B3", cc: 55 }
+        4NHL: [
+        { kod: "37000121MXX", cc: 13,5 },
+        { kod: "37000126MXX", cc: 13,5 },
+        { kod: "37000128MXX", cc: 13,5 },
+        { kod: "37000152MXX", cc: 13,5 },
+        { kod: "37000158MXX", cc: 13,5 }
+    ],
+    MP4: [
+        { kod: "36000121MXX", cc: 12,5 },
+        { kod: "36000126MXX", cc: 12,5 },
+        { kod: "36000128MXX", cc: 12,5 },
+        { kod: "36000152MXX", cc: 12,5 },
+        { kod: "36000158MXX", cc: 12,5 }
     ]
 };
 
@@ -179,3 +190,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     generateTableRows();
 });
+
