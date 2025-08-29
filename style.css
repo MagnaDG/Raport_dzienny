@@ -158,7 +158,6 @@ td:nth-child(8), td:nth-child(9), td:nth-child(10), td:nth-child(11), td:nth-chi
     transition: transform 0.3s ease;
 }
 
-/* K L U C Z O W A   P O P R A W K A ! */
 /* Klasa do pokazywania okna modalnego */
 .modal-overlay.active {
     opacity: 1;
