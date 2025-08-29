@@ -136,3 +136,7 @@ td:nth-child(17) /* DANE10 */
 {
     border: none;
 }
+/* Klasa do ukrywania elementów */
+.hidden {
+    display: none;
+}
