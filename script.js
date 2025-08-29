@@ -1,25 +1,14 @@
 // Dane, które powinny być wczytane np. z pliku JSON
 const productionData = {
-    M4: [
-        { kod: "36000254MXX", cc: 12,5 },
-        { kod: "36000255MXX", cc: 12,5 },
-        { kod: "36000256MXX", cc: 12,5 },
-        { kod: "36000257MXX", cc: 12,5 },
-        { kod: "36000258MXX", cc: 12,5}
+    liniaA: [
+        { kod: "KOD-A1", cc: 50 },
+        { kod: "KOD-A2", cc: 65 },
+        { kod: "KOD-A3", cc: 45 }
     ],
-     NHL: [
-        { kod: "37000254MXX", cc: 12,5 },
-        { kod: "37000255MXX", cc: 12,5 },
-        { kod: "37000256MXX", cc: 12,5 },
-        { kod: "37000257MXX", cc: 12,5 },
-        { kod: "37000258MXX", cc: 12,5}
-    ],
-    MP4: [
-        { kod: "36000456MXX", cc: 10,5 },
-        { kod: "36000457MXX", cc: 10,5 },
-        { kod: "36000457MXX", cc: 10,5 },
-        { kod: "36000459MXX", cc: 10,5 },
-        { kod: "36000468MXX", cc: 10,5}
+    liniaB: [
+        { kod: "KOD-B1", cc: 40 },
+        { kod: "KOD-B2", cc: 70 },
+        { kod: "KOD-B3", cc: 55 }
     ]
 };
 
@@ -113,8 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const foundCode2 = productionData[selectedLine]?.find(data => data.kod === selectedKod2);
         const cc2 = foundCode2 ? foundCode2.cc : 0;
 
-        // CC dla całej paletki jest średnią z dwóch kodów
-        const totalCc = (cc1 + cc2) / 2;
+        // CC dla całej paletki jest sumą wartości z dwóch kodów
+        const totalCc = cc1 + cc2;
         ccInput.value = totalCc;
 
         // Obliczanie OEE
@@ -146,47 +135,47 @@ document.addEventListener('DOMContentLoaded', () => {
             target.classList.contains('ok-input-2') ||
             target.classList.contains('nok-input-1') ||
             target.classList.contains('nok-input-2') ||
-            target.classList.contains('time-input') ||
-            target.classList.contains('cc-input')) {
+            target.classList.contains('time-input')) {
             updateValues(row);
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        const activeElement = document.activeElement;
+        if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'SELECT')) {
+            const row = activeElement.closest('tr');
+            if (!row) return;
+
+            const allInputs = Array.from(row.querySelectorAll('input, select'));
+            const currentIndex = allInputs.indexOf(activeElement);
+
+            if (event.key === 'ArrowRight' && currentIndex < allInputs.length - 1) {
+                allInputs[currentIndex + 1].focus();
+                event.preventDefault();
+            } else if (event.key === 'ArrowLeft' && currentIndex > 0) {
+                allInputs[currentIndex - 1].focus();
+                event.preventDefault();
+            } else if (event.key === 'ArrowDown' || event.key === 'Enter') {
+                const nextRow = row.nextElementSibling;
+                if (nextRow) {
+                    const nextRowInputs = Array.from(nextRow.querySelectorAll('input, select'));
+                    if (nextRowInputs[currentIndex]) {
+                        nextRowInputs[currentIndex].focus();
+                        event.preventDefault();
+                    }
+                }
+            } else if (event.key === 'ArrowUp') {
+                const prevRow = row.previousElementSibling;
+                if (prevRow) {
+                    const prevRowInputs = Array.from(prevRow.querySelectorAll('input, select'));
+                    if (prevRowInputs[currentIndex]) {
+                        prevRowInputs[currentIndex].focus();
+                        event.preventDefault();
+                    }
+                }
+            }
         }
     });
 
     generateTableRows();
 });
-document.addEventListener('keydown', (event) => {
-    // Sprawdzamy, czy fokus jest na elemencie wejściowym w tabeli
-    const activeElement = document.activeElement;
-    if (activeElement && activeElement.tagName === 'INPUT') {
-        const row = activeElement.closest('tr');
-        const allInputs = Array.from(row.querySelectorAll('input, select'));
-        const currentIndex = allInputs.indexOf(activeElement);
-
-        if (event.key === 'ArrowRight' && currentIndex < allInputs.length - 1) {
-            allInputs[currentIndex + 1].focus();
-            event.preventDefault();
-        } else if (event.key === 'ArrowLeft' && currentIndex > 0) {
-            allInputs[currentIndex - 1].focus();
-            event.preventDefault();
-        } else if (event.key === 'ArrowDown' || event.key === 'Enter') {
-            const nextRow = row.nextElementSibling;
-            if (nextRow) {
-                const nextRowInputs = Array.from(nextRow.querySelectorAll('input, select'));
-                if (nextRowInputs[currentIndex]) {
-                    nextRowInputs[currentIndex].focus();
-                    event.preventDefault();
-                }
-            }
-        } else if (event.key === 'ArrowUp') {
-            const prevRow = row.previousElementSibling;
-            if (prevRow) {
-                const prevRowInputs = Array.from(prevRow.querySelectorAll('input, select'));
-                if (prevRowInputs[currentIndex]) {
-                    prevRowInputs[currentIndex].focus();
-                    event.preventDefault();
-                }
-            }
-        }
-    }
-});
-
