@@ -120,8 +120,7 @@ td:nth-child(5) > div {
 td:nth-child(1),
 td:nth-child(2),
 td:nth-child(6),
-td:nth-child(8), td:nth-child(9), td:nth-child(10), td:nth-child(11), td:nth-child(12), td:nth-child(13), td:nth-child(14), td:nth-child(15), td:nth-child(16), td:nth-child(17)
-{
+td:nth-child(8), td:nth-child(9), td:nth-child(10), td:nth-child(11), td:nth-child(12), td:nth-child(13), td:nth-child(14), td:nth-child(15), td:nth-child(16), td:nth-child(17) {
     border: none;
 }
 
@@ -159,6 +158,7 @@ td:nth-child(8), td:nth-child(9), td:nth-child(10), td:nth-child(11), td:nth-chi
     transition: transform 0.3s ease;
 }
 
+/* K L U C Z O W A   P O P R A W K A ! */
 /* Klasa do pokazywania okna modalnego */
 .modal-overlay.active {
     opacity: 1;
