@@ -52,9 +52,31 @@ th {
     padding: 15px 12px;
 }
 
-/* Style dla parzystych wierszy (lepsza czytelność) */
+/* Styl dla nagłówka "Godz." */
+th:first-child {
+    background-color: #999;
+    color: white;
+}
+
+/* Style dla parzystych wierszy (dla lepszej czytelności) */
 tr:nth-child(even) {
     background-color: #f9f9f9;
+}
+
+/* Zmniejszenie czcionki w komórkach kolumny Godz. */
+td:first-child {
+    font-size: 12px;
+}
+
+/* Ukrywanie strzałek w polach typu "number" */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
 }
 
 /* ### Łatwa edycja szerokości kolumn ###
@@ -79,16 +101,6 @@ th:nth-child(15), td:nth-child(15) { width: 6%; }
 th:nth-child(16), td:nth-child(16) { width: 6%; }
 th:nth-child(17), td:nth-child(17) { width: 10%; }
 
-/* Style dla konkretnych kolumn */
-th:first-child {
-    background-color: #999;
-    color: white;
-}
-
-td:first-child {
-    font-size: 12px;
-}
-
 /* Style dla pól formularza */
 select, input[type="date"], input[type="number"], input[type="text"] {
     width: 100%;
@@ -105,14 +117,4 @@ td:nth-child(5) > div {
     display: flex;
     flex-direction: column;
     gap: 5px;
-}
-/* Ukrywanie strzałek w polach typu "number" */
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-input[type=number] {
-    -moz-appearance: textfield;
 }
