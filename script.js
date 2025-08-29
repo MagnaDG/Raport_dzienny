@@ -1,4 +1,4 @@
-// Dane, które powinny być wczytane np. z pliku JSON
+// Dane produkcyjne
 const productionData = {
     MP4: [
         { kod: "37000057487MXX", cc: 50 },
@@ -23,13 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const workHours = ["6-7", "7-8", "8-9", "9-10", "10-11", "11-12", "12-13", "13-14"];
 
-    // Funkcja do generowania wierszy tabeli
     function generateTableRows() {
         tableBody.innerHTML = '';
         const selectedLine = lineSelect.value;
         const codes = productionData[selectedLine] || [];
 
-        // Generowanie opcji kodów do selecta
         const getCodeOptions = () => {
             let options = '<option value="">Wybierz kod</option>';
             codes.forEach(data => {
@@ -78,10 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Funkcja do aktualizowania wartości CC i obliczania OEE
     function updateValues(row) {
         const kodSelect1 = row.querySelector('.kod-select-1');
-        const kodSelect2 = row.querySelector('.kod-select-2');
         const okInput1 = row.querySelector('.ok-input-1');
         const okInput2 = row.querySelector('.ok-input-2');
         const nokInput1 = row.querySelector('.nok-input-1');
@@ -92,17 +88,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const selectedLine = lineSelect.value;
         const selectedKod1 = kodSelect1.value;
-        const selectedKod2 = kodSelect2.value;
 
-        // Znajdź wartość CC dla pierwszego wybranego kodu
         const foundCode1 = productionData[selectedLine]?.find(data => data.kod === selectedKod1);
         const cc1 = foundCode1 ? foundCode1.cc : 0;
         
-        // CC dla całej paletki jest wartością przypisaną do pierwszego kodu
         const totalCc = cc1;
         ccInput.value = totalCc;
 
-        // Obliczanie OEE
         const totalOk = (parseInt(okInput1.value) || 0) + (parseInt(okInput2.value) || 0);
         const totalNok = (parseInt(nokInput1.value) || 0) + (parseInt(nokInput2.value) || 0);
         const totalTime = parseInt(timeInput.value) || 0;
