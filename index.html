@@ -44,12 +44,6 @@
         </div>
     </header>
 
-    <div id="menu-options" class="hidden">
-        <button id="edit-data-button">Edytuj dane</button>
-        <button id="future-button1">Przyszła funkcja 1</button>
-        <button id="future-button2">Przyszła funkcja 2</button>
-    </div>
-
     <main>
         <table id="report-table">
             <thead>
@@ -87,6 +81,16 @@
             </div>
         </div>
     </main>
+
+    <div id="menu-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Opcje Menu</h2>
+            <button id="edit-data-button">Edytuj dane</button>
+            <button id="future-button1">Przyszła funkcja 1</button>
+            <button id="future-button2">Przyszła funkcja 2</button>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
