@@ -79,10 +79,7 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 
-/* ### Łatwa edycja szerokości kolumn ###
-  Suma wartości musi wynosić 100%.
-  Każdy selektor odpowiada za konkretną kolumnę.
-*/
+/* ### Łatwa edycja szerokości kolumn ### */
 th:nth-child(1), td:nth-child(1) { width: 5%; }
 th:nth-child(2), td:nth-child(2) { width: 5%; }
 th:nth-child(3), td:nth-child(3) { width: 10%; }
@@ -120,37 +117,71 @@ td:nth-child(5) > div {
 }
 
 /* Usunięcie ramki z komórek nieedytowalnych */
-td:nth-child(1), /* Godz. */
-td:nth-child(2), /* OEE */
-td:nth-child(6), /* CC */
-td:nth-child(8), /* DANE1 */
-td:nth-child(9), /* DANE2 */
-td:nth-child(10), /* DANE3 */
-td:nth-child(11), /* DANE4 */
-td:nth-child(12), /* DANE5 */
-td:nth-child(13), /* DANE6 */
-td:nth-child(14), /* DANE7 */
-td:nth-child(15), /* DANE8 */
-td:nth-child(16), /* DANE9 */
-td:nth-child(17) /* DANE10 */
+td:nth-child(1),
+td:nth-child(2),
+td:nth-child(6),
+td:nth-child(8), td:nth-child(9), td:nth-child(10), td:nth-child(11), td:nth-child(12), td:nth-child(13), td:nth-child(14), td:nth-child(15), td:nth-child(16), td:nth-child(17)
 {
     border: none;
 }
 
-/* Style dla nowych elementów menu */
-#menu-options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 15px;
-    margin-top: 10px;
-    background-color: #e9e9e9;
-    border-radius: 8px;
+/* Nowe style dla Modala (okienka pop-up) */
+.modal-overlay {
+    display: none; /* Domyślnie ukryte */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5); /* Półprzezroczyste tło */
+    padding-top: 60px;
 }
 
-#menu-options button {
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    border-radius: 8px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+}
+
+.close-button {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#menu-modal button {
     padding: 10px;
     cursor: pointer;
+    border: 1px solid #007bff;
+    background-color: #e9e9e9;
+    border-radius: 4px;
+}
+
+#menu-modal h2 {
+    margin: 0;
+    color: #007bff;
 }
 
 .hidden {
@@ -171,12 +202,14 @@ td:nth-child(17) /* DANE10 */
 }
 
 #edit-table-container {
+    overflow-x: auto; /* Pozwala na przewijanie tabeli edycji */
     margin-top: 15px;
     margin-bottom: 15px;
 }
 
 #edit-table-container table {
-    width: 100%;
+    width: auto;
+    min-width: 100%;
 }
 
 .edit-buttons {
