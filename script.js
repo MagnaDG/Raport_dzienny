@@ -1,19 +1,35 @@
-// Dane produkcyjne
-const productionData = {
+// Domyślne dane, jeśli w localStorage nic nie ma
+const defaultProductionData = {
     MP4: [
-        { kod: "37000057487MXX", cc: 50 },
-        { kod: "KOD-A2", cc: 65 },
-        { kod: "KOD-A3", cc: 45 }
+        { kod: "37000057487MXX", cc: 50, dane1: 0, dane2: 0, dane3: 0, dane4: 0, dane5: 0, dane6: 0, dane7: 0, dane8: 0, dane9: 0, dane10: 0 },
+        { kod: "KOD-A2", cc: 65, dane1: 0, dane2: 0, dane3: 0, dane4: 0, dane5: 0, dane6: 0, dane7: 0, dane8: 0, dane9: 0, dane10: 0 },
+        { kod: "KOD-A3", cc: 45, dane1: 0, dane2: 0, dane3: 0, dane4: 0, dane5: 0, dane6: 0, dane7: 0, dane8: 0, dane9: 0, dane10: 0 }
     ],
     liniaB: [
-        { kod: "KOD-B1", cc: 40 },
-        { kod: "KOD-B2", cc: 70 },
-        { kod: "KOD-B3", cc: 55 }
+        { kod: "KOD-B1", cc: 40, dane1: 0, dane2: 0, dane3: 0, dane4: 0, dane5: 0, dane6: 0, dane7: 0, dane8: 0, dane9: 0, dane10: 0 },
+        { kod: "KOD-B2", cc: 70, dane1: 0, dane2: 0, dane3: 0, dane4: 0, dane5: 0, dane6: 0, dane7: 0, dane8: 0, dane9: 0, dane10: 0 },
+        { kod: "KOD-B3", cc: 55, dane1: 0, dane2: 0, dane3: 0, dane4: 0, dane5: 0, dane6: 0, dane7: 0, dane8: 0, dane9: 0, dane10: 0 }
     ]
 };
 
 // Stałe hasło do edycji danych
 const EDIT_PASSWORD = 'haslo123';
+
+// Funkcja do pobierania danych z localStorage lub domyślnych
+function getProductionData() {
+    const storedData = localStorage.getItem('productionData');
+    if (storedData) {
+        return JSON.parse(storedData);
+    }
+    return defaultProductionData;
+}
+
+// Funkcja do zapisywania danych w localStorage
+function saveProductionData(data) {
+    localStorage.setItem('productionData', JSON.stringify(data));
+}
+
+let productionData = getProductionData();
 
 document.addEventListener('DOMContentLoaded', () => {
     const datePicker = document.getElementById('date-picker');
@@ -23,7 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Nowe elementy interfejsu
     const menuButton = document.getElementById('menu-button');
-    const menuOptions = document.getElementById('menu-options');
+    const menuModal = document.getElementById('menu-modal');
+    const closeModalButton = document.querySelector('.close-button');
     const editDataButton = document.getElementById('edit-data-button');
     const editSection = document.getElementById('edit-section');
     const reportTable = document.getElementById('report-table');
@@ -75,16 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
                 <td><input type="number" class="cc-input" disabled value="0"></td>
                 <td><input type="number" class="time-input" min="0" value="0"></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
             `;
             tableBody.appendChild(row);
         }
@@ -128,26 +136,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function generateEditTable() {
         editTableContainer.innerHTML = '';
         const table = document.createElement('table');
-        table.innerHTML = `
-            <thead>
-                <tr>
-                    <th>Linia</th>
-                    <th>KOD</th>
-                    <th>CC</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        `;
+        let headerRow = '<tr><th>Linia</th><th>KOD</th><th>CC</th>';
+        for (let i = 1; i <= 10; i++) {
+            headerRow += `<th>DANE${i}</th>`;
+        }
+        headerRow += '</tr>';
+        
+        table.innerHTML = `<thead>${headerRow}</thead><tbody></tbody>`;
         const tbody = table.querySelector('tbody');
 
         for (const line in productionData) {
             productionData[line].forEach(data => {
                 const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${line}</td>
-                    <td><input type="text" value="${data.kod}"></td>
-                    <td><input type="number" value="${data.cc}"></td>
-                `;
+                let rowContent = `<td>${line}</td><td><input type="text" value="${data.kod}"></td><td><input type="number" value="${data.cc}"></td>`;
+                for (let i = 1; i <= 10; i++) {
+                    rowContent += `<td><input type="number" value="${data['dane' + i]}"></td>`;
+                }
+                row.innerHTML = rowContent;
                 tbody.appendChild(row);
             });
         }
@@ -162,28 +167,39 @@ document.addEventListener('DOMContentLoaded', () => {
         rows.forEach(row => {
             const line = row.querySelector('td:first-child').textContent;
             const kod = row.querySelector('td:nth-child(2) input').value;
-            const cc = parseInt(row.querySelector('td:nth-child(3) input').value);
+            const cc = parseInt(row.querySelector('td:nth-child(3) input').value) || 0;
+            
+            const params = { kod, cc };
+            for (let i = 1; i <= 10; i++) {
+                params['dane' + i] = parseInt(row.querySelector(`td:nth-child(${i + 3}) input`).value) || 0;
+            }
             
             if (!newProductionData[line]) {
                 newProductionData[line] = [];
             }
-            newProductionData[line].push({ kod, cc });
+            newProductionData[line].push(params);
         });
 
-        Object.assign(productionData, newProductionData);
+        productionData = newProductionData;
+        saveProductionData(productionData);
         alert('Dane zapisane pomyślnie!');
     }
 
-    // Obsługa kliknięcia przycisku "MENU"
+    // Obsługa przycisku "MENU" - pokazuje modal
     menuButton.addEventListener('click', () => {
-        menuOptions.classList.toggle('hidden');
+        menuModal.classList.remove('hidden');
+    });
+
+    // Obsługa zamknięcia modala
+    closeModalButton.addEventListener('click', () => {
+        menuModal.classList.add('hidden');
     });
 
     // Obsługa kliknięcia przycisku "Edytuj dane"
     editDataButton.addEventListener('click', () => {
+        menuModal.classList.add('hidden');
         const password = prompt('Wprowadź hasło do edycji danych:');
         if (password === EDIT_PASSWORD) {
-            menuOptions.classList.add('hidden');
             reportTable.classList.add('hidden');
             editSection.classList.remove('hidden');
             generateEditTable();
