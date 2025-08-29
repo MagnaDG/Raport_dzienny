@@ -1,25 +1,14 @@
 // Dane, które powinny być wczytane np. z pliku JSON
 const productionData = {
-    M4: [
-        { kod: "36000121MXX", cc: 10,5 },
-        { kod: "36000126MXX", cc: 10,5 },
-        { kod: "36000128MXX", cc: 10,5 },
-        { kod: "36000152MXX", cc: 10,5 },
-        { kod: "36000158MXX", cc: 10,5 }
+    liniaA: [
+        { kod: "37000057487MXX", cc: 50 },
+        { kod: "KOD-A2", cc: 65 },
+        { kod: "KOD-A3", cc: 45 }
     ],
-        4NHL: [
-        { kod: "37000121MXX", cc: 13,5 },
-        { kod: "37000126MXX", cc: 13,5 },
-        { kod: "37000128MXX", cc: 13,5 },
-        { kod: "37000152MXX", cc: 13,5 },
-        { kod: "37000158MXX", cc: 13,5 }
-    ],
-    MP4: [
-        { kod: "36000121MXX", cc: 12,5 },
-        { kod: "36000126MXX", cc: 12,5 },
-        { kod: "36000128MXX", cc: 12,5 },
-        { kod: "36000152MXX", cc: 12,5 },
-        { kod: "36000158MXX", cc: 12,5 }
+    liniaB: [
+        { kod: "KOD-B1", cc: 40 },
+        { kod: "KOD-B2", cc: 70 },
+        { kod: "KOD-B3", cc: 55 }
     ]
 };
 
@@ -190,4 +179,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     generateTableRows();
 });
-
+/* Usunięcie ramki z komórek nieedytowalnych */
+td:nth-child(1), /* Godz. */
+td:nth-child(2), /* OEE */
+td:nth-child(6), /* CC */
+td:nth-child(8), /* DANE1 */
+td:nth-child(9), /* DANE2 */
+td:nth-child(10), /* DANE3 */
+td:nth-child(11), /* DANE4 */
+td:nth-child(12), /* DANE5 */
+td:nth-child(13), /* DANE6 */
+td:nth-child(14), /* DANE7 */
+td:nth-child(15), /* DANE8 */
+td:nth-child(16), /* DANE9 */
+td:nth-child(17) /* DANE10 */
+{
+    border: none;
+}
