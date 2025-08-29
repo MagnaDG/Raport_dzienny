@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Raport Produkcyjny</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
@@ -80,10 +80,10 @@
     </div>
   </main>
 
-  <!-- Modal -->
-  <div id="menu-modal" class="modal-overlay hidden">
+  <!-- Modal (UWAGA: bez klasy 'hidden') -->
+  <div id="menu-modal" class="modal-overlay">
     <div class="modal-content">
-      <span class="close-button">&times;</span>
+      <span class="close-button" title="Zamknij">&times;</span>
       <h2>Opcje Menu</h2>
       <button id="edit-data-button">Edytuj dane</button>
       <button id="future-button1">Przyszła funkcja 1</button>
@@ -91,6 +91,6 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
