@@ -1,258 +1,62 @@
-/* Główne style strony */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    padding: 20px;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
-/* Sekcja z kontrolkami (data, linia itp.) */
 .controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-bottom: 20px;
-    background-color: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 1rem;
+  background: #f0f0f0;
+  padding: 1rem;
 }
 
 .control-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-/* Style tabeli */
 table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
 }
 
-/* Style dla wszystkich nagłówków i komórek */
 th, td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Style dla nagłówków (th) */
-th {
-    background-color: #007bff;
-    color: white;
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 14px;
-    padding: 15px 12px;
-}
-
-/* Styl dla nagłówka "Godz." */
-th:first-child {
-    background-color: #999;
-    color: white;
-}
-
-/* Style dla parzystych wierszy (dla lepszej czytelności) */
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-/* Zmniejszenie czcionki w komórkach kolumny Godz. */
-td:first-child {
-    font-size: 12px;
-}
-
-/* Ukrywanie strzałek w polach typu "number" */
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-input[type=number] {
-    -moz-appearance: textfield;
-}
-
-/* ### Łatwa edycja szerokości kolumn ### */
-th:nth-child(1), td:nth-child(1) { width: 5%; }
-th:nth-child(2), td:nth-child(2) { width: 5%; }
-th:nth-child(3), td:nth-child(3) { width: 10%; }
-th:nth-child(4), td:nth-child(4) { width: 5%; }
-th:nth-child(5), td:nth-child(5) { width: 5%; }
-th:nth-child(6), td:nth-child(6) { width: 5%; }
-th:nth-child(7), td:nth-child(7) { width: 5%; }
-th:nth-child(8), td:nth-child(8) { width: 6%; }
-th:nth-child(9), td:nth-child(9) { width: 6%; }
-th:nth-child(10), td:nth-child(10) { width: 6%; }
-th:nth-child(11), td:nth-child(11) { width: 6%; }
-th:nth-child(12), td:nth-child(12) { width: 6%; }
-th:nth-child(13), td:nth-child(13) { width: 6%; }
-th:nth-child(14), td:nth-child(14) { width: 6%; }
-th:nth-child(15), td:nth-child(15) { width: 6%; }
-th:nth-child(16), td:nth-child(16) { width: 6%; }
-th:nth-child(17), td:nth-child(17) { width: 10%; }
-
-/* Style dla pól formularza */
-select, input[type="date"], input[type="number"], input[type="text"] {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-
-/* Style dla układu dwóch pól w jednej komórce (tylko KOD, OK, NOK) */
-td:nth-child(3) > div,
-td:nth-child(4) > div,
-td:nth-child(5) > div {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-/* Usunięcie ramki z komórek nieedytowalnych */
-td:nth-child(1),
-td:nth-child(2),
-td:nth-child(6),
-td:nth-child(8), td:nth-child(9), td:nth-child(10), td:nth-child(11), td:nth-child(12), td:nth-child(13), td:nth-child(14), td:nth-child(15), td:nth-child(16), td:nth-child(17) {
-    border: none;
-}
-
-/* Nowe style dla Modala (okienka pop-up) */
-.modal-overlay {
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5); /* Półprzezroczyste tło */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* Domyślnie ukryte */
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.modal-content {
-    background-color: #fefefe;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 400px;
-    border-radius: 8px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    text-align: center;
-    transform: translateY(-50px);
-    transition: transform 0.3s ease;
-}
-
-/* Klasa do pokazywania okna modalnego */
-.modal-overlay.active {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.close-button {
-    color: #aaa;
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close-button:hover,
-.close-button:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-#menu-modal button {
-    padding: 10px;
-    cursor: pointer;
-    border: 1px solid #007bff;
-    background-color: #e9e9e9;
-    border-radius: 4px;
-}
-
-#menu-modal h2 {
-    margin: 0;
-    color: #007bff;
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: center;
 }
 
 .hidden {
-    display: none;
+  display: none !important;
 }
 
-#edit-section {
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-#edit-section h2 {
-    text-align: center;
-    color: #007bff;
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 300px;
+  position: relative;
 }
 
-#edit-table-container {
-    overflow-x: auto; /* Pozwala na przewijanie tabeli edycji */
-    margin-top: 15px;
-    margin-bottom: 15px;
-}
-
-#edit-table-container table {
-    width: auto;
-    min-width: 100%;
-}
-
-.edit-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
-
-.edit-buttons button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-#save-data-button {
-    background-color: #28a745;
-    color: white;
-}
-
-#back-button {
-    background-color: #6c757d;
-    color: white;
-}
-
-#menu-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
+.close-button {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+  font-size: 20px;
 }
