@@ -1,6 +1,6 @@
 // Dane, które powinny być wczytane np. z pliku JSON
 const productionData = {
-    liniaA: [
+    MP4: [
         { kod: "37000057487MXX", cc: 50 },
         { kod: "KOD-A2", cc: 65 },
         { kod: "KOD-A3", cc: 45 }
@@ -98,12 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const foundCode1 = productionData[selectedLine]?.find(data => data.kod === selectedKod1);
         const cc1 = foundCode1 ? foundCode1.cc : 0;
         
-        // Znajdź wartość CC dla drugiego wybranego kodu
-        const foundCode2 = productionData[selectedLine]?.find(data => data.kod === selectedKod2);
-        const cc2 = foundCode2 ? foundCode2.cc : 0;
-
-        // CC dla całej paletki jest sumą wartości z dwóch kodów
-        const totalCc = cc1 + cc2;
+        // CC dla całej paletki jest wartością przypisaną do pierwszego kodu
+        const totalCc = cc1;
         ccInput.value = totalCc;
 
         // Obliczanie OEE
@@ -179,20 +175,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
     generateTableRows();
 });
-/* Usunięcie ramki z komórek nieedytowalnych */
-td:nth-child(1), /* Godz. */
-td:nth-child(2), /* OEE */
-td:nth-child(6), /* CC */
-td:nth-child(8), /* DANE1 */
-td:nth-child(9), /* DANE2 */
-td:nth-child(10), /* DANE3 */
-td:nth-child(11), /* DANE4 */
-td:nth-child(12), /* DANE5 */
-td:nth-child(13), /* DANE6 */
-td:nth-child(14), /* DANE7 */
-td:nth-child(15), /* DANE8 */
-td:nth-child(16), /* DANE9 */
-td:nth-child(17) /* DANE10 */
-{
-    border: none;
-}
