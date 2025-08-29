@@ -143,3 +143,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     generateTableRows();
 });
+document.addEventListener('keydown', (event) => {
+    // Sprawdzamy, czy fokus jest na elemencie wejściowym w tabeli
+    const activeElement = document.activeElement;
+    if (activeElement && activeElement.tagName === 'INPUT') {
+        const row = activeElement.closest('tr');
+        const allInputs = Array.from(row.querySelectorAll('input, select'));
+        const currentIndex = allInputs.indexOf(activeElement);
+
+        if (event.key === 'ArrowRight' && currentIndex < allInputs.length - 1) {
+            allInputs[currentIndex + 1].focus();
+            event.preventDefault();
+        } else if (event.key === 'ArrowLeft' && currentIndex > 0) {
+            allInputs[currentIndex - 1].focus();
+            event.preventDefault();
+        } else if (event.key === 'ArrowDown' || event.key === 'Enter') {
+            const nextRow = row.nextElementSibling;
+            if (nextRow) {
+                const nextRowInputs = Array.from(nextRow.querySelectorAll('input, select'));
+                if (nextRowInputs[currentIndex]) {
+                    nextRowInputs[currentIndex].focus();
+                    event.preventDefault();
+                }
+            }
+        } else if (event.key === 'ArrowUp') {
+            const prevRow = row.previousElementSibling;
+            if (prevRow) {
+                const prevRowInputs = Array.from(prevRow.querySelectorAll('input, select'));
+                if (prevRowInputs[currentIndex]) {
+                    prevRowInputs[currentIndex].focus();
+                    event.preventDefault();
+                }
+            }
+        }
+    }
+});
