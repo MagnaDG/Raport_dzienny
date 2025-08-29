@@ -22,12 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Funkcja do generowania wierszy tabeli
     function generateTableRows() {
-        tableBody.innerHTML = ''; // Wyczyść tabelę przed generowaniem
+        tableBody.innerHTML = '';
         const selectedLine = lineSelect.value;
         const codes = productionData[selectedLine] || [];
         const datalistId = 'kod-list-' + selectedLine;
 
-        // Tworzymy datalistę na podstawie wybranej linii
         const datalist = document.createElement('datalist');
         datalist.id = datalistId;
         codes.forEach(data => {
@@ -35,6 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
             option.value = data.kod;
             datalist.appendChild(option);
         });
+        // Upewnij się, że datalista jest unikalna i dodana tylko raz
+        const oldDatalist = document.getElementById(datalistId);
+        if (oldDatalist) {
+            oldDatalist.remove();
+        }
         document.body.appendChild(datalist);
 
         for (let i = 0; i < numRows; i++) {
@@ -48,6 +52,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><input type="number" class="nok-input" min="0" value="0"></td>
                 <td><input type="number" class="cc-input" disabled value="0"></td>
                 <td><input type="number" class="time-input" min="0" value="0"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
             `;
             tableBody.appendChild(row);
         }
@@ -65,15 +79,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedLine = lineSelect.value;
         const selectedKod = kodInput.value;
 
-        // Znajdź wartość CC dla wpisanego/wybranego kodu
         const foundCode = productionData[selectedLine]?.find(data => data.kod === selectedKod);
         if (foundCode) {
             ccInput.value = foundCode.cc;
         } else {
-            ccInput.value = 0; // Ustaw 0, jeśli kod nie pasuje
+            ccInput.value = 0;
         }
 
-        // Obliczanie OEE
         const ok = parseInt(okInput.value) || 0;
         const nok = parseInt(nokInput.value) || 0;
         const time = parseInt(timeInput.value) || 0;
@@ -89,13 +101,11 @@ document.addEventListener('DOMContentLoaded', () => {
         oeeCell.textContent = oee.toFixed(2) + '%';
     }
 
-    // Nasłuchuj na zmiany w liście 'Linia'
     lineSelect.addEventListener('change', () => {
         generateTableRows();
     });
 
-    // Nasłuchuj na zmiany wewnątrz tabeli (delegowanie zdarzeń)
-    tableBody.addEventListener('input', (event) => { // Zmieniono na 'input' dla lepszej responsywności
+    tableBody.addEventListener('input', (event) => {
         const target = event.target;
         const row = target.closest('tr');
 
@@ -107,6 +117,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Inicjalne generowanie tabeli po załadowaniu strony
     generateTableRows();
 });
