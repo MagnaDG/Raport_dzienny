@@ -61,7 +61,7 @@ tr:nth-child(even) {
   Suma wartości musi wynosić 100%.
   Każdy selektor odpowiada za konkretną kolumnę.
 */
-th:nth-child(1), td:nth-child(1) { width: 5%; }    /* Godz. */
+th:nth-child(1), td:nth-child(1) { width: 2%; }    /* Godz. */
 th:nth-child(2), td:nth-child(2) { width: 5%; }    /* OEE */
 th:nth-child(3), td:nth-child(3) { width: 10%; }   /* KOD */
 th:nth-child(4), td:nth-child(4) { width: 5%; }    /* OK */
@@ -77,7 +77,7 @@ th:nth-child(13), td:nth-child(13) { width: 6%; }  /* DANE6 */
 th:nth-child(14), td:nth-child(14) { width: 6%; }  /* DANE7 */
 th:nth-child(15), td:nth-child(15) { width: 6%; }  /* DANE8 */
 th:nth-child(16), td:nth-child(16) { width: 6%; }  /* DANE9 */
-th:nth-child(17), td:nth-child(17) { width: 10%; } /* DANE10 (zwiększona szerokość) */
+th:nth-child(17), td:nth-child(17) { width: 13%; } /* DANE10 (zwiększona szerokość) */
 
 /* Style dla konkretnych kolumn */
 th:first-child {
@@ -97,3 +97,4 @@ select, input[type="date"], input[type="number"], input[type="text"] {
     border-radius: 4px;
     border: 1px solid #ccc;
 }
+
