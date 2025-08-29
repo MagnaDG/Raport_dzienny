@@ -127,7 +127,7 @@ td:nth-child(8), td:nth-child(9), td:nth-child(10), td:nth-child(11), td:nth-chi
 
 /* Nowe style dla Modala (okienka pop-up) */
 .modal-overlay {
-    display: none; /* Domyślnie ukryte */
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -137,6 +137,12 @@ td:nth-child(8), td:nth-child(9), td:nth-child(10), td:nth-child(11), td:nth-chi
     overflow: auto;
     background-color: rgba(0,0,0,0.5); /* Półprzezroczyste tło */
     padding-top: 60px;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.show-modal {
+    display: flex;
 }
 
 .modal-content {
