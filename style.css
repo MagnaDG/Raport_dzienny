@@ -1,9 +1,11 @@
+/* Główne style strony */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     padding: 20px;
 }
 
+/* Sekcja z kontrolkami (data, linia itp.) */
 .controls {
     display: flex;
     flex-wrap: wrap;
@@ -21,6 +23,7 @@ body {
     gap: 10px;
 }
 
+/* Style tabeli */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -29,6 +32,7 @@ table {
     table-layout: fixed;
 }
 
+/* Style dla wszystkich nagłówków i komórek */
 th, td {
     border: 1px solid #ddd;
     padding: 12px;
@@ -38,58 +42,58 @@ th, td {
     text-overflow: ellipsis;
 }
 
+/* Style dla nagłówków (th) */
 th {
     background-color: #007bff;
     color: white;
     text-transform: uppercase;
     font-weight: bold;
+    font-size: 14px; /* Zmiana rozmiaru czcionki dla wszystkich nagłówków */
+    padding: 15px 12px; /* Zwiększenie wysokości nagłówków */
 }
 
-/* Styl dla nowej kolumny "Godz." */
-th:first-child {
-    background-color: #999;
-    color: white;
-}
-
+/* Style dla parzystych wierszy (lepsza czytelność) */
 tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-/* Zmniejszenie czcionki w komórkach kolumny Godz. */
-td:first-child {
-    font-size: 14px;
-}
-
 /* ### Łatwa edycja szerokości kolumn ###
   Suma wartości musi wynosić 100%.
-  Pamiętaj, że zmiany w TH wpływają też na TD.
+  Każdy selektor odpowiada za konkretną kolumnę.
 */
-th:nth-child(1), td:nth-child(1) { width: 2%; }    /* Godz. */
+th:nth-child(1), td:nth-child(1) { width: 5%; }    /* Godz. */
 th:nth-child(2), td:nth-child(2) { width: 5%; }    /* OEE */
 th:nth-child(3), td:nth-child(3) { width: 10%; }   /* KOD */
-th:nth-child(4), td:nth-child(4) { width: 3%; }    /* OK */
-th:nth-child(5), td:nth-child(5) { width: 3%; }    /* NOK */
-th:nth-child(6), td:nth-child(6) { width: 4%; }    /* CC */
-th:nth-child(7), td:nth-child(7) { width: 4%; }    /* CZAS */
-th:nth-child(8), td:nth-child(8) { width: 4%; }    /* DANE1 */
-th:nth-child(9), td:nth-child(9) { width: 4%; }    /* DANE2 */
-th:nth-child(10), td:nth-child(10) { width: 4%; }  /* DANE3 */
-th:nth-child(11), td:nth-child(11) { width: 4%; }  /* DANE4 */
-th:nth-child(12), td:nth-child(12) { width: 4%; }  /* DANE5 */
-th:nth-child(13), td:nth-child(13) { width: 4%; }  /* DANE6 */
-th:nth-child(14), td:nth-child(14) { width: 4%; }  /* DANE7 */
-th:nth-child(15), td:nth-child(15) { width: 4%; }  /* DANE8 */
-th:nth-child(16), td:nth-child(16) { width: 4%; }  /* DANE9 */
-th:nth-child(17), td:nth-child(17) { width: 15%; }  /* DANE10 */
+th:nth-child(4), td:nth-child(4) { width: 5%; }    /* OK */
+th:nth-child(5), td:nth-child(5) { width: 5%; }    /* NOK */
+th:nth-child(6), td:nth-child(6) { width: 5%; }    /* CC */
+th:nth-child(7), td:nth-child(7) { width: 5%; }    /* CZAS */
+th:nth-child(8), td:nth-child(8) { width: 6%; }    /* DANE1 */
+th:nth-child(9), td:nth-child(9) { width: 6%; }    /* DANE2 */
+th:nth-child(10), td:nth-child(10) { width: 6%; }  /* DANE3 */
+th:nth-child(11), td:nth-child(11) { width: 6%; }  /* DANE4 */
+th:nth-child(12), td:nth-child(12) { width: 6%; }  /* DANE5 */
+th:nth-child(13), td:nth-child(13) { width: 6%; }  /* DANE6 */
+th:nth-child(14), td:nth-child(14) { width: 6%; }  /* DANE7 */
+th:nth-child(15), td:nth-child(15) { width: 6%; }  /* DANE8 */
+th:nth-child(16), td:nth-child(16) { width: 6%; }  /* DANE9 */
+th:nth-child(17), td:nth-child(17) { width: 10%; } /* DANE10 (zwiększona szerokość) */
 
+/* Style dla konkretnych kolumn */
+th:first-child {
+    background-color: #999; /* Szary kolor tła dla nagłówka Godz. */
+    color: white;
+}
+
+td:first-child {
+    font-size: 12px; /* Zmniejszona czcionka w komórkach kolumny Godz. */
+}
+
+/* Style dla pól formularza */
 select, input[type="date"], input[type="number"], input[type="text"] {
     width: 100%;
     box-sizing: border-box;
     padding: 8px;
     border-radius: 4px;
     border: 1px solid #ccc;
-}
-/* Zmniejszenie czcionki w komórkach kolumny Godz. */
-td:first-child {
-    font-size: 12px; /* Możesz zmienić wartość na dowolną inną (np. 12px, 0.9em) */
 }
