@@ -2,11 +2,13 @@
 const productionData = {
     liniaA: [
         { kod: "KOD-A1", cc: 50 },
-        { kod: "KOD-A2", cc: 65 }
+        { kod: "KOD-A2", cc: 65 },
+        { kod: "KOD-A3", cc: 45 }
     ],
     liniaB: [
         { kod: "KOD-B1", cc: 40 },
-        { kod: "KOD-B2", cc: 70 }
+        { kod: "KOD-B2", cc: 70 },
+        { kod: "KOD-B3", cc: 55 }
     ]
 };
 
@@ -49,12 +51,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${workHours[i] || ''}</td>
                 <td></td>
                 <td>
-                    <input list="${datalistId}" class="kod-input" type="text" placeholder="Wybierz lub wpisz kod">
+                    <div>
+                        <input list="${datalistId}" class="kod-input-1" type="text" placeholder="Wybierz lub wpisz kod">
+                        <input list="${datalistId}" class="kod-input-2" type="text" placeholder="Wybierz lub wpisz kod">
+                    </div>
                 </td>
-                <td><input type="number" class="ok-input" min="0" value="0"></td>
-                <td><input type="number" class="nok-input" min="0" value="0"></td>
-                <td><input type="number" class="cc-input" disabled value="0"></td>
-                <td><input type="number" class="time-input" min="0" value="0"></td>
+                <td>
+                    <div>
+                        <input type="number" class="ok-input-1" min="0" value="0">
+                        <input type="number" class="ok-input-2" min="0" value="0">
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <input type="number" class="nok-input-1" min="0" value="0">
+                        <input type="number" class="nok-input-2" min="0" value="0">
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <input type="number" class="cc-input-1" disabled value="0">
+                        <input type="number" class="cc-input-2" disabled value="0">
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <input type="number" class="time-input-1" min="0" value="0">
+                        <input type="number" class="time-input-2" min="0" value="0">
+                    </div>
+                </td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -72,33 +97,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Funkcja do aktualizowania wartości CC i obliczania OEE
     function updateValues(row) {
-        const kodInput = row.querySelector('.kod-input');
-        const okInput = row.querySelector('.ok-input');
-        const nokInput = row.querySelector('.nok-input');
-        const ccInput = row.querySelector('.cc-input');
-        const timeInput = row.querySelector('.time-input');
-        const oeeCell = row.querySelector('td:nth-child(2)'); // Zmieniono indeks na 2
+        const kodInput1 = row.querySelector('.kod-input-1');
+        const kodInput2 = row.querySelector('.kod-input-2');
+        const okInput1 = row.querySelector('.ok-input-1');
+        const okInput2 = row.querySelector('.ok-input-2');
+        const nokInput1 = row.querySelector('.nok-input-1');
+        const nokInput2 = row.querySelector('.nok-input-2');
+        const ccInput1 = row.querySelector('.cc-input-1');
+        const ccInput2 = row.querySelector('.cc-input-2');
+        const timeInput1 = row.querySelector('.time-input-1');
+        const timeInput2 = row.querySelector('.time-input-2');
+        const oeeCell = row.querySelector('td:nth-child(2)');
 
         const selectedLine = lineSelect.value;
-        const selectedKod = kodInput.value;
+        const selectedKod1 = kodInput1.value;
+        const selectedKod2 = kodInput2.value;
 
-        const foundCode = productionData[selectedLine]?.find(data => data.kod === selectedKod);
-        if (foundCode) {
-            ccInput.value = foundCode.cc;
+        // Aktualizacja CC dla KOD1
+        const foundCode1 = productionData[selectedLine]?.find(data => data.kod === selectedKod1);
+        if (foundCode1) {
+            ccInput1.value = foundCode1.cc;
         } else {
-            ccInput.value = 0;
+            ccInput1.value = 0;
+        }
+        
+        // Aktualizacja CC dla KOD2
+        const foundCode2 = productionData[selectedLine]?.find(data => data.kod === selectedKod2);
+        if (foundCode2) {
+            ccInput2.value = foundCode2.cc;
+        } else {
+            ccInput2.value = 0;
         }
 
-        const ok = parseInt(okInput.value) || 0;
-        const nok = parseInt(nokInput.value) || 0;
-        const time = parseInt(timeInput.value) || 0;
-        const cc = parseInt(ccInput.value) || 0;
+        // Obliczanie OEE
+        const totalOk = (parseInt(okInput1.value) || 0) + (parseInt(okInput2.value) || 0);
+        const totalNok = (parseInt(nokInput1.value) || 0) + (parseInt(nokInput2.value) || 0);
+        const totalTime = (parseInt(timeInput1.value) || 0) + (parseInt(timeInput2.value) || 0);
+        const totalCc = (parseInt(ccInput1.value) || 0) + (parseInt(ccInput2.value) || 0);
 
         let oee = 0;
-        if (time > 0 && cc > 0) {
-            const plannedProduction = time * cc;
+        if (totalTime > 0 && totalCc > 0) {
+            const plannedProduction = totalTime * totalCc;
             if (plannedProduction > 0) {
-                oee = ((ok + nok) / plannedProduction) * 100;
+                oee = ((totalOk + totalNok) / plannedProduction) * 100;
             }
         }
         oeeCell.textContent = oee.toFixed(2) + '%';
@@ -111,11 +152,15 @@ document.addEventListener('DOMContentLoaded', () => {
     tableBody.addEventListener('input', (event) => {
         const target = event.target;
         const row = target.closest('tr');
-
-        if (target.classList.contains('kod-input') ||
-            target.classList.contains('ok-input') ||
-            target.classList.contains('nok-input') ||
-            target.classList.contains('time-input')) {
+        
+        if (target.classList.contains('kod-input-1') ||
+            target.classList.contains('kod-input-2') ||
+            target.classList.contains('ok-input-1') ||
+            target.classList.contains('ok-input-2') ||
+            target.classList.contains('nok-input-1') ||
+            target.classList.contains('nok-input-2') ||
+            target.classList.contains('time-input-1') ||
+            target.classList.contains('time-input-2')) {
             updateValues(row);
         }
     });
