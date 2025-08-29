@@ -11,7 +11,102 @@ const productionData = {
         { kod: "KOD-B3", cc: 55 }
     ]
 };
+// Stałe hasło do edycji danych
+const EDIT_PASSWORD = 'zx';
 
+document.addEventListener('DOMContentLoaded', () => {
+    // ... (pozostały kod, który już masz) ...
+
+    const menuButton = document.getElementById('menu-button');
+    const menuOptions = document.getElementById('menu-options');
+    const editDataButton = document.getElementById('edit-data-button');
+    const editSection = document.getElementById('edit-section');
+    const reportTable = document.getElementById('report-table');
+    const saveDataButton = document.getElementById('save-data-button');
+    const backButton = document.getElementById('back-button');
+    const editTableContainer = document.getElementById('edit-table-container');
+
+    // Funkcja do generowania wierszy tabeli do edycji
+    function generateEditTable() {
+        editTableContainer.innerHTML = '';
+        const table = document.createElement('table');
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>Linia</th>
+                    <th>KOD</th>
+                    <th>CC</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        `;
+        const tbody = table.querySelector('tbody');
+
+        for (const line in productionData) {
+            productionData[line].forEach(data => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${line}</td>
+                    <td><input type="text" value="${data.kod}"></td>
+                    <td><input type="number" value="${data.cc}"></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        editTableContainer.appendChild(table);
+    }
+
+    // Funkcja do zapisywania danych z tabeli edycji
+    function saveData() {
+        const rows = editTableContainer.querySelectorAll('tbody tr');
+        const newProductionData = {};
+        
+        rows.forEach(row => {
+            const line = row.querySelector('td:first-child').textContent;
+            const kod = row.querySelector('td:nth-child(2) input').value;
+            const cc = parseInt(row.querySelector('td:nth-child(3) input').value);
+            
+            if (!newProductionData[line]) {
+                newProductionData[line] = [];
+            }
+            newProductionData[line].push({ kod, cc });
+        });
+
+        // Nadpisujemy stare dane nowymi
+        Object.assign(productionData, newProductionData);
+        alert('Dane zapisane pomyślnie!');
+    }
+
+    // Obsługa kliknięcia przycisku "MENU"
+    menuButton.addEventListener('click', () => {
+        menuOptions.classList.toggle('hidden');
+    });
+
+    // Obsługa kliknięcia przycisku "Edytuj dane"
+    editDataButton.addEventListener('click', () => {
+        const password = prompt('Wprowadź hasło do edycji danych:');
+        if (password === EDIT_PASSWORD) {
+            menuOptions.classList.add('hidden');
+            reportTable.classList.add('hidden');
+            editSection.classList.remove('hidden');
+            generateEditTable();
+        } else {
+            alert('Błędne hasło!');
+        }
+    });
+
+    // Obsługa przycisku "Zapisz dane"
+    saveDataButton.addEventListener('click', () => {
+        saveData();
+    });
+
+    // Obsługa przycisku "Wróć"
+    backButton.addEventListener('click', () => {
+        editSection.classList.add('hidden');
+        reportTable.classList.remove('hidden');
+        // Po powrocie generujemy tabelę na nowo, aby pokazać zaktualizowane dane
+        generateTableRows();
+    });
 document.addEventListener('DOMContentLoaded', () => {
     const datePicker = document.getElementById('date-picker');
     const lineSelect = document.getElementById('line-select');
@@ -167,3 +262,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     generateTableRows();
 });
+
