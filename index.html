@@ -38,7 +38,17 @@
                 <option value="C">C</option>
             </select>
         </div>
+        
+        <div class="control-group">
+            <button id="menu-button">MENU</button>
+        </div>
     </header>
+
+    <div id="menu-options" class="hidden">
+        <button id="edit-data-button">Edytuj dane</button>
+        <button id="future-button1">Przyszła funkcja 1</button>
+        <button id="future-button2">Przyszła funkcja 2</button>
+    </div>
 
     <main>
         <table id="report-table">
@@ -66,6 +76,14 @@
             <tbody>
                 </tbody>
         </table>
+
+        <div id="edit-section" class="hidden">
+            <h2>Edycja Danych Produkcyjnych</h2>
+            <div id="edit-table-container">
+                </div>
+            <button id="save-data-button">Zapisz dane</button>
+            <button id="back-button">Wróć</button>
+        </div>
     </main>
 
     <script src="script.js"></script>
