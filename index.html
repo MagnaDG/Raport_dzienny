@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raport Produkcji</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Raport Produkcyjny</title>
+    <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
-    <header class="production-header">
-        <div class="header-item">
-            <label for="date-input">Data:</label>
-            <input type="text" id="date-input" readonly>
+    <header class="controls">
+        <div class="control-group">
+            <label for="date-picker">Data:</label>
+            <input type="date" id="date-picker">
         </div>
-        <div class="header-item">
-            <span class="divider">|</span>
-        </div>
-        <div class="header-item">
+
+        <div class="control-group">
             <label for="line-select">Linia:</label>
-            <select id="line-select"></select>
+            <select id="line-select">
+                <option value="">Wybierz linię</option>
+                <option value="MP4">MP4</option>
+                <option value="liniaB">liniaB</option>
+            </select>
         </div>
-        <div class="header-item">
+
+        <div class="control-group">
             <label for="shift-select">Zmiana:</label>
             <select id="shift-select">
                 <option value="I">I</option>
@@ -28,69 +31,82 @@
                 <option value="III">III</option>
             </select>
         </div>
-        <div class="header-item">
+
+        <div class="control-group">
             <label for="brigade-select">Brygada:</label>
             <select id="brigade-select">
+                <option value="">BRYGADA</option>
                 <option value="A">A</option>
                 <option value="B">B</option>
                 <option value="C">C</option>
-                <option value="D">D</option>
-                <option value="E">E</option>
             </select>
         </div>
-        <div class="header-item">
+        
+        <div class="control-group">
             <label for="leader-input">Lider:</label>
             <input type="text" id="leader-input">
         </div>
-        <button id="menu-btn" class="menu-button">MENU</button>
+
+        <div class="control-group">
+            <button id="menu-button">MENU</button>
+        </div>
     </header>
 
     <main>
-        <div class="main-table-container">
-            <div class="table-header-row" id="main-table-header">
-                </div>
-            <div id="production-table-body">
-                </div>
+        <div class="table-wrap">
+            <table id="report-table">
+                <thead>
+                    <tr>
+                        <th>Godz.</th>
+                        <th>OEE</th>
+                        <th>KOD</th>
+                        <th>OK</th>
+                        <th>NOK</th>
+                        <th>CC</th>
+                        <th>CZAS</th>
+                        <th>DANE1</th>
+                        <th>DANE2</th>
+                        <th>DANE3</th>
+                        <th>DANE4</th>
+                        <th>DANE5</th>
+                        <th>DANE6</th>
+                        <th>DANE7</th>
+                        <th>DANE8</th>
+                        <th>DANE9</th>
+                        <th>DANE10</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button id="add-row-button" class="add-row-btn">➕ Dodaj wiersz</button>
+        </div>
+
+        <div id="edit-section" class="hidden">
+            <h2>Edycja Danych Produkcyjnych</h2>
+
+            <div class="edit-toolbar">
+                <button id="add-edit-row">➕ Dodaj wiersz (kody)</button>
+            </div>
+
+            <div id="edit-table-container"></div>
+
+            <div class="edit-buttons">
+                <button id="save-data-button">Zapisz dane</button>
+                <button id="back-button">Wróć</button>
+            </div>
         </div>
     </main>
 
-    <div id="menu-modal" class="modal">
+    <div id="menu-modal" class="modal-overlay">
         <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <div class="menu-options">
-                </div>
+            <span class="close-button" title="Zamknij">&times;</span>
+            <h2>Opcje Menu</h2>
+            <button id="edit-data-button">Edytuj dane (kody/linie)</button>
+            <button id="future-button1" disabled>Przyszła funkcja 1</button>
+            <button id="future-button2" disabled>Przyszła funkcja 2</button>
         </div>
     </div>
 
-    <div id="edit-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3>Edytuj Dane</h3>
-            <table id="edit-table">
-                <thead>
-                    <tr>
-                        <th>LINIA</th>
-                        <th>KOD</th>
-                        <th>CC</th>
-                        <th>OSÓB</th>
-                        <th>A</th>
-                        <th>B</th>
-                        <th>C</th>
-                        <th>D</th>
-                        <th>E</th>
-                        <th>F</th>
-                        <th>G</th>
-                        <th>H</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    </tbody>
-            </table>
-            <button id="add-row-btn" class="plus-button">+</button>
-            <button id="save-data-btn" class="save-button">Zapisz</button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>
