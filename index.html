@@ -1,79 +1,111 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Raport Produkcyjny</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raport Produkcyjny</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="controls">
-    <div class="control-group">
-      <label for="date-picker">Data:</label>
-      <input id="date-picker" type="date" />
+
+    <header class="controls">
+        <div class="control-group">
+            <label for="date-picker">Data:</label>
+            <input type="date" id="date-picker">
+        </div>
+        <div class="control-group">
+            <label for="line-select">Linia:</label>
+            <select id="line-select">
+                <option value="">Wybierz linię</option>
+                <option value="MP4">MP4</option>
+                <option value="Linia B">Linia B</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label for="shift-select">Zmiana:</label>
+            <select id="shift-select">
+                <option value="I">I</option>
+                <option value="II">II</option>
+                <option value="III">III</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label for="brigade-select">Brygada:</label>
+            <select id="brigade-select">
+                <option value="">BRYGADA</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <button id="menu-button">MENU</button>
+        </div>
+    </header>
+
+    <main>
+        <table id="report-table">
+            <thead>
+                <tr>
+                    <th style="width:60px">Godz.</th>
+                    <th style="width:60px">OEE</th>
+                    <th style="width:70px">KOD</th>
+                    <th style="width:70px">OK</th>
+                    <th style="width:70px">NOK</th>
+                    <th style="width:70px">CC</th>
+                    <th style="width:80px">CZAS</th>
+                    <th style="width:80px">DANE1</th>
+                    <th style="width:80px">DANE2</th>
+                    <th style="width:80px">DANE3</th>
+                    <th style="width:80px">DANE4</th>
+                    <th style="width:80px">DANE5</th>
+                    <th style="width:80px">DANE6</th>
+                    <th style="width:80px">DANE7</th>
+                    <th style="width:80px">DANE8</th>
+                    <th style="width:80px">DANE9</th>
+                    <th style="width:80px">DANE10</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </main>
+
+    <!-- Sekcja edycji -->
+    <div id="edit-section" class="hidden">
+        <h2>Edycja Danych Produkcyjnych</h2>
+
+        <div class="edit-header">
+            <label>Linia: 
+                <input type="text" id="edit-line">
+            </label>
+            <label>Zmiana: 
+                <input type="text" id="edit-shift">
+            </label>
+            <label>Brygada: 
+                <input type="text" id="edit-brigade">
+            </label>
+        </div>
+
+        <div id="edit-table-container"></div>
+        <button id="add-row-button">+ Dodaj wiersz</button>
+
+        <div class="edit-buttons">
+            <button id="save-data-button">Zapisz dane</button>
+            <button id="back-button">Wróć</button>
+        </div>
     </div>
 
-    <div class="control-group">
-      <label for="global-line-select">Linia (globalnie):</label>
-      <select id="global-line-select">
-        <option value="">(brak)</option>
-      </select>
+    <!-- Menu modal -->
+    <div id="menu-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Opcje Menu</h2>
+            <button id="edit-data-button">Edytuj dane</button>
+            <button id="future-button1">Przyszła funkcja 1</button>
+            <button id="future-button2">Przyszła funkcja 2</button>
+        </div>
     </div>
 
-    <div class="control-group">
-      <button id="menu-button">MENU</button>
-    </div>
-  </header>
-
-  <main>
-    <section class="report-wrap">
-      <table id="report-table">
-        <thead>
-          <tr>
-            <th>Godz.</th>
-            <th>OEE</th>
-            <th>KOD</th>
-            <th>OK</th>
-            <th>NOK</th>
-            <th>CC</th>
-            <th>CZAS</th>
-            <th>LINIA</th>
-            <th>DANE1</th><th>DANE2</th><th>DANE3</th><th>DANE4</th><th>DANE5</th>
-            <th>DANE6</th><th>DANE7</th><th>DANE8</th><th>DANE9</th><th>DANE10</th>
-            <th>Akcje</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-
-      <div class="row-controls">
-        <button id="add-row-main" class="btn">+ Dodaj wiersz</button>
-      </div>
-    </section>
-
-    <!-- Sekcja edycji danych (kody/linie) -->
-    <section id="edit-section" class="hidden">
-      <h2>Edycja kodów i linii</h2>
-      <div class="edit-actions">
-        <button id="add-row-edit" class="btn">+ Dodaj kod</button>
-        <button id="save-data-button" class="btn primary">Zapisz</button>
-        <button id="back-button" class="btn">Wróć</button>
-      </div>
-      <div id="edit-table-container"></div>
-    </section>
-  </main>
-
-  <!-- Modal -->
-  <div id="menu-modal" class="modal-overlay">
-    <div class="modal-content">
-      <button class="close-button" title="Zamknij">&times;</button>
-      <h3>Menu</h3>
-      <div class="modal-buttons">
-        <button id="edit-data-button" class="btn">Edytuj dane</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="script.js" defer></script>
+    <script src="script.js"></script>
 </body>
 </html>
