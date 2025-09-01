@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Raport Produkcyjny</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+
   <header class="controls">
     <div class="control-group">
       <label for="date-picker">Data:</label>
@@ -17,7 +18,7 @@
       <select id="line-select">
         <option value="">Wybierz linię</option>
         <option value="MP4">MP4</option>
-        <option value="Linia B">Linia B</option>
+        <option value="liniaB">Linia B</option>
       </select>
     </div>
     <div class="control-group">
@@ -37,6 +38,7 @@
         <option value="C">C</option>
       </select>
     </div>
+
     <div class="control-group">
       <button id="menu-button">MENU</button>
     </div>
@@ -56,21 +58,32 @@
           <th>DANE1</th>
           <th>DANE2</th>
           <th>DANE3</th>
-          <th>LINIA</th>
-          <th>Akcje</th>
+          <th>DANE4</th>
+          <th>DANE5</th>
+          <th>DANE6</th>
+          <th>DANE7</th>
+          <th>DANE8</th>
+          <th>DANE9</th>
+          <th>DANE10</th>
         </tr>
       </thead>
-      <tbody>
-        <!-- Wiersze będą dodawane dynamicznie -->
-      </tbody>
+      <tbody></tbody>
     </table>
-    <button id="add-row-button">➕ Dodaj wiersz</button>
+
+    <div id="edit-section" class="hidden">
+      <h2>Edycja Danych Produkcyjnych</h2>
+      <div id="edit-table-container"></div>
+      <div class="edit-buttons">
+        <button id="save-data-button">Zapisz dane</button>
+        <button id="back-button">Wróć</button>
+      </div>
+    </div>
   </main>
 
-  <!-- Modal -->
-  <div id="menu-modal" class="modal-overlay hidden">
+  <!-- Modal (UWAGA: bez klasy 'hidden') -->
+  <div id="menu-modal" class="modal-overlay">
     <div class="modal-content">
-      <span class="close-button">&times;</span>
+      <span class="close-button" title="Zamknij">&times;</span>
       <h2>Opcje Menu</h2>
       <button id="edit-data-button">Edytuj dane</button>
       <button id="future-button1">Przyszła funkcja 1</button>
@@ -78,6 +91,6 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
