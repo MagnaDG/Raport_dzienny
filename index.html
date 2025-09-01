@@ -18,7 +18,7 @@
             <select id="line-select">
                 <option value="">Wybierz linię</option>
                 <option value="MP4">MP4</option>
-                <option value="Linia B">Linia B</option>
+                <option value="liniaB">Linia B</option>
             </select>
         </div>
         <div class="control-group">
@@ -38,6 +38,7 @@
                 <option value="C">C</option>
             </select>
         </div>
+        
         <div class="control-group">
             <button id="menu-button">MENU</button>
         </div>
@@ -47,55 +48,40 @@
         <table id="report-table">
             <thead>
                 <tr>
-                    <th style="width:60px">Godz.</th>
-                    <th style="width:60px">OEE</th>
-                    <th style="width:70px">KOD</th>
-                    <th style="width:70px">OK</th>
-                    <th style="width:70px">NOK</th>
-                    <th style="width:70px">CC</th>
-                    <th style="width:80px">CZAS</th>
-                    <th style="width:80px">DANE1</th>
-                    <th style="width:80px">DANE2</th>
-                    <th style="width:80px">DANE3</th>
-                    <th style="width:80px">DANE4</th>
-                    <th style="width:80px">DANE5</th>
-                    <th style="width:80px">DANE6</th>
-                    <th style="width:80px">DANE7</th>
-                    <th style="width:80px">DANE8</th>
-                    <th style="width:80px">DANE9</th>
-                    <th style="width:80px">DANE10</th>
+                    <th>Godz.</th>
+                    <th>OEE</th>
+                    <th>KOD</th>
+                    <th>OK</th>
+                    <th>NOK</th>
+                    <th>CC</th>
+                    <th>CZAS</th>
+                    <th>DANE1</th>
+                    <th>DANE2</th>
+                    <th>DANE3</th>
+                    <th>DANE4</th>
+                    <th>DANE5</th>
+                    <th>DANE6</th>
+                    <th>DANE7</th>
+                    <th>DANE8</th>
+                    <th>DANE9</th>
+                    <th>DANE10</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+            </tbody>
         </table>
+
+        <div id="edit-section" class="hidden">
+            <h2>Edycja Danych Produkcyjnych</h2>
+            <div id="edit-table-container">
+            </div>
+            <div class="edit-buttons">
+                <button id="save-data-button">Zapisz dane</button>
+                <button id="back-button">Wróć</button>
+            </div>
+        </div>
     </main>
 
-    <!-- Sekcja edycji -->
-    <div id="edit-section" class="hidden">
-        <h2>Edycja Danych Produkcyjnych</h2>
-
-        <div class="edit-header">
-            <label>Linia: 
-                <input type="text" id="edit-line">
-            </label>
-            <label>Zmiana: 
-                <input type="text" id="edit-shift">
-            </label>
-            <label>Brygada: 
-                <input type="text" id="edit-brigade">
-            </label>
-        </div>
-
-        <div id="edit-table-container"></div>
-        <button id="add-row-button">+ Dodaj wiersz</button>
-
-        <div class="edit-buttons">
-            <button id="save-data-button">Zapisz dane</button>
-            <button id="back-button">Wróć</button>
-        </div>
-    </div>
-
-    <!-- Menu modal -->
     <div id="menu-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <span class="close-button">&times;</span>
