@@ -1,354 +1,360 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const dateInput = document.getElementById('date-input');
-    const shiftSelect = document.getElementById('shift-select');
-    const lineSelect = document.getElementById('line-select');
-    const menuBtn = document.getElementById('menu-btn');
-    const menuModal = document.getElementById('menu-modal');
-    const editModal = document.getElementById('edit-modal');
-    const productionTableBody = document.getElementById('production-table-body');
-    const mainTableHeader = document.getElementById('main-table-header');
-    const addRowBtn = document.getElementById('add-row-btn');
-    const saveDataBtn = document.getElementById('save-data-btn');
-    const editTableBody = document.querySelector('#edit-table tbody');
 
-    // Inicjalizacja danych z localStorage
-    let storedData = JSON.parse(localStorage.getItem('productionData')) || {
-        lines: [],
-        codes: {}
+    // ========================
+    //  DANE STARTOWE + LS
+    // ========================
+    const EDIT_PASSWORD = 'haslo123';
+
+    const defaultProductionData = {
+        MP4: [
+            { kod: "37000057487MXX", cc: 50, dane1: 0, dane2: 0, dane3: 0, dane4: 0, dane5: 0, dane6: 0, dane7: 0, dane8: 0, dane9: 0, dane10: 0 },
+            { kod: "KOD-A2", cc: 65, dane1: 0, dane2: 0, dane3: 0, dane4: 0, dane5: 0, dane6: 0, dane7: 0, dane8: 0, dane9: 0, dane10: 0 },
+            { kod: "KOD-A3", cc: 45, dane1: 0, dane2: 0, dane3: 0, dane4: 0, dane5: 0, dane6: 0, dane7: 0, dane8: 0, dane9: 0, dane10: 0 }
+        ],
+        liniaB: [
+            { kod: "KOD-B1", cc: 40, dane1: 0, dane2: 0, dane3: 0, dane4: 0, dane5: 0, dane6: 0, dane7: 0, dane8: 0, dane9: 0, dane10: 0 },
+            { kod: "KOD-B2", cc: 70, dane1: 0, dane2: 0, dane3: 0, dane4: 0, dane5: 0, dane6: 0, dane7: 0, dane8: 0, dane9: 0, dane10: 0 },
+            { kod: "KOD-B3", cc: 55, dane1: 0, dane2: 0, dane3: 0, dane4: 0, dane5: 0, dane6: 0, dane7: 0, dane8: 0, dane9: 0, dane10: 0 }
+        ]
     };
+
+    function getProductionData() {
+        const stored = localStorage.getItem('productionData');
+        return stored ? JSON.parse(stored) : structuredClone(defaultProductionData);
+    }
+    function saveProductionData(data) {
+        localStorage.setItem('productionData', JSON.stringify(data));
+    }
+
+    let productionData = getProductionData();
+
+    // ========================
+    //  ELEMENTY DOM
+    // ========================
+    const datePicker = document.getElementById('date-picker');
+    const lineSelect = document.getElementById('line-select');
+    const shiftSelect = document.getElementById('shift-select');
+    const reportTable = document.getElementById('report-table');
+    const tableBody = reportTable.querySelector('tbody');
+    const addRowButton = document.getElementById('add-row-button');
+
+    const menuButton = document.getElementById('menu-button');
+    const menuModal = document.getElementById('menu-modal');
+    const closeModalButton = document.querySelector('.close-button');
+    const editDataButton = document.getElementById('edit-data-button');
+
+    const editSection = document.getElementById('edit-section');
+    const editTableContainer = document.getElementById('edit-table-container');
+    const addEditRowBtn = document.getElementById('add-edit-row');
+    const saveDataButton = document.getElementById('save-data-button');
+    const backButton = document.getElementById('back-button');
+
+    // ========================
+    //  KONFIGURACJA ZMIANOWA
+    // ========================
+    const shiftsConfig = {
+        'I': ['6-7', '7-8', '8-9', '9-10', '10-11', '11-12', '12-13', '13-14'],
+        'II': ['14-15', '15-16', '16-17', '17-18', '18-19', '19-20', '20-21', '21-22'],
+        'III': ['22-23', '23-24', '0-1', '1-2', '2-3', '3-4', '4-5', '5-6']
+    };
+
+    // ========================
+    //  FUNKCJE POMOCNICZE
+    // ========================
 
     // Ustawienie aktualnej daty z "nowym dniem" od 6:00
     function setDate() {
         const now = new Date();
         const hour = now.getHours();
         const day = now.getDate();
-        const month = now.getMonth() + 1;
-        const year = now.getFullYear();
-
+        
         if (hour < 6) {
             now.setDate(day - 1);
         }
-
-        const displayDate = `${String(now.getDate()).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()}`;
-        dateInput.value = displayDate;
+        datePicker.value = now.toISOString().split('T')[0];
     }
-
-    // Generowanie nagłówków 1-10
-    function generateTableHeaders() {
-        for (let i = 1; i <= 10; i++) {
-            const headerCell = document.createElement('div');
-            headerCell.classList.add('table-header-cell');
-            headerCell.textContent = i;
-            mainTableHeader.appendChild(headerCell);
-        }
-    }
-
-    // Generowanie wiersza z godzinami na podstawie wybranej zmiany
-    function generateInitialRow() {
-        const shift = shiftSelect.value;
-        let startHour;
-        let endHour;
-
-        if (shift === 'I') {
-            startHour = 6;
-            endHour = 7;
-        } else if (shift === 'II') {
-            startHour = 14;
-            endHour = 15;
-        } else {
-            startHour = 22;
-            endHour = 23;
-        }
-
-        createTableRow(startHour, endHour, 'default');
-    }
-
-    // Tworzenie wiersza tabeli
-    function createTableRow(startHour, endHour, type) {
-        const row = document.createElement('div');
-        row.classList.add('table-data-row');
-
-        const hourCell = document.createElement('div');
-        hourCell.classList.add('table-cell', 'hour-cell');
-        hourCell.textContent = `${type === 'p' ? 'P ' : ''}${startHour}-${endHour}`;
-
-        const plusYellow = document.createElement('button');
-        plusYellow.classList.add('plus-button', 'plus-yellow');
-        plusYellow.textContent = '+';
-        plusYellow.addEventListener('click', () => {
-            insertNewRow(row, 'p', startHour, endHour);
+    
+    // Generowanie opcji KOD dla wybranej linii
+    function getCodeOptionsForSelectedLine() {
+        const selectedLine = lineSelect.value;
+        const codes = productionData[selectedLine] || [];
+        let options = '<option value="">Wybierz kod</option>';
+        codes.forEach(item => {
+            options += `<option value="${item.kod}">${item.kod}</option>`;
         });
-
-        const plusBlue = document.createElement('button');
-        plusBlue.classList.add('plus-button', 'plus-blue');
-        plusBlue.textContent = '+';
-        plusBlue.addEventListener('click', () => {
-            insertNewRow(row, 'regular', startHour + 1, endHour + 1);
-        });
-
-        if (type !== 'p') {
-            hourCell.appendChild(plusYellow);
-            hourCell.appendChild(plusBlue);
-        }
-
-        row.appendChild(hourCell);
-
-        for (let i = 0; i < 9; i++) {
-            const dataCell = document.createElement('div');
-            dataCell.classList.add('table-cell');
-            const input = document.createElement('input');
-            input.type = 'text';
-
-            if (i === 2) { // Kolumna 3 (indeks 2) na kod
-                const select = document.createElement('select');
-                const line = lineSelect.value;
-                if (storedData.codes[line]) {
-                    storedData.codes[line].forEach(codeData => {
-                        const option = document.createElement('option');
-                        option.value = codeData.kod;
-                        option.textContent = codeData.kod;
-                        select.appendChild(option);
-                    });
-                }
-                select.addEventListener('change', () => {
-                    updateCC(row, line, select.value);
-                });
-                dataCell.appendChild(select);
-            } else {
-                dataCell.appendChild(input);
-            }
-            row.appendChild(dataCell);
-        }
-
-        productionTableBody.appendChild(row);
+        return options;
     }
 
-    function insertNewRow(currentRow, type, startHour, endHour) {
-        const newRow = document.createElement('div');
-        newRow.classList.add('table-data-row');
+    // ========================
+    //  TABELA GŁÓWNA
+    // ========================
 
-        const hourCell = document.createElement('div');
-        hourCell.classList.add('table-cell', 'hour-cell');
-        hourCell.textContent = `${type === 'p' ? 'P ' : ''}${startHour}-${endHour}`;
-
-        const plusYellow = document.createElement('button');
-        plusYellow.classList.add('plus-button', 'plus-yellow');
-        plusYellow.textContent = '+';
-        plusYellow.addEventListener('click', () => {
-            insertNewRow(newRow, 'p', startHour, endHour);
-        });
-
-        const plusBlue = document.createElement('button');
-        plusBlue.classList.add('plus-button', 'plus-blue');
-        plusBlue.textContent = '+';
-        plusBlue.addEventListener('click', () => {
-            insertNewRow(newRow, 'regular', startHour + 1, endHour + 1);
-        });
-
-        if (type !== 'p') {
-            hourCell.appendChild(plusYellow);
-            hourCell.appendChild(plusBlue);
-        }
-
-        newRow.appendChild(hourCell);
-
-        for (let i = 0; i < 9; i++) {
-            const dataCell = document.createElement('div');
-            dataCell.classList.add('table-cell');
-            const input = document.createElement('input');
-            input.type = 'text';
-
-            if (i === 2) { // Kolumna 3 (indeks 2) na kod
-                const select = document.createElement('select');
-                const line = lineSelect.value;
-                if (storedData.codes[line]) {
-                    storedData.codes[line].forEach(codeData => {
-                        const option = document.createElement('option');
-                        option.value = codeData.kod;
-                        option.textContent = codeData.kod;
-                        select.appendChild(option);
-                    });
-                }
-                select.addEventListener('change', () => {
-                    updateCC(newRow, line, select.value);
-                });
-                dataCell.appendChild(select);
-            } else {
-                dataCell.appendChild(input);
-            }
-            newRow.appendChild(dataCell);
-        }
-        
-        currentRow.parentNode.insertBefore(newRow, currentRow.nextSibling);
-    }
-
-    function updateCC(row, line, code) {
-        const ccCell = row.children[5]; // Kolumna 6 (indeks 5)
-        const lineCodes = storedData.codes[line] || [];
-        const foundCode = lineCodes.find(item => item.kod === code);
-        
-        if (foundCode) {
-            ccCell.textContent = foundCode.cc;
-        } else {
-            ccCell.textContent = '';
-        }
-    }
-
-    // Otwieranie modala menu
-    menuBtn.addEventListener('click', () => {
-        menuModal.style.display = 'flex';
-        renderMenuOptions();
-    });
-
-    // Zamykanie modali
-    document.querySelectorAll('.close-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            btn.closest('.modal').style.display = 'none';
-        });
-    });
-
-    window.onclick = (event) => {
-        if (event.target == menuModal) {
-            menuModal.style.display = 'none';
-        }
-        if (event.target == editModal) {
-            editModal.style.display = 'none';
-        }
-    };
-
-    // Renderowanie opcji menu
-    function renderMenuOptions() {
-        const menuOptionsDiv = menuModal.querySelector('.menu-options');
-        menuOptionsDiv.innerHTML = '';
-        const options = ['Funkcja 1', 'Funkcja 2', 'Funkcja 3', 'Funkcja 4', 'EDYTUJ DANE'];
-        options.forEach(option => {
-            const btn = document.createElement('button');
-            btn.textContent = option;
-            btn.addEventListener('click', () => {
-                if (option === 'EDYTUJ DANE') {
-                    const password = prompt('Podaj hasło:');
-                    if (password === 'z') {
-                        menuModal.style.display = 'none';
-                        editModal.style.display = 'flex';
-                        renderEditTable();
-                    } else {
-                        alert('Błędne hasło!');
-                    }
-                } else {
-                    alert(`Wybrano: ${option}`);
-                }
-            });
-            menuOptionsDiv.appendChild(btn);
-        });
-    }
-
-    // Renderowanie tabeli edycji
-    function renderEditTable() {
-        editTableBody.innerHTML = '';
-        storedData.lines.forEach(line => {
-            const lineCodes = storedData.codes[line] || [];
-            lineCodes.forEach(codeData => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${line}</td>
-                    <td>${codeData.kod}</td>
-                    <td><input type="text" value="${codeData.cc}" data-field="cc"></td>
-                    <td><input type="text" value="${codeData.osob}" data-field="osob"></td>
-                    <td><input type="text" value="${codeData.A}" data-field="A"></td>
-                    <td><input type="text" value="${codeData.B}" data-field="B"></td>
-                    <td><input type="text" value="${codeData.C}" data-field="C"></td>
-                    <td><input type="text" value="${codeData.D}" data-field="D"></td>
-                    <td><input type="text" value="${codeData.E}" data-field="E"></td>
-                    <td><input type="text" value="${codeData.F}" data-field="F"></td>
-                    <td><input type="text" value="${codeData.G}" data-field="G"></td>
-                    <td><input type="text" value="${codeData.H}" data-field="H"></td>
-                `;
-                editTableBody.appendChild(row);
-            });
-        });
-    }
-
-    // Dodawanie nowego wiersza w tabeli edycji
-    addRowBtn.addEventListener('click', () => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td><input type="text" placeholder="Linia" data-field="line"></td>
-            <td><input type="text" placeholder="Kod" data-field="kod"></td>
-            <td><input type="text" placeholder="CC" data-field="cc"></td>
-            <td><input type="text" placeholder="Osób" data-field="osob"></td>
-            <td><input type="text" placeholder="A" data-field="A"></td>
-            <td><input type="text" placeholder="B" data-field="B"></td>
-            <td><input type="text" placeholder="C" data-field="C"></td>
-            <td><input type="text" placeholder="D" data-field="D"></td>
-            <td><input type="text" placeholder="E" data-field="E"></td>
-            <td><input type="text" placeholder="F" data-field="F"></td>
-            <td><input type="text" placeholder="G" data-field="G"></td>
-            <td><input type="text" placeholder="H" data-field="H"></td>
+    // Tworzenie nowego wiersza tabeli głównej
+    function createMainRow(hourLabel = '') {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="col-hour">${hourLabel}</td>
+            <td class="col-oee"></td>
+            <td class="col-kod">
+                <div class="cell-2in1">
+                    <select class="kod-select-1">${getCodeOptionsForSelectedLine()}</select>
+                    <select class="kod-select-2">${getCodeOptionsForSelectedLine()}</select>
+                </div>
+            </td>
+            <td class="col-ok">
+                <div class="cell-2in1">
+                    <input type="number" class="ok-input-1" min="0" value="0">
+                    <input type="number" class="ok-input-2" min="0" value="0">
+                </div>
+            </td>
+            <td class="col-nok">
+                <div class="cell-2in1">
+                    <input type="number" class="nok-input-1" min="0" value="0">
+                    <input type="number" class="nok-input-2" min="0" value="0">
+                </div>
+            </td>
+            <td class="col-cc"><input type="number" class="cc-input" value="0" disabled></td>
+            <td class="col-time"><input type="number" class="time-input" min="0" value="0"></td>
+            <td><input type="number" class="dane-input" min="0" value="0"></td>
+            <td><input type="number" class="dane-input" min="0" value="0"></td>
+            <td><input type="number" class="dane-input" min="0" value="0"></td>
+            <td><input type="number" class="dane-input" min="0" value="0"></td>
+            <td><input type="number" class="dane-input" min="0" value="0"></td>
+            <td><input type="number" class="dane-input" min="0" value="0"></td>
+            <td><input type="number" class="dane-input" min="0" value="0"></td>
+            <td><input type="number" class="dane-input" min="0" value="0"></td>
+            <td><input type="number" class="dane-input" min="0" value="0"></td>
+            <td><input type="number" class="dane-input" min="0" value="0"></td>
         `;
-        editTableBody.appendChild(row);
+        return tr;
+    }
+
+    // Generowanie wierszy tabeli na podstawie wybranej zmiany
+    function generateTableRows() {
+        tableBody.innerHTML = '';
+        const selectedShift = shiftSelect.value;
+        const workHours = shiftsConfig[selectedShift] || [];
+        
+        workHours.forEach(hour => {
+            const row = createMainRow(hour);
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Aktualizacja wartości (CC, OEE) w wierszu
+    function updateValues(row) {
+        const kodSelect1 = row.querySelector('.kod-select-1');
+        const okInput1 = row.querySelector('.ok-input-1');
+        const okInput2 = row.querySelector('.ok-input-2');
+        const nokInput1 = row.querySelector('.nok-input-1');
+        const nokInput2 = row.querySelector('.nok-input-2');
+        const ccInput = row.querySelector('.cc-input');
+        const timeInput = row.querySelector('.time-input');
+        const oeeCell = row.querySelector('.col-oee');
+
+        const selectedLine = lineSelect.value;
+        const selectedKod1 = kodSelect1.value;
+
+        const foundCode1 = productionData[selectedLine]?.find(d => d.kod === selectedKod1);
+        const cc1 = foundCode1 ? Number(foundCode1.cc) : 0;
+        
+        ccInput.value = cc1;
+
+        const totalOk = (parseInt(okInput1.value) || 0) + (parseInt(okInput2.value) || 0);
+        const totalNok = (parseInt(nokInput1.value) || 0) + (parseInt(nokInput2.value) || 0);
+        const totalTime = parseInt(timeInput.value) || 0;
+        
+        let oee = 0;
+        if (totalTime > 0 && cc1 > 0) {
+            const planned = totalTime * cc1;
+            if (planned > 0) {
+                oee = ((totalOk + totalNok) / planned) * 100;
+            }
+        }
+        oeeCell.textContent = oee.toFixed(2) + '%';
+    }
+
+    // Reakcja na zmianę KOD
+    tableBody.addEventListener('change', (event) => {
+        const target = event.target;
+        if (target.classList.contains('kod-select-1')) {
+            const row = target.closest('tr');
+            updateValues(row);
+        }
     });
 
-    // Zapisywanie danych z tabeli edycji do localStorage
-    saveDataBtn.addEventListener('click', () => {
-        const newLines = new Set();
-        const newCodes = {};
-        const rows = editTableBody.querySelectorAll('tr');
+    // Reakcja na zmianę innych inputów (dane liczbowe)
+    tableBody.addEventListener('input', (event) => {
+        const target = event.target;
+        if (target.classList.contains('ok-input-1') || target.classList.contains('ok-input-2') ||
+            target.classList.contains('nok-input-1') || target.classList.contains('nok-input-2') ||
+            target.classList.contains('time-input')) {
+            const row = target.closest('tr');
+            updateValues(row);
+        }
+    });
+
+    // Reakcja na zmianę linii lub zmiany - przebudowa tabeli
+    lineSelect.addEventListener('change', generateTableRows);
+    shiftSelect.addEventListener('change', generateTableRows);
+
+    // Dodawanie NOWEGO wiersza do głównej tabeli
+    addRowButton.addEventListener('click', () => {
+        const newRow = createMainRow(''); // dodatkowy wiersz bez etykiety godzin
+        tableBody.appendChild(newRow);
+    });
+
+    // ========================
+    //  MODAL + MENU
+    // ========================
+
+    menuButton.addEventListener('click', () => {
+        menuModal.classList.add('active');
+    });
+    closeModalButton.addEventListener('click', () => {
+        menuModal.classList.remove('active');
+    });
+    window.addEventListener('click', (e) => {
+        if (e.target === menuModal) menuModal.classList.remove('active');
+    });
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') menuModal.classList.remove('active');
+    });
+
+    // ========================
+    //  EDYCJA DANYCH
+    // ========================
+
+    // Generowanie tabeli edycji z danymi z productionData
+    function generateEditTable() {
+        editTableContainer.innerHTML = '';
+        const table = document.createElement('table');
+        const header = `<thead><tr>
+            <th>LINIA</th>
+            <th>KOD</th>
+            <th>CC</th>
+            <th>DANE1</th><th>DANE2</th><th>DANE3</th><th>DANE4</th><th>DANE5</th>
+            <th>DANE6</th><th>DANE7</th><th>DANE8</th><th>DANE9</th><th>DANE10</th>
+            <th>Akcje</th>
+        </tr></thead>`;
+        table.innerHTML = header + '<tbody></tbody>';
+        const tbody = table.querySelector('tbody');
+
+        for (const lineName of Object.keys(productionData)) {
+            productionData[lineName].forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" class="ed-line" value="${lineName}"></td>
+                    <td><input type="text" class="ed-kod" value="${item.kod}"></td>
+                    <td><input type="number" class="ed-cc" value="${item.cc}" min="0"></td>
+                    ${Array.from({ length: 10 }, (_, i) => `<td><input type="number" class="ed-d${i + 1}" value="${item['dane' + (i + 1)] || 0}" min="0"></td>`).join('')}
+                    <td><button class="edit-del">Usuń</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        tbody.addEventListener('click', (e) => {
+            if (e.target.classList.contains('edit-del')) {
+                e.target.closest('tr').remove();
+            }
+        });
+        editTableContainer.appendChild(table);
+    }
+
+    // Dodawanie pustego wiersza w tabeli edycji
+    function addEmptyEditRow() {
+        const table = editTableContainer.querySelector('table');
+        const tbody = table.querySelector('tbody');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><input type="text" class="ed-line" value=""></td>
+            <td><input type="text" class="ed-kod" value=""></td>
+            <td><input type="number" class="ed-cc" value="0" min="0"></td>
+            ${Array.from({ length: 10 }, (_, i) => `<td><input type="number" class="ed-d${i + 1}" value="0" min="0"></td>`).join('')}
+            <td><button class="edit-del">Usuń</button></td>
+        `;
+        tbody.appendChild(tr);
+    }
+
+    // Zapisywanie danych z tabeli edycji
+    function saveEditedData() {
+        const rows = editTableContainer.querySelectorAll('tbody tr');
+        const newData = {};
 
         rows.forEach(row => {
-            const lineInput = row.querySelector('[data-field="line"]');
-            const kodInput = row.querySelector('[data-field="kod"]');
-            const line = lineInput ? lineInput.value : row.cells[0].textContent;
-            const kod = kodInput ? kodInput.value : row.cells[1].textContent;
+            const line = row.querySelector('.ed-line').value.trim();
+            const kod = row.querySelector('.ed-kod').value.trim();
 
-            if (line && kod) {
-                newLines.add(line);
-                if (!newCodes[line]) {
-                    newCodes[line] = [];
-                }
-                const codeData = { kod: kod };
-                row.querySelectorAll('[data-field]').forEach(input => {
-                    codeData[input.dataset.field] = input.value;
-                });
-                newCodes[line].push(codeData);
+            if (!line || !kod) {
+                return; // Pomiń puste wiersze
             }
+
+            const cc = parseInt(row.querySelector('.ed-cc').value) || 0;
+            const item = { kod, cc };
+            for (let i = 1; i <= 10; i++) {
+                item['dane' + i] = parseInt(row.querySelector(`.ed-d${i}`).value) || 0;
+            }
+
+            if (!newData[line]) newData[line] = [];
+            newData[line].push(item);
         });
 
-        storedData.lines = Array.from(newLines);
-        storedData.codes = newCodes;
+        productionData = newData;
+        saveProductionData(productionData);
+        alert('Dane zapisane pomyślnie!');
 
-        localStorage.setItem('productionData', JSON.stringify(storedData));
-        alert('Dane zostały zapisane!');
-        editModal.style.display = 'none';
-        renderLineOptions(); // Aktualizacja listy linii
-        generateInitialRow(); // Odświeżenie tabeli głównej
-    });
-
-    // Generowanie opcji linii produkcyjnych
-    function renderLineOptions() {
-        lineSelect.innerHTML = '';
-        storedData.lines.forEach(line => {
+        // Odświeżenie selectów linii po zapisie
+        updateLineSelectOptions();
+        
+        // Powrót do widoku głównego
+        editSection.classList.add('hidden');
+        reportTable.parentElement.classList.remove('hidden');
+        generateTableRows();
+    }
+    
+    // Aktualizacja opcji w select linii
+    function updateLineSelectOptions() {
+        const selectedLine = lineSelect.value;
+        lineSelect.innerHTML = '<option value="">Wybierz linię</option>';
+        Object.keys(productionData).forEach(line => {
             const option = document.createElement('option');
             option.value = line;
             option.textContent = line;
             lineSelect.appendChild(option);
         });
+        lineSelect.value = selectedLine;
     }
 
-    // Zmiana zmiany
-    shiftSelect.addEventListener('change', () => {
-        productionTableBody.innerHTML = '';
-        generateInitialRow();
+    // Otwórz edycję po haśle
+    editDataButton.addEventListener('click', () => {
+        menuModal.classList.remove('active');
+        const pwd = prompt('Wprowadź hasło do edycji danych:');
+        if (pwd !== EDIT_PASSWORD) {
+            alert('Błędne hasło!');
+            return;
+        }
+        editSection.classList.remove('hidden');
+        reportTable.parentElement.classList.add('hidden');
+        generateEditTable();
     });
 
-    // Zmiana linii
-    lineSelect.addEventListener('change', () => {
-        productionTableBody.innerHTML = '';
-        generateInitialRow();
-    });
+    // Dodaj pusty wiersz w edycji
+    addEditRowBtn.addEventListener('click', addEmptyEditRow);
 
-    // Inicjalizacja przy ładowaniu strony
+    // Zapisz edycje
+    saveDataButton.addEventListener('click', saveEditedData);
+
+    // Wróć do raportu
+    backButton.addEventListener('click', () => {
+        editSection.classList.add('hidden');
+        reportTable.parentElement.classList.remove('hidden');
+        generateTableRows();
+    });
+    
+    // ========================
+    //  INICJALIZACJA
+    // ========================
     setDate();
-    generateTableHeaders();
-    renderLineOptions();
-    generateInitialRow();
+    updateLineSelectOptions();
+    generateTableRows();
 });
