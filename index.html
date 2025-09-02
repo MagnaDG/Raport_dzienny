@@ -3,317 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raport Produkcji - Panel Kontrolny</title>
+    <title>Raport Produkcji KPI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #2c3e50;
-            --secondary: #3498db;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --light: #ecf0f1;
-            --dark: #34495e;
-            --gray: #95a5a6;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
         body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
         }
-        
-        .container {
+        .table-container {
             width: 100%;
-            max-width: 1800px;
-            margin: 0 auto;
-            padding: 20px;
+            overflow-x: auto;
         }
-        
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 15px;
-            border-radius: 8px 8px 0 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
+        table {
+            border-collapse: collapse;
+            width: max-content;
         }
-        
-        .header-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 6px 8px;
+            text-align: center;
+            font-size: 12px;
+            vertical-align: top;
+            min-width: 80px;
         }
-        
-        .header-item label {
-            font-weight: bold;
-            min-width: 70px;
+        th {
+            background-color: #e5e7eb;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-        
-        select, input, button {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
+        .header-input, .header-select {
+            padding: 4px 8px;
+            border: 1px solid #d1d5db;
             border-radius: 4px;
             font-size: 14px;
         }
-        
-        button {
-            background-color: var(--secondary);
-            color: white;
-            cursor: pointer;
-            border: none;
-            transition: background-color 0.3s;
-        }
-        
-        button:hover {
-            background-color: #2980b9;
-        }
-        
-        .menu-btn {
-            margin-left: auto;
-            background-color: var(--dark);
-        }
-        
-        .production-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            background-color: white;
-        }
-        
-        .production-table th {
-            background-color: var(--dark);
-            color: white;
-            padding: 12px;
-            text-align: center;
-            font-weight: bold;
-            position: sticky;
-            top: 0;
-        }
-        
-        .production-table td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center;
-            vertical-align: top;
-        }
-        
-        .hour-cell {
-            background-color: #f8f9fa;
-            font-weight: bold;
-            position: relative;
-        }
-        
-        .add-row-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            margin-top: 5px;
-        }
-        
-        .add-hour-btn {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            cursor: pointer;
-        }
-        
-        .blue-btn {
-            background-color: var(--secondary);
-        }
-        
-        .green-btn {
-            background-color: var(--success);
-        }
-        
-        .oee-cell {
-            font-weight: bold;
-        }
-        
-        .oee-0 {
-            color: #bbb;
-        }
-        
-        .oee-0-70 {
-            color: var(--danger);
-        }
-        
-        .oee-70-80 {
-            color: var(--warning);
-        }
-        
-        .oee-80-100 {
-            color: var(--success);
-        }
-        
         .split-cell {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 2px;
+            padding: 0;
+            border: none;
         }
-        
-        .split-input {
-            width: 100%;
+        .split-cell > div, .split-cell > select {
+            padding: 4px;
+            height: 30px;
+            border: none;
             text-align: center;
         }
-        
-        .losses-table {
+        .split-cell > div:first-child, .split-cell > select:first-child {
+            border-bottom: 1px solid #d1d5db;
+        }
+        .cell-input {
             width: 100%;
-            border-collapse: collapse;
+            border: none;
+            text-align: center;
+            background-color: transparent;
         }
-        
-        .losses-table th {
-            background-color: #e0e0e0;
-            padding: 6px;
-            font-size: 12px;
+        .cell-input:focus {
+            outline: 1px solid #3b82f6;
         }
-        
-        .losses-table td {
-            padding: 4px;
-            font-size: 12px;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+        .add-btn {
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
             justify-content: center;
             align-items: center;
-        }
-        
-        .modal-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 1000px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--dark);
-        }
-        
-        .data-modification-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        
-        .data-modification-table th,
-        .data-modification-table td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-        
-        .delete-btn {
-            background-color: var(--danger);
+            margin: 2px;
             color: white;
-            padding: 5px 10px;
+            user-select: none;
         }
+        .blue-plus { background-color: #3b82f6; }
+        .green-plus { background-color: #22c55e; }
         
-        .add-row-btn {
-            background-color: var(--success);
-            margin-bottom: 15px;
-        }
-        
-        .export-section {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .export-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .export-btn {
-            padding: 10px 20px;
-            background-color: var(--secondary);
-        }
-        
-        .save-btn {
-            background-color: var(--success);
-        }
-        
-        @media (max-width: 1200px) {
-            .container {
-                overflow-x: auto;
-            }
-            
-            .production-table {
-                min-width: 1200px;
-            }
-        }
+        /* OEE Colors */
+        .oee-gray { color: #9ca3af; }
+        .oee-red { color: #ef4444; }
+        .oee-yellow { color: #f59e0b; }
+        .oee-green { color: #22c55e; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <div class="header-item">
-                <label for="date">DATA:</label>
-                <input type="date" id="date" value="">
+<body class="p-4">
+
+    <div id="app" class="space-y-4">
+        <!-- Nagłówek -->
+        <header class="bg-white p-4 rounded-lg shadow-md flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center gap-2">
+                <label for="report-date" class="font-semibold">DATA:</label>
+                <input type="date" id="report-date" class="header-input">
             </div>
-            <div class="header-item">
-                <label for="line">LINIA:</label>
-                <select id="line">
-                    <option value="">Wybierz linię</option>
-                    <option value="linia1">Linia 1</option>
-                    <option value="linia2">Linia 2</option>
-                    <option value="linia3">Linia 3</option>
-                    <option value="linia4">Linia 4</option>
+            <div class="flex items-center gap-2">
+                <label for="line-select" class="font-semibold">LINIA:</label>
+                <select id="line-select" class="header-select">
+                    <option value="">Wybierz...</option>
+                    <option value="LINE_A">Linia A</option>
+                    <option value="LINE_B">Linia B</option>
+                    <option value="LINE_C">Linia C</option>
                 </select>
             </div>
-            <div class="header-item">
-                <label for="shift">ZMIANA:</label>
-                <select id="shift">
-                    <option value="">Wybierz zmianę</option>
+            <div class="flex items-center gap-2">
+                <label for="shift-select" class="font-semibold">ZMIANA:</label>
+                <select id="shift-select" class="header-select">
                     <option value="I">I</option>
                     <option value="II">II</option>
                     <option value="III">III</option>
                 </select>
             </div>
-            <div class="header-item">
-                <label for="brigade">BRYGADA:</label>
-                <select id="brigade">
-                    <option value="">Wybierz brygadę</option>
+            <div class="flex items-center gap-2">
+                <label for="brigade-select" class="font-semibold">BRYGADA:</label>
+                <select id="brigade-select" class="header-select">
                     <option value="A">A</option>
                     <option value="B">B</option>
                     <option value="C">C</option>
@@ -322,443 +125,675 @@
                     <option value="F">F</option>
                 </select>
             </div>
-            <div class="header-item">
-                <label for="leader">LIDER:</label>
-                <input type="text" id="leader" placeholder="Nazwisko">
+            <div class="flex items-center gap-2">
+                <label for="leader-input" class="font-semibold">LIDER:</label>
+                <input type="text" id="leader-input" class="header-input" placeholder="Wpisz nazwisko...">
             </div>
-            <button class="menu-btn" id="menuBtn">MENU</button>
+            <button id="menu-btn" class="bg-gray-700 text-white px-4 py-2 rounded-md font-semibold hover:bg-gray-800 transition">MENU</button>
         </header>
 
-        <main>
-            <table class="production-table">
-                <thead>
-                    <tr>
-                        <th rowspan="2">GODZ</th>
-                        <th rowspan="2">OEE</th>
-                        <th rowspan="2">OSÓB NOMINAŁ</th>
-                        <th rowspan="2">CZAS CYKLU NOMINAŁ</th>
-                        <th rowspan="2">OSÓB REAL</th>
-                        <th rowspan="2">CC REAL</th>
-                        <th colspan="2">KOD</th>
-                        <th colspan="2">ILOŚĆ PLAN</th>
-                        <th colspan="2">ILOŚĆ MAX</th>
-                        <th colspan="2">OK</th>
-                        <th colspan="2">NOK</th>
-                        <th rowspan="2">CZAS DOSTĘPNY</th>
-                        <th rowspan="2">POSTOJE</th>
-                        <th rowspan="2">BRAK WYDAJNOŚCI</th>
-                        <th rowspan="2">ROZLICZENIE CZASU</th>
-                        <th colspan="5">STRATY</th>
-                    </tr>
-                    <tr>
-                        <th>LH</th>
-                        <th>RH</th>
-                        <th>LH</th>
-                        <th>RH</th>
-                        <th>LH</th>
-                        <th>RH</th>
-                        <th>LH</th>
-                        <th>RH</th>
-                        <th>LH</th>
-                        <th>RH</th>
-                        <th>POWÓD</th>
-                        <th>OPERACJA</th>
-                        <th>CZAS</th>
-                        <th>ILOŚĆ ZDARZEŃ</th>
-                        <th>OPIS</th>
-                    </tr>
-                </thead>
-                <tbody id="productionBody">
-                    <!-- Rows will be generated dynamically -->
-                </tbody>
-            </table>
+        <!-- Tabela Produkcyjna -->
+        <main class="bg-white p-4 rounded-lg shadow-md">
+            <div class="table-container">
+                <table id="production-table" class="min-w-full">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">GODZ</th>
+                            <th rowspan="2">OEE</th>
+                            <th rowspan="2">OSÓB NOMINAŁ</th>
+                            <th rowspan="2">CZAS CYKLU NOMINAŁ (s)</th>
+                            <th rowspan="2">OSÓB REAL</th>
+                            <th rowspan="2">CC REAL (s)</th>
+                            <th rowspan="2">KOD</th>
+                            <th rowspan="2">ILOŚĆ PLAN</th>
+                            <th rowspan="2">ILOŚĆ MAX</th>
+                            <th rowspan="2">OK</th>
+                            <th rowspan="2">NOK</th>
+                            <th rowspan="2">CZAS DOSTĘPNY (min)</th>
+                            <th rowspan="2">POSTOJE (min)</th>
+                            <th rowspan="2">BRAK WYDAJNOŚCI (min)</th>
+                            <th rowspan="2">ROZLICZENIE CZASU (min)</th>
+                            <th colspan="5">STRATY</th>
+                        </tr>
+                        <tr>
+                            <th>POWÓD</th>
+                            <th>OPERACJA</th>
+                            <th>CZAS (min)</th>
+                            <th>ILOŚĆ ZDARZEŃ</th>
+                            <th>OPIS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Wiersze będą dodawane dynamicznie przez JS -->
+                    </tbody>
+                </table>
+            </div>
         </main>
+    </div>
 
-        <div class="export-section">
-            <h3>Eksport danych i zarządzanie</h3>
-            <div class="export-buttons">
-                <button class="export-btn" id="exportExcel">Eksportuj do Excel</button>
-                <button class="export-btn" id="exportCSV">Eksportuj do CSV</button>
-                <button class="save-btn" id="saveData">Zapisz dane</button>
-                <button class="menu-btn" id="loadData">Wczytaj dane</button>
+    <!-- Modal MENU -->
+    <div id="menu-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-20">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm text-center">
+            <h2 class="text-2xl font-bold mb-4">MENU GŁÓWNE</h2>
+            <div class="space-y-3">
+                 <button id="save-report-btn" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Zapisz Raport</button>
+                <button id="data-modify-btn" class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition">Modyfikacja Danych</button>
+                <button id="close-menu-modal" class="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition mt-6">Zamknij</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal for data modification -->
-    <div class="modal" id="dataModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Modyfikacja danych</h2>
-                <button class="close-btn" id="closeModal">&times;</button>
-            </div>
-            <div id="passwordSection">
-                <p>Aby uzyskać dostęp, wprowadź hasło:</p>
-                <input type="password" id="passwordInput">
-                <button id="submitPassword">Zatwierdź</button>
-            </div>
-            <div id="modificationSection" style="display: none;">
-                <button class="add-row-btn" id="addModificationRow">Dodaj wiersz</button>
-                <table class="data-modification-table">
+    <!-- Modal Modyfikacji Danych -->
+    <div id="data-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-30">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl">
+            <h2 class="text-2xl font-bold mb-4">Modyfikacja Danych Produktów</h2>
+            <div class="max-h-[60vh] overflow-y-auto">
+                <table class="w-full">
                     <thead>
                         <tr>
                             <th>LINIA</th>
                             <th>KOD</th>
-                            <th>CZAS CYKLU</th>
+                            <th>CZAS CYKLU (s)</th>
                             <th>OSÓB NOMINAŁ</th>
                             <th>STRONA</th>
-                            <th>Akcja</th>
+                            <th>AKCJA</th>
                         </tr>
                     </thead>
-                    <tbody id="modificationBody">
-                        <!-- Rows will be generated dynamically -->
+                    <tbody id="data-table-body">
+                        <!-- Wiersze z danymi produktów -->
                     </tbody>
                 </table>
-                <button class="save-btn" id="saveModifications">Zapisz zmiany</button>
+            </div>
+            <div class="mt-4 flex justify-between">
+                <button id="add-data-row-btn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition font-semibold">Dodaj Wiersz</button>
+                <div>
+                    <button id="save-data-btn" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition font-semibold">Zapisz Zmiany</button>
+                    <button id="close-data-modal" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition ml-2">Anuluj</button>
+                </div>
             </div>
         </div>
     </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-5 py-3 rounded-lg shadow-lg opacity-0 transition-opacity duration-300">
+      <p id="toast-message"></p>
+    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set current date as default
-            const today = new Date();
-            const formattedDate = today.toISOString().substr(0, 10);
-            document.getElementById('date').value = formattedDate;
-            
-            // Initialize the first production row
-            addProductionRow('6-7', false);
-            
-            // Event listeners
-            document.getElementById('menuBtn').addEventListener('click', openMenuModal);
-            document.getElementById('closeModal').addEventListener('click', closeModal);
-            document.getElementById('submitPassword').addEventListener('click', checkPassword);
-            document.getElementById('addModificationRow').addEventListener('click', addModificationRow);
-            document.getElementById('saveModifications').addEventListener('click', saveModifications);
-            document.getElementById('exportExcel').addEventListener('click', exportToExcel);
-            document.getElementById('exportCSV').addEventListener('click', exportToCSV);
-            document.getElementById('saveData').addEventListener('click', saveDataToLocalStorage);
-            document.getElementById('loadData').addEventListener('click', loadDataFromLocalStorage);
-            
-            // Load initial modification data
-            loadModificationData();
+
+    <script type="module">
+        // Importy Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, getDocs, writeBatch, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Konfiguracja Firebase ---
+        // Poniższe zmienne zostaną dostarczone przez środowisko uruchomieniowe.
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : { apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID" }; // Zastępcza konfiguracja
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'production-report-app';
+
+        // Inicjalizacja Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        let userId = null;
+        let productData = []; // Lokalna przechowalnia danych o produktach
+        
+        // --- Uwierzytelnianie ---
+        signInAnonymously(auth).catch((error) => {
+            console.error("Błąd logowania anonimowego:", error);
+        });
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                userId = user.uid;
+                console.log("Zalogowano anonimowo, UID:", userId);
+                // Po zalogowaniu, pobierz dane i zainicjuj aplikację
+                listenToProductData();
+                setupInitialListeners();
+            } else {
+                console.log("Użytkownik wylogowany.");
+            }
         });
         
-        // Production row management
-        function addProductionRow(hourText, isChangeover) {
-            const tbody = document.getElementById('productionBody');
+        // --- Globalne Elementy DOM ---
+        const tableBody = document.getElementById('table-body');
+        const lineSelect = document.getElementById('line-select');
+
+        // --- Toast Notification ---
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+
+        function showToast(message, duration = 3000) {
+            toastMessage.textContent = message;
+            toast.classList.remove('opacity-0');
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+            }, duration);
+        }
+
+        // --- Logika Modyfikacji Danych ---
+        const menuBtn = document.getElementById('menu-btn');
+        const menuModal = document.getElementById('menu-modal');
+        const dataModal = document.getElementById('data-modal');
+
+        menuBtn.addEventListener('click', () => menuModal.classList.remove('hidden'));
+        document.getElementById('close-menu-modal').addEventListener('click', () => menuModal.classList.add('hidden'));
+
+        document.getElementById('data-modify-btn').addEventListener('click', () => {
+            const password = prompt("Podaj hasło, aby kontynuować:");
+            if (password === "z") {
+                menuModal.classList.add('hidden');
+                renderDataModalTable();
+                dataModal.classList.remove('hidden');
+            } else if (password !== null) {
+                alert("Nieprawidłowe hasło!");
+            }
+        });
+
+        document.getElementById('close-data-modal').addEventListener('click', () => dataModal.classList.add('hidden'));
+        
+        const dataTableBody = document.getElementById('data-table-body');
+        
+        function renderDataModalTable() {
+            dataTableBody.innerHTML = '';
+            productData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <select class="cell-input data-line" data-index="${index}">
+                            <option value="LINE_A" ${item.line === 'LINE_A' ? 'selected' : ''}>Linia A</option>
+                            <option value="LINE_B" ${item.line === 'LINE_B' ? 'selected' : ''}>Linia B</option>
+                            <option value="LINE_C" ${item.line === 'LINE_C' ? 'selected' : ''}>Linia C</option>
+                        </select>
+                    </td>
+                    <td><input type="text" class="cell-input data-code" value="${item.code}" data-index="${index}"></td>
+                    <td><input type="number" class="cell-input data-cycle" value="${item.cycleTime}" data-index="${index}"></td>
+                    <td><input type="number" class="cell-input data-people" value="${item.people}" data-index="${index}"></td>
+                    <td>
+                        <select class="cell-input data-side" data-index="${index}">
+                            <option value="LH" ${item.side === 'LH' ? 'selected' : ''}>LH</option>
+                            <option value="RH" ${item.side === 'RH' ? 'selected' : ''}>RH</option>
+                        </select>
+                    </td>
+                    <td><button class="text-red-500 font-bold delete-data-row" data-index="${index}">Usuń</button></td>
+                `;
+                dataTableBody.appendChild(row);
+            });
+        }
+        
+        // Nasłuchiwanie zmian w danych produktów
+        function listenToProductData() {
+            const productsColRef = collection(db, 'artifacts', appId, 'public', 'product_definitions');
+            onSnapshot(productsColRef, (snapshot) => {
+                productData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                productData.sort((a,b) => a.code.localeCompare(b.code)); // Sortowanie
+                console.log("Dane produktów zaktualizowane:", productData);
+                // Przeładuj opcje kodów w istniejących wierszach
+                 document.querySelectorAll('.code-select-lh, .code-select-rh').forEach(select => {
+                    const currentLine = lineSelect.value;
+                    const currentVal = select.value;
+                    populateCodeSelects(select, currentLine, select.classList.contains('code-select-lh') ? 'LH' : 'RH');
+                    select.value = currentVal;
+                });
+            });
+        }
+        
+        // Zapisywanie danych produktów
+        document.getElementById('save-data-btn').addEventListener('click', async () => {
+            const batch = writeBatch(db);
+            const dataToSave = [];
+            const rows = dataTableBody.querySelectorAll('tr');
+
+            rows.forEach((row, index) => {
+                const line = row.querySelector('.data-line').value;
+                const code = row.querySelector('.data-code').value.trim();
+                const cycleTime = parseFloat(row.querySelector('.data-cycle').value);
+                const people = parseInt(row.querySelector('.data-people').value);
+                const side = row.querySelector('.data-side').value;
+
+                if(code && !isNaN(cycleTime) && !isNaN(people)) {
+                     const docRef = doc(collection(db, 'artifacts', appId, 'public', 'product_definitions'), code);
+                     batch.set(docRef, { line, code, cycleTime, people, side });
+                }
+            });
+            
+            // Obsługa usuwania
+            const currentCodesInUI = Array.from(rows).map(r => r.querySelector('.data-code').value.trim());
+            productData.forEach(item => {
+                if (!currentCodesInUI.includes(item.code)) {
+                     const docRef = doc(collection(db, 'artifacts', appId, 'public', 'product_definitions'), item.code);
+                     batch.delete(docRef);
+                }
+            });
+
+            try {
+                await batch.commit();
+                showToast("Dane produktów zostały zapisane!");
+                dataModal.classList.add('hidden');
+            } catch (e) {
+                console.error("Błąd zapisu danych produktów:", e);
+                showToast("Błąd zapisu. Spróbuj ponownie.", 5000);
+            }
+        });
+        
+        // Dodawanie nowego wiersza w modalu
+        document.getElementById('add-data-row-btn').addEventListener('click', () => {
+            const newRow = document.createElement('tr');
+            const newIndex = dataTableBody.rows.length;
+            newRow.innerHTML = `
+                <td>
+                    <select class="cell-input data-line" data-index="${newIndex}">
+                        <option value="LINE_A" selected>Linia A</option>
+                        <option value="LINE_B">Linia B</option>
+                        <option value="LINE_C">Linia C</option>
+                    </select>
+                </td>
+                <td><input type="text" class="cell-input data-code" placeholder="Nowy kod" data-index="${newIndex}"></td>
+                <td><input type="number" class="cell-input data-cycle" value="0" data-index="${newIndex}"></td>
+                <td><input type="number" class="cell-input data-people" value="0" data-index="${newIndex}"></td>
+                <td>
+                    <select class="cell-input data-side" data-index="${newIndex}">
+                        <option value="LH" selected>LH</option>
+                        <option value="RH">RH</option>
+                    </select>
+                </td>
+                <td><button class="text-red-500 font-bold delete-data-row" data-index="${newIndex}">Usuń</button></td>
+            `;
+            dataTableBody.appendChild(newRow);
+        });
+        
+        // Usuwanie wiersza w modalu (z UI, zapis po kliknięciu 'Zapisz')
+        dataTableBody.addEventListener('click', e => {
+            if (e.target.classList.contains('delete-data-row')) {
+                e.target.closest('tr').remove();
+            }
+        });
+
+        // --- Logika Głównego Raportu ---
+
+        function createHourRow(hour, isChangeover = false) {
             const row = document.createElement('tr');
+            row.classList.add('hour-row');
+            row.dataset.hour = hour;
+            row.dataset.isChangeover = isChangeover;
+
+            const hourText = isChangeover ? `P ${hour}-${hour+1}` : `${hour}-${hour+1}`;
             
-            // Generate a unique ID for this row
-            const rowId = 'row_' + Date.now() + Math.floor(Math.random() * 1000);
-            
-            // Hour cell with add buttons
             row.innerHTML = `
-                <td class="hour-cell">
-                    ${isChangeover ? 'P ' : ''}${hourText}
-                    <div class="add-row-buttons">
-                        <div class="add-hour-btn blue-btn" onclick="addNextHour('${rowId}')">+</div>
-                        <div class="add-hour-btn green-btn" onclick="addChangeover('${rowId}')">+</div>
+                <td class="relative">
+                    <div class="font-semibold">${hourText}</div>
+                    <div class="absolute bottom-1 right-1 flex">
+                        <span class="add-btn blue-plus" title="Dodaj następną godzinę">+</span>
+                        <span class="add-btn green-plus" title="Dodaj przezbrojenie">+</span>
                     </div>
                 </td>
-                <td class="oee-cell" id="${rowId}_oee">0%</td>
-                <td id="${rowId}_osob_nominal">4</td>
-                <td id="${rowId}_czas_cyklu_nominal">30</td>
-                <td><input type="number" value="4" min="0" onchange="calculateOEE('${rowId}')"></td>
-                <td id="${rowId}_cc_real">30</td>
-                <td class="split-cell">
-                    <select onchange="updatePlanValues('${rowId}')">
-                        <option value="">Wybierz kod</option>
-                        <option value="KOD1">KOD1</option>
-                        <option value="KOD2">KOD2</option>
-                        <option value="KOD3">KOD3</option>
-                    </select>
+                <td class="oee-cell font-bold">0.00%</td>
+                <td class="nominal-people-cell">
+                    <div class="split-cell">
+                        <div class="h-[30px] flex items-center justify-center"></div>
+                        <div class="h-[30px] flex items-center justify-center"></div>
+                    </div>
                 </td>
-                <td class="split-cell">
-                    <select onchange="updatePlanValues('${rowId}')">
-                        <option value="">Wybierz kod</option>
-                        <option value="KOD4">KOD4</option>
-                        <option value="KOD5">KOD5</option>
-                        <option value="KOD6">KOD6</option>
-                    </select>
+                <td class="nominal-cycle-cell">
+                    <div class="split-cell">
+                        <div class="h-[30px] flex items-center justify-center"></div>
+                        <div class="h-[30px] flex items-center justify-center"></div>
+                    </div>
                 </td>
-                <td class="split-cell">
-                    <span id="${rowId}_plan_lh">120</span>
+                <td><input type="number" class="cell-input real-people" value="0"></td>
+                <td class="real-cycle-cell">0.00</td>
+                <td>
+                    <div class="split-cell">
+                        <select class="cell-input code-select-lh"></select>
+                        <select class="cell-input code-select-rh"></select>
+                    </div>
                 </td>
-                <td class="split-cell">
-                    <span id="${rowId}_plan_rh">120</span>
+                <td class="plan-qty-cell">
+                    <div class="split-cell"><div>0</div><div>0</div></div>
                 </td>
-                <td class="split-cell">
-                    <span id="${rowId}_max_lh">120</span>
+                <td class="max-qty-cell">
+                    <div class="split-cell"><div>0</div><div>0</div></div>
                 </td>
-                <td class="split-cell">
-                    <span id="${rowId}_max_rh">120</span>
+                <td>
+                    <div class="split-cell">
+                        <input type="number" class="cell-input ok-qty-lh" value="0">
+                        <input type="number" class="cell-input ok-qty-rh" value="0">
+                    </div>
                 </td>
-                <td class="split-cell">
-                    <input type="number" value="0" min="0" class="split-input" onchange="calculateOEE('${rowId}')">
+                <td>
+                    <div class="split-cell">
+                        <input type="number" class="cell-input nok-qty-lh" value="0">
+                        <input type="number" class="cell-input nok-qty-rh" value="0">
+                    </div>
                 </td>
-                <td class="split-cell">
-                    <input type="number" value="0" min="0" class="split-input" onchange="calculateOEE('${rowId}')">
-                </td>
-                <td class="split-cell">
-                    <input type="number" value="0" min="0" class="split-input">
-                </td>
-                <td class="split-cell">
-                    <input type="number" value="0" min="0" class="split-input">
-                </td>
-                <td><input type="number" value="60" min="0" onchange="calculateOEE('${rowId}')"></td>
-                <td><input type="number" value="0" min="0" onchange="calculateOEE('${rowId}')"></td>
-                <td id="${rowId}_brak_wydajnosci">0</td>
-                <td id="${rowId}_rozliczenie_czasu">60</td>
-                <td colspan="5">
-                    <table class="losses-table">
-                        <thead>
-                            <tr>
-                                <th>POWÓD</th>
-                                <th>OPERACJA</th>
-                                <th>CZAS</th>
-                                <th>ILOŚĆ ZDARZEŃ</th>
-                                <th>OPIS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <select>
-                                        <option value="">Wybierz powód</option>
-                                        <option value="brak_materialu">Brak materiału</option>
-                                        <option value="awaria">Awaria</option>
-                                        <option value="przezbrojenie">Przezbrojenie</option>
-                                    </select>
-                                </td>
-                                <td><input type="text"></td>
-                                <td><input type="number" value="0" min="0"></td>
-                                <td><input type="number" value="0" min="0"></td>
-                                <td><input type="text"></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <select>
-                                        <option value="">Wybierz powód</option>
-                                        <option value="brak_materialu">Brak materiału</option>
-                                        <option value="awaria">Awaria</option>
-                                        <option value="przezbrojenie">Przezbrojenie</option>
-                                    </select>
-                                </td>
-                                <td><input type="text"></td>
-                                <td><input type="number" value="0" min="0"></td>
-                                <td><input type="number" value="0" min="0"></td>
-                                <td><input type="text"></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <select>
-                                        <option value="">Wybierz powód</option>
-                                        <option value="brak_materialu">Brak materiału</option>
-                                        <option value="awaria">Awaria</option>
-                                        <option value="przezbrojenie">Przezbrojenie</option>
-                                    </select>
-                                </td>
-                                <td><input type="text"></td>
-                                <td><input type="number" value="0" min="0"></td>
-                                <td><input type="number" value="0" min="0"></td>
-                                <td><input type="text"></td>
-                            </tr>
-                        </tbody>
+                <td><input type="number" class="cell-input available-time" value="60"></td>
+                <td class="downtime-cell">0</td>
+                <td class="inefficiency-cell">0</td>
+                <td class="reconciliation-cell">60</td>
+                <td colspan="5" class="p-0">
+                    <table class="w-full losses-table">
+                        ${Array(5).fill(0).map(() => `
+                        <tr class="loss-row">
+                            <td>
+                                <select class="cell-input loss-reason">
+                                    <option value="">--</option>
+                                    <option value="BRAK_WYDAJNOSCI">Brak wydajności</option>
+                                    <option value="POSTOJ_TECHNICZNY">Postój techniczny</option>
+                                    <option value="BRAK_MATERIALU">Brak materiału</option>
+                                    <option value="INNE">Inne</option>
+                                </select>
+                            </td>
+                            <td><input type="text" class="cell-input loss-operation"></td>
+                            <td><input type="number" class="cell-input loss-time" value="0"></td>
+                            <td><input type="number" class="cell-input loss-events" value="1"></td>
+                            <td><input type="text" class="cell-input loss-desc"></td>
+                        </tr>`).join('')}
                     </table>
                 </td>
             `;
             
-            tbody.appendChild(row);
-            calculateOEE(rowId);
+            const selectedLine = lineSelect.value;
+            populateCodeSelects(row.querySelector('.code-select-lh'), selectedLine, 'LH');
+            populateCodeSelects(row.querySelector('.code-select-rh'), selectedLine, 'RH');
+
+            return row;
         }
-        
-        function addNextHour(rowId) {
-            const currentRow = document.getElementById(rowId).parentElement;
-            const currentHourText = currentRow.querySelector('.hour-cell').textContent.split(' ').pop();
-            const [start, end] = currentHourText.split('-').map(Number);
-            const nextHourText = `${end}-${end+1}`;
-            
-            addProductionRow(nextHourText, false);
-        }
-        
-        function addChangeover(rowId) {
-            const currentRow = document.getElementById(rowId).parentElement;
-            const currentHourText = currentRow.querySelector('.hour-cell').textContent.split(' ').pop();
-            
-            addProductionRow(currentHourText, true);
-        }
-        
-        function calculateOEE(rowId) {
-            // This is a simplified OEE calculation
-            // In a real application, this would be more complex
-            const availableTime = parseFloat(document.querySelector(`#${rowId} input[type="number"]`).value) || 0;
-            const stops = parseFloat(document.querySelectorAll(`#${rowId} input[type="number"]`)[1].value) || 0;
-            const okLH = parseFloat(document.querySelectorAll(`#${rowId} input[type="number"]`)[2].value) || 0;
-            const okRH = parseFloat(document.querySelectorAll(`#${rowId} input[type="number"]`)[3].value) || 0;
-            const totalOK = okLH + okRH;
-            
-            const plannedProduction = 120; // This would be calculated based on cycle time
-            const operatingTime = availableTime - stops;
-            
-            // Simple OEE calculation (Availability × Performance × Quality)
-            const availability = operatingTime / availableTime;
-            const performance = totalOK / plannedProduction;
-            const quality = totalOK / (totalOK + (parseFloat(document.querySelectorAll(`#${rowId} input[type="number"]`)[4].value) || 0) + (parseFloat(document.querySelectorAll(`#${rowId} input[type="number"]`)[5].value) || 0));
-            
-            let oee = availability * performance * quality;
-            oee = isNaN(oee) ? 0 : oee;
-            
-            const oeePercent = Math.round(oee * 100);
-            const oeeCell = document.getElementById(`${rowId}_oee`);
-            oeeCell.textContent = `${oeePercent}%`;
-            
-            // Apply color based on OEE value
-            oeeCell.className = 'oee-cell ';
-            if (oeePercent === 0) {
-                oeeCell.classList.add('oee-0');
-            } else if (oeePercent < 70) {
-                oeeCell.classList.add('oee-0-70');
-            } else if (oeePercent < 80) {
-                oeeCell.classList.add('oee-70-80');
-            } else {
-                oeeCell.classList.add('oee-80-100');
-            }
-            
-            // Update time reconciliation
-            document.getElementById(`${rowId}_rozliczenie_czasu`).textContent = operatingTime;
-        }
-        
-        function updatePlanValues(rowId) {
-            // This would update planned and max quantities based on selected codes
-            // For now, we'll just set some default values
-            document.getElementById(`${rowId}_plan_lh`).textContent = '120';
-            document.getElementById(`${rowId}_plan_rh`).textContent = '120';
-            document.getElementById(`${rowId}_max_lh`).textContent = '120';
-            document.getElementById(`${rowId}_max_rh`).textContent = '120';
-            
-            calculateOEE(rowId);
-        }
-        
-        // Modal and data modification functions
-        function openMenuModal() {
-            document.getElementById('dataModal').style.display = 'flex';
-            document.getElementById('passwordSection').style.display = 'block';
-            document.getElementById('modificationSection').style.display = 'none';
-            document.getElementById('passwordInput').value = '';
-        }
-        
-        function closeModal() {
-            document.getElementById('dataModal').style.display = 'none';
-        }
-        
-        function checkPassword() {
-            const password = document.getElementById('passwordInput').value;
-            if (password === 'z') {
-                document.getElementById('passwordSection').style.display = 'none';
-                document.getElementById('modificationSection').style.display = 'block';
-            } else {
-                alert('Nieprawidłowe hasło!');
-            }
-        }
-        
-        function addModificationRow() {
-            const tbody = document.getElementById('modificationBody');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>
-                    <select>
-                        <option value="linia1">Linia 1</option>
-                        <option value="linia2">Linia 2</option>
-                        <option value="linia3">Linia 3</option>
-                        <option value="linia4">Linia 4</option>
-                    </select>
-                </td>
-                <td><input type="text"></td>
-                <td><input type="number" value="30"></td>
-                <td><input type="number" value="4"></td>
-                <td>
-                    <select>
-                        <option value="LH">LH</option>
-                        <option value="RH">RH</option>
-                        <option value="OBIE">Obie</option>
-                    </select>
-                </td>
-                <td><button class="delete-btn" onclick="deleteModificationRow(this)">Usuń</button></td>
-            `;
-            tbody.appendChild(row);
-        }
-        
-        function deleteModificationRow(button) {
-            const row = button.parentElement.parentElement;
-            row.parentElement.removeChild(row);
-        }
-        
-        function loadModificationData() {
-            // In a real application, this would load data from a database
-            // For now, we'll add some sample data
-            const tbody = document.getElementById('modificationBody');
-            tbody.innerHTML = '';
-            
-            const sampleData = [
-                { line: 'linia1', code: 'KOD1', cycleTime: 30, people: 4, side: 'LH' },
-                { line: 'linia1', code: 'KOD2', cycleTime: 45, people: 3, side: 'RH' },
-                { line: 'linia2', code: 'KOD3', cycleTime: 25, people: 5, side: 'OBIE' }
-            ];
-            
-            sampleData.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>
-                        <select>
-                            <option value="linia1" ${item.line === 'linia1' ? 'selected' : ''}>Linia 1</option>
-                            <option value="linia2" ${item.line === 'linia2' ? 'selected' : ''}>Linia 2</option>
-                            <option value="linia3" ${item.line === 'linia3' ? 'selected' : ''}>Linia 3</option>
-                            <option value="linia4" ${item.line === 'linia4' ? 'selected' : ''}>Linia 4</option>
-                        </select>
-                    </td>
-                    <td><input type="text" value="${item.code}"></td>
-                    <td><input type="number" value="${item.cycleTime}"></td>
-                    <td><input type="number" value="${item.people}"></td>
-                    <td>
-                        <select>
-                            <option value="LH" ${item.side === 'LH' ? 'selected' : ''}>LH</option>
-                            <option value="RH" ${item.side === 'RH' ? 'selected' : ''}>RH</option>
-                            <option value="OBIE" ${item.side === 'OBIE' ? 'selected' : ''}>Obie</option>
-                        </select>
-                    </td>
-                    <td><button class="delete-btn" onclick="deleteModificationRow(this)">Usuń</button></td>
-                `;
-                tbody.appendChild(row);
+
+        function populateCodeSelects(selectElement, line, side) {
+            const filteredData = productData.filter(p => p.line === line && p.side === side);
+            selectElement.innerHTML = '<option value="">Wybierz kod...</option>';
+            filteredData.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.code;
+                option.textContent = p.code;
+                selectElement.appendChild(option);
             });
         }
         
-        function saveModifications() {
-            // In a real application, this would save to a database
-            alert('Dane zostały zapisane!');
-            closeModal();
+        function addNextHourRow(startHour, isChangeover) {
+            const existingHours = Array.from(document.querySelectorAll('.hour-row')).map(r => parseInt(r.dataset.hour));
+            const maxHour = existingHours.length > 0 ? Math.max(...existingHours) : 5; // Start from 6 if empty
+            const nextHour = startHour !== undefined ? startHour : maxHour + 1;
+            
+            if (nextHour > 23) return;
+
+            const newRow = createHourRow(nextHour, isChangeover);
+            tableBody.appendChild(newRow);
+        }
+
+        tableBody.addEventListener('click', e => {
+            if (e.target.classList.contains('blue-plus')) {
+                const parentRow = e.target.closest('.hour-row');
+                const currentHour = parseInt(parentRow.dataset.hour);
+                addNextHourRow(currentHour + 1, false);
+            }
+            if (e.target.classList.contains('green-plus')) {
+                const parentRow = e.target.closest('.hour-row');
+                const currentHour = parseInt(parentRow.dataset.hour);
+                addNextHourRow(currentHour, true);
+            }
+        });
+        
+        // --- Obliczenia ---
+        function calculateAll() {
+            document.querySelectorAll('.hour-row').forEach(row => calculateRow(row));
+        }
+
+        function calculateRow(row) {
+            // Get data from inputs
+            const codeLH = row.querySelector('.code-select-lh').value;
+            const codeRH = row.querySelector('.code-select-rh').value;
+            const dataLH = productData.find(p => p.code === codeLH);
+            const dataRH = productData.find(p => p.code === codeRH);
+
+            const nominalPeople = (dataLH?.people || 0) + (dataRH?.people || 0);
+            const nominalCycleLH = dataLH?.cycleTime || 0;
+            const nominalCycleRH = dataRH?.cycleTime || 0;
+
+            row.querySelector('.nominal-people-cell .split-cell div:nth-child(1)').textContent = dataLH?.people || '-';
+            row.querySelector('.nominal-people-cell .split-cell div:nth-child(2)').textContent = dataRH?.people || '-';
+            row.querySelector('.nominal-cycle-cell .split-cell div:nth-child(1)').textContent = nominalCycleLH || '-';
+            row.querySelector('.nominal-cycle-cell .split-cell div:nth-child(2)').textContent = nominalCycleRH || '-';
+
+            const okQtyLH = parseInt(row.querySelector('.ok-qty-lh').value) || 0;
+            const okQtyRH = parseInt(row.querySelector('.ok-qty-rh').value) || 0;
+            const nokQtyLH = parseInt(row.querySelector('.nok-qty-lh').value) || 0;
+            const nokQtyRH = parseInt(row.querySelector('.nok-qty-rh').value) || 0;
+            const availableTime = parseFloat(row.querySelector('.available-time').value) || 0;
+            
+            let totalDowntime = 0;
+            let inefficiencyTime = 0;
+            row.querySelectorAll('.loss-row').forEach(lossRow => {
+                const time = parseFloat(lossRow.querySelector('.loss-time').value) || 0;
+                const reason = lossRow.querySelector('.loss-reason').value;
+                if(reason && reason !== 'BRAK_WYDAJNOSCI') {
+                    totalDowntime += time;
+                }
+                if(reason === 'BRAK_WYDAJNOSCI') {
+                    inefficiencyTime += time;
+                }
+            });
+
+            row.querySelector('.downtime-cell').textContent = totalDowntime.toFixed(2);
+            row.querySelector('.inefficiency-cell').textContent = inefficiencyTime.toFixed(2);
+            
+            // Calculations
+            const productionTime = availableTime - totalDowntime;
+            const totalOk = okQtyLH + okQtyRH;
+            const totalNok = nokQtyLH + nokQtyRH;
+            const totalProduced = totalOk + totalNok;
+
+            // Ilosc Plan
+            const planQtyLH = nominalCycleLH > 0 ? Math.floor((availableTime * 60) / nominalCycleLH) : 0;
+            const planQtyRH = nominalCycleRH > 0 ? Math.floor((availableTime * 60) / nominalCycleRH) : 0;
+            row.querySelector('.plan-qty-cell div:nth-child(1)').textContent = planQtyLH;
+            row.querySelector('.plan-qty-cell div:nth-child(2)').textContent = planQtyRH;
+            
+            // Ilosc Max
+            const maxQtyLH = nominalCycleLH > 0 ? Math.floor((productionTime * 60) / nominalCycleLH) : 0;
+            const maxQtyRH = nominalCycleRH > 0 ? Math.floor((productionTime * 60) / nominalCycleRH) : 0;
+            row.querySelector('.max-qty-cell div:nth-child(1)').textContent = maxQtyLH;
+            row.querySelector('.max-qty-cell div:nth-child(2)').textContent = maxQtyRH;
+
+            // CC Real - średni ważony czas cyklu
+            const effectiveTimeForProduction = (productionTime - inefficiencyTime) * 60; // in seconds
+            const realCycle = totalProduced > 0 ? effectiveTimeForProduction / totalProduced : 0;
+            row.querySelector('.real-cycle-cell').textContent = realCycle.toFixed(2);
+
+            // OEE
+            const availability = availableTime > 0 ? productionTime / availableTime : 0;
+            const targetCycle = (nominalCycleLH + nominalCycleRH) / 2 || 1; // Proste uśrednienie
+            const performance = totalProduced > 0 && productionTime > 0 ? (totalProduced * targetCycle) / (productionTime * 60) : 0;
+            const quality = totalProduced > 0 ? totalOk / totalProduced : 0;
+            const oee = availability * performance * quality * 100;
+            
+            const oeeCell = row.querySelector('.oee-cell');
+            oeeCell.textContent = oee.toFixed(2) + '%';
+            oeeCell.className = 'oee-cell font-bold'; // reset
+            if (oee <= 0) oeeCell.classList.add('oee-gray');
+            else if (oee < 70) oeeCell.classList.add('oee-red');
+            else if (oee < 80) oeeCell.classList.add('oee-yellow');
+            else oeeCell.classList.add('oee-green');
+            
+            // Rozliczenie Czasu
+            const productiveTimeMinutes = (totalProduced * realCycle) / 60;
+            const reconciliation = availableTime - totalDowntime - inefficiencyTime - productiveTimeMinutes;
+            row.querySelector('.reconciliation-cell').textContent = reconciliation.toFixed(2);
+        }
+
+        tableBody.addEventListener('change', e => {
+            if(e.target.closest('.hour-row')) {
+                const row = e.target.closest('.hour-row');
+                // Jeśli zmieniono kod, zaktualizuj dane nominalne
+                if (e.target.classList.contains('code-select-lh') || e.target.classList.contains('code-select-rh')) {
+                    const code = e.target.value;
+                    const side = e.target.classList.contains('code-select-lh') ? 'LH' : 'RH';
+                    const data = productData.find(p => p.code === code);
+                    
+                    const peopleCell = side === 'LH' ? row.querySelector('.nominal-people-cell .split-cell div:nth-child(1)') : row.querySelector('.nominal-people-cell .split-cell div:nth-child(2)');
+                    const cycleCell = side === 'LH' ? row.querySelector('.nominal-cycle-cell .split-cell div:nth-child(1)') : row.querySelector('.nominal-cycle-cell .split-cell div:nth-child(2)');
+                    
+                    if (data) {
+                        peopleCell.textContent = data.people;
+                        cycleCell.textContent = data.cycleTime;
+                    } else {
+                        peopleCell.textContent = '-';
+                        cycleCell.textContent = '-';
+                    }
+                }
+                calculateRow(row);
+            }
+        });
+
+        lineSelect.addEventListener('change', () => {
+            const selectedLine = lineSelect.value;
+            document.querySelectorAll('.hour-row').forEach(row => {
+                populateCodeSelects(row.querySelector('.code-select-lh'), selectedLine, 'LH');
+                populateCodeSelects(row.querySelector('.code-select-rh'), selectedLine, 'RH');
+                // Resetuj wybrane kody i przelicz
+                row.querySelector('.code-select-lh').value = '';
+                row.querySelector('.code-select-rh').value = '';
+                calculateRow(row);
+            });
+            loadReport();
+        });
+
+        // --- Zapis i Odczyt Raportu ---
+        function getReportId() {
+            const date = document.getElementById('report-date').value;
+            const line = document.getElementById('line-select').value;
+            const shift = document.getElementById('shift-select').value;
+            if (!date || !line || !shift) return null;
+            return `${date}_${line}_${shift}`;
         }
         
-        // Export functions
-        function exportToExcel() {
-            alert('Funkcja eksportu do Excel zostanie zaimplementowana w pełnej wersji systemu.');
-            // This would use a library like SheetJS in a real application
+        async function saveReport() {
+            const reportId = getReportId();
+            if (!reportId) {
+                showToast("Wybierz datę, linię i zmianę, aby zapisać raport.", 4000);
+                return;
+            }
+            
+            const reportData = {
+                header: {
+                    date: document.getElementById('report-date').value,
+                    line: document.getElementById('line-select').value,
+                    shift: document.getElementById('shift-select').value,
+                    brigade: document.getElementById('brigade-select').value,
+                    leader: document.getElementById('leader-input').value,
+                },
+                rows: []
+            };
+
+            document.querySelectorAll('.hour-row').forEach(row => {
+                const rowData = {
+                    hour: row.dataset.hour,
+                    isChangeover: row.dataset.isChangeover === 'true',
+                    realPeople: row.querySelector('.real-people').value,
+                    codeLH: row.querySelector('.code-select-lh').value,
+                    codeRH: row.querySelector('.code-select-rh').value,
+                    okLH: row.querySelector('.ok-qty-lh').value,
+                    okRH: row.querySelector('.ok-qty-rh').value,
+                    nokLH: row.querySelector('.nok-qty-lh').value,
+                    nokRH: row.querySelector('.nok-qty-rh').value,
+                    availableTime: row.querySelector('.available-time').value,
+                    losses: []
+                };
+
+                row.querySelectorAll('.loss-row').forEach(lossRow => {
+                    rowData.losses.push({
+                        reason: lossRow.querySelector('.loss-reason').value,
+                        operation: lossRow.querySelector('.loss-operation').value,
+                        time: lossRow.querySelector('.loss-time').value,
+                        events: lossRow.querySelector('.loss-events').value,
+                        desc: lossRow.querySelector('.loss-desc').value,
+                    });
+                });
+                reportData.rows.push(rowData);
+            });
+
+            try {
+                const reportRef = doc(db, 'artifacts', appId, 'public', 'reports', reportId);
+                await setDoc(reportRef, reportData);
+                showToast("Raport został pomyślnie zapisany!");
+            } catch (error) {
+                console.error("Błąd zapisu raportu:", error);
+                showToast("Wystąpił błąd podczas zapisu.", 5000);
+            }
         }
         
-        function exportToCSV() {
-            alert('Funkcja eksportu do CSV zostanie zaimplementowana w pełnej wersji systemu.');
-            // This would generate CSV data from the table
+        document.getElementById('save-report-btn').addEventListener('click', () => {
+             saveReport();
+             menuModal.classList.add('hidden');
+        });
+
+        async function loadReport() {
+            const reportId = getReportId();
+            if (!reportId) {
+                // Jeśli nie ma ID, czyść tabelę i dodaj pierwszy wiersz
+                tableBody.innerHTML = '';
+                addNextHourRow(6);
+                return;
+            };
+
+            const reportRef = doc(db, 'artifacts', appId, 'public', 'reports', reportId);
+            const docSnap = await getDoc(reportRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                // Załaduj nagłówek
+                document.getElementById('brigade-select').value = data.header.brigade || 'A';
+                document.getElementById('leader-input').value = data.header.leader || '';
+                
+                // Załaduj wiersze
+                tableBody.innerHTML = '';
+                data.rows.forEach(rowData => {
+                    const newRow = createHourRow(parseInt(rowData.hour), rowData.isChangeover);
+                    newRow.querySelector('.real-people').value = rowData.realPeople;
+                    newRow.querySelector('.code-select-lh').value = rowData.codeLH;
+                    newRow.querySelector('.code-select-rh').value = rowData.codeRH;
+                    newRow.querySelector('.ok-qty-lh').value = rowData.okLH;
+                    newRow.querySelector('.ok-qty-rh').value = rowData.okRH;
+                    newRow.querySelector('.nok-qty-lh').value = rowData.nokLH;
+                    newRow.querySelector('.nok-qty-rh').value = rowData.nokRH;
+                    newRow.querySelector('.available-time').value = rowData.availableTime;
+                    
+                    newRow.querySelectorAll('.loss-row').forEach((lossRow, index) => {
+                        const lossData = rowData.losses[index];
+                        if (lossData) {
+                            lossRow.querySelector('.loss-reason').value = lossData.reason;
+                            lossRow.querySelector('.loss-operation').value = lossData.operation;
+                            lossRow.querySelector('.loss-time').value = lossData.time;
+                            lossRow.querySelector('.loss-events').value = lossData.events;
+                            lossRow.querySelector('.loss-desc').value = lossData.desc;
+                        }
+                    });
+                    tableBody.appendChild(newRow);
+                });
+                calculateAll();
+                showToast("Raport załadowany.");
+            } else {
+                // Jeśli nie ma raportu, wyczyść tabelę i dodaj pierwszy wiersz
+                tableBody.innerHTML = '';
+                addNextHourRow(6);
+                showToast("Nie znaleziono raportu. Utworzono nowy.");
+            }
         }
         
-        function saveDataToLocalStorage() {
-            alert('Dane zostały zapisane lokalnie!');
-            // This would save data to localStorage in a real application
+        // --- Inicjalizacja ---
+        function setupInitialListeners() {
+            document.getElementById('report-date').valueAsDate = new Date();
+            addNextHourRow(6); // Dodaj pierwszy wiersz na start
+            
+            // Nasłuchuj na zmiany w nagłówku, aby przeładować raport
+            document.getElementById('report-date').addEventListener('change', loadReport);
+            document.getElementById('shift-select').addEventListener('change', loadReport);
         }
-        
-        function loadDataFromLocalStorage() {
-            alert('Dane zostały wczytane z pamięci lokalnej!');
-            // This would load data from localStorage in a real application
-        }
+
     </script>
 </body>
 </html>
