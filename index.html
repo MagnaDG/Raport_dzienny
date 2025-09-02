@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Raport Produkcji KPI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn/tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -17,7 +17,8 @@
         }
         table {
             border-collapse: collapse;
-            width: max-content;
+            width: 100%; /* Rozciąga tabelę na całą szerokość */
+            table-layout: fixed; /* Wymusza zdefiniowane szerokości kolumn */
         }
         th, td {
             border: 1px solid #d1d5db;
@@ -25,7 +26,7 @@
             text-align: center;
             font-size: 12px;
             vertical-align: top;
-            min-width: 80px;
+            word-wrap: break-word; /* Zapobiega rozpychaniu komórek */
         }
         th {
             background-color: #e5e7eb;
@@ -34,6 +35,26 @@
             top: 0;
             z-index: 10;
         }
+        
+        /* --- EDYCJA SZEROKOŚCI KOLUMN --- */
+        /* Zmień poniższe wartości procentowe, aby dostosować szerokość każdej kolumny. */
+        .col-godz { width: 5%; }
+        .col-oee { width: 5%; }
+        .col-osob-nominal { width: 5%; }
+        .col-cc-nominal { width: 5%; }
+        .col-osob-real { width: 5%; }
+        .col-cc-real { width: 5%; }
+        .col-kod { width: 8%; }
+        .col-ilosc-plan { width: 5%; }
+        .col-ilosc-max { width: 5%; }
+        .col-ok { width: 5%; }
+        .col-nok { width: 5%; }
+        .col-czas-dostepny { width: 6%; }
+        .col-postoje { width: 5%; }
+        .col-brak-wydajnosci { width: 6%; }
+        .col-rozliczenie { width: 6%; }
+        .col-straty { width: 24%; } /* Ta kolumna zawiera 5 pod-kolumn */
+        
         .header-input, .header-select {
             padding: 4px 8px;
             border: 1px solid #d1d5db;
@@ -47,13 +68,13 @@
             padding: 0;
             border: none;
         }
-        .split-cell > div, .split-cell > select {
+        .split-cell > div, .split-cell > select, .split-cell > input {
             padding: 4px;
             height: 30px;
             border: none;
             text-align: center;
         }
-        .split-cell > div:first-child, .split-cell > select:first-child {
+        .split-cell > *:first-child {
             border-bottom: 1px solid #d1d5db;
         }
         .cell-input {
@@ -61,6 +82,7 @@
             border: none;
             text-align: center;
             background-color: transparent;
+            box-sizing: border-box;
         }
         .cell-input:focus {
             outline: 1px solid #3b82f6;
@@ -80,6 +102,7 @@
         }
         .blue-plus { background-color: #3b82f6; }
         .green-plus { background-color: #22c55e; }
+        .red-minus { background-color: #ef4444; }
         
         /* OEE Colors */
         .oee-gray { color: #9ca3af; }
@@ -135,25 +158,25 @@
         <!-- Tabela Produkcyjna -->
         <main class="bg-white p-4 rounded-lg shadow-md">
             <div class="table-container">
-                <table id="production-table" class="min-w-full">
+                <table id="production-table">
                     <thead>
                         <tr>
-                            <th rowspan="2">GODZ</th>
-                            <th rowspan="2">OEE</th>
-                            <th rowspan="2">OSÓB NOMINAŁ</th>
-                            <th rowspan="2">CZAS CYKLU NOMINAŁ (s)</th>
-                            <th rowspan="2">OSÓB REAL</th>
-                            <th rowspan="2">CC REAL (s)</th>
-                            <th rowspan="2">KOD</th>
-                            <th rowspan="2">ILOŚĆ PLAN</th>
-                            <th rowspan="2">ILOŚĆ MAX</th>
-                            <th rowspan="2">OK</th>
-                            <th rowspan="2">NOK</th>
-                            <th rowspan="2">CZAS DOSTĘPNY (min)</th>
-                            <th rowspan="2">POSTOJE (min)</th>
-                            <th rowspan="2">BRAK WYDAJNOŚCI (min)</th>
-                            <th rowspan="2">ROZLICZENIE CZASU (min)</th>
-                            <th colspan="5">STRATY</th>
+                            <th rowspan="2" class="col-godz">GODZ</th>
+                            <th rowspan="2" class="col-oee">OEE</th>
+                            <th rowspan="2" class="col-osob-nominal">OSÓB NOMINAŁ</th>
+                            <th rowspan="2" class="col-cc-nominal">CZAS CYKLU NOMINAŁ (s)</th>
+                            <th rowspan="2" class="col-osob-real">OSÓB REAL</th>
+                            <th rowspan="2" class="col-cc-real">CC REAL (s)</th>
+                            <th rowspan="2" class="col-kod">KOD</th>
+                            <th rowspan="2" class="col-ilosc-plan">ILOŚĆ PLAN</th>
+                            <th rowspan="2" class="col-ilosc-max">ILOŚĆ MAX</th>
+                            <th rowspan="2" class="col-ok">OK</th>
+                            <th rowspan="2" class="col-nok">NOK</th>
+                            <th rowspan="2" class="col-czas-dostepny">CZAS DOSTĘPNY (min)</th>
+                            <th rowspan="2" class="col-postoje">POSTOJE (min)</th>
+                            <th rowspan="2" class="col-brak-wydajnosci">BRAK WYDAJNOŚCI (min)</th>
+                            <th rowspan="2" class="col-rozliczenie">ROZLICZENIE CZASU (min)</th>
+                            <th colspan="5" class="col-straty">STRATY</th>
                         </tr>
                         <tr>
                             <th>POWÓD</th>
@@ -227,10 +250,9 @@
         import { getFirestore, collection, doc, getDocs, writeBatch, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Konfiguracja Firebase ---
-        // Poniższe zmienne zostaną dostarczone przez środowisko uruchomieniowe.
         const firebaseConfig = typeof __firebase_config !== 'undefined' 
             ? JSON.parse(__firebase_config) 
-            : { apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID" }; // Zastępcza konfiguracja
+            : { apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID" };
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'production-report-app';
 
@@ -240,7 +262,7 @@
         const auth = getAuth(app);
         
         let userId = null;
-        let productData = []; // Lokalna przechowalnia danych o produktach
+        let productData = []; 
         
         // --- Uwierzytelnianie ---
         signInAnonymously(auth).catch((error) => {
@@ -251,7 +273,6 @@
             if (user) {
                 userId = user.uid;
                 console.log("Zalogowano anonimowo, UID:", userId);
-                // Po zalogowaniu, pobierz dane i zainicjuj aplikację
                 listenToProductData();
                 setupInitialListeners();
             } else {
@@ -290,7 +311,7 @@
                 renderDataModalTable();
                 dataModal.classList.remove('hidden');
             } else if (password !== null) {
-                alert("Nieprawidłowe hasło!");
+                showToast("Nieprawidłowe hasło!", 3000);
             }
         });
 
@@ -311,7 +332,7 @@
                         </select>
                     </td>
                     <td><input type="text" class="cell-input data-code" value="${item.code}" data-index="${index}"></td>
-                    <td><input type="number" class="cell-input data-cycle" value="${item.cycleTime}" data-index="${index}"></td>
+                    <td><input type="number" step="0.1" class="cell-input data-cycle" value="${item.cycleTime}" data-index="${index}"></td>
                     <td><input type="number" class="cell-input data-people" value="${item.people}" data-index="${index}"></td>
                     <td>
                         <select class="cell-input data-side" data-index="${index}">
@@ -325,32 +346,29 @@
             });
         }
         
-        // Nasłuchiwanie zmian w danych produktów
         function listenToProductData() {
             const productsColRef = collection(db, 'artifacts', appId, 'public', 'product_definitions');
             onSnapshot(productsColRef, (snapshot) => {
                 productData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                productData.sort((a,b) => a.code.localeCompare(b.code)); // Sortowanie
+                productData.sort((a,b) => a.code.localeCompare(b.code));
                 console.log("Dane produktów zaktualizowane:", productData);
-                // Przeładuj opcje kodów w istniejących wierszach
                  document.querySelectorAll('.code-select-lh, .code-select-rh').forEach(select => {
                     const currentLine = lineSelect.value;
                     const currentVal = select.value;
                     populateCodeSelects(select, currentLine, select.classList.contains('code-select-lh') ? 'LH' : 'RH');
                     select.value = currentVal;
                 });
+                calculateAll(); // Przelicz wszystko po aktualizacji danych
             });
         }
         
-        // Zapisywanie danych produktów
         document.getElementById('save-data-btn').addEventListener('click', async () => {
             const batch = writeBatch(db);
-            const dataToSave = [];
             const rows = dataTableBody.querySelectorAll('tr');
 
             rows.forEach((row, index) => {
                 const line = row.querySelector('.data-line').value;
-                const code = row.querySelector('.data-code').value.trim();
+                const code = row.querySelector('.data-code').value.trim().toUpperCase();
                 const cycleTime = parseFloat(row.querySelector('.data-cycle').value);
                 const people = parseInt(row.querySelector('.data-people').value);
                 const side = row.querySelector('.data-side').value;
@@ -361,8 +379,7 @@
                 }
             });
             
-            // Obsługa usuwania
-            const currentCodesInUI = Array.from(rows).map(r => r.querySelector('.data-code').value.trim());
+            const currentCodesInUI = Array.from(rows).map(r => r.querySelector('.data-code').value.trim().toUpperCase());
             productData.forEach(item => {
                 if (!currentCodesInUI.includes(item.code)) {
                      const docRef = doc(collection(db, 'artifacts', appId, 'public', 'product_definitions'), item.code);
@@ -380,7 +397,6 @@
             }
         });
         
-        // Dodawanie nowego wiersza w modalu
         document.getElementById('add-data-row-btn').addEventListener('click', () => {
             const newRow = document.createElement('tr');
             const newIndex = dataTableBody.rows.length;
@@ -393,7 +409,7 @@
                     </select>
                 </td>
                 <td><input type="text" class="cell-input data-code" placeholder="Nowy kod" data-index="${newIndex}"></td>
-                <td><input type="number" class="cell-input data-cycle" value="0" data-index="${newIndex}"></td>
+                <td><input type="number" step="0.1" class="cell-input data-cycle" value="0" data-index="${newIndex}"></td>
                 <td><input type="number" class="cell-input data-people" value="0" data-index="${newIndex}"></td>
                 <td>
                     <select class="cell-input data-side" data-index="${newIndex}">
@@ -406,7 +422,6 @@
             dataTableBody.appendChild(newRow);
         });
         
-        // Usuwanie wiersza w modalu (z UI, zapis po kliknięciu 'Zapisz')
         dataTableBody.addEventListener('click', e => {
             if (e.target.classList.contains('delete-data-row')) {
                 e.target.closest('tr').remove();
@@ -429,21 +444,12 @@
                     <div class="absolute bottom-1 right-1 flex">
                         <span class="add-btn blue-plus" title="Dodaj następną godzinę">+</span>
                         <span class="add-btn green-plus" title="Dodaj przezbrojenie">+</span>
+                        <span class="add-btn red-minus" title="Usuń wiersz">-</span>
                     </div>
                 </td>
                 <td class="oee-cell font-bold">0.00%</td>
-                <td class="nominal-people-cell">
-                    <div class="split-cell">
-                        <div class="h-[30px] flex items-center justify-center"></div>
-                        <div class="h-[30px] flex items-center justify-center"></div>
-                    </div>
-                </td>
-                <td class="nominal-cycle-cell">
-                    <div class="split-cell">
-                        <div class="h-[30px] flex items-center justify-center"></div>
-                        <div class="h-[30px] flex items-center justify-center"></div>
-                    </div>
-                </td>
+                <td class="nominal-people-cell">-</td>
+                <td class="nominal-cycle-cell">-</td>
                 <td><input type="number" class="cell-input real-people" value="0"></td>
                 <td class="real-cycle-cell">0.00</td>
                 <td>
@@ -488,7 +494,7 @@
                                 </select>
                             </td>
                             <td><input type="text" class="cell-input loss-operation"></td>
-                            <td><input type="number" class="cell-input loss-time" value="0"></td>
+                            <td><input type="number" step="0.5" class="cell-input loss-time" value="0"></td>
                             <td><input type="number" class="cell-input loss-events" value="1"></td>
                             <td><input type="text" class="cell-input loss-desc"></td>
                         </tr>`).join('')}
@@ -516,7 +522,7 @@
         
         function addNextHourRow(startHour, isChangeover) {
             const existingHours = Array.from(document.querySelectorAll('.hour-row')).map(r => parseInt(r.dataset.hour));
-            const maxHour = existingHours.length > 0 ? Math.max(...existingHours) : 5; // Start from 6 if empty
+            const maxHour = existingHours.length > 0 ? Math.max(...existingHours) : 5;
             const nextHour = startHour !== undefined ? startHour : maxHour + 1;
             
             if (nextHour > 23) return;
@@ -536,28 +542,32 @@
                 const currentHour = parseInt(parentRow.dataset.hour);
                 addNextHourRow(currentHour, true);
             }
+            if (e.target.classList.contains('red-minus')) {
+                e.target.closest('.hour-row').remove();
+            }
         });
         
-        // --- Obliczenia ---
         function calculateAll() {
             document.querySelectorAll('.hour-row').forEach(row => calculateRow(row));
         }
 
         function calculateRow(row) {
-            // Get data from inputs
             const codeLH = row.querySelector('.code-select-lh').value;
             const codeRH = row.querySelector('.code-select-rh').value;
             const dataLH = productData.find(p => p.code === codeLH);
             const dataRH = productData.find(p => p.code === codeRH);
 
-            const nominalPeople = (dataLH?.people || 0) + (dataRH?.people || 0);
+            // Dane nominalne dla całej paletki (priorytet LH)
+            const palletData = dataLH || dataRH;
+            const nominalPeople = palletData?.people;
+            const palletCycleTime = palletData?.cycleTime;
+            
+            row.querySelector('.nominal-people-cell').textContent = nominalPeople || '-';
+            row.querySelector('.nominal-cycle-cell').textContent = palletCycleTime || '-';
+
+            // Czasy cyklu dla poszczególnych stron (do planu/max)
             const nominalCycleLH = dataLH?.cycleTime || 0;
             const nominalCycleRH = dataRH?.cycleTime || 0;
-
-            row.querySelector('.nominal-people-cell .split-cell div:nth-child(1)').textContent = dataLH?.people || '-';
-            row.querySelector('.nominal-people-cell .split-cell div:nth-child(2)').textContent = dataRH?.people || '-';
-            row.querySelector('.nominal-cycle-cell .split-cell div:nth-child(1)').textContent = nominalCycleLH || '-';
-            row.querySelector('.nominal-cycle-cell .split-cell div:nth-child(2)').textContent = nominalCycleRH || '-';
 
             const okQtyLH = parseInt(row.querySelector('.ok-qty-lh').value) || 0;
             const okQtyRH = parseInt(row.querySelector('.ok-qty-rh').value) || 0;
@@ -581,45 +591,40 @@
             row.querySelector('.downtime-cell').textContent = totalDowntime.toFixed(2);
             row.querySelector('.inefficiency-cell').textContent = inefficiencyTime.toFixed(2);
             
-            // Calculations
             const productionTime = availableTime - totalDowntime;
             const totalOk = okQtyLH + okQtyRH;
             const totalNok = nokQtyLH + nokQtyRH;
             const totalProduced = totalOk + totalNok;
 
-            // Ilosc Plan
             const planQtyLH = nominalCycleLH > 0 ? Math.floor((availableTime * 60) / nominalCycleLH) : 0;
             const planQtyRH = nominalCycleRH > 0 ? Math.floor((availableTime * 60) / nominalCycleRH) : 0;
             row.querySelector('.plan-qty-cell div:nth-child(1)').textContent = planQtyLH;
             row.querySelector('.plan-qty-cell div:nth-child(2)').textContent = planQtyRH;
             
-            // Ilosc Max
             const maxQtyLH = nominalCycleLH > 0 ? Math.floor((productionTime * 60) / nominalCycleLH) : 0;
             const maxQtyRH = nominalCycleRH > 0 ? Math.floor((productionTime * 60) / nominalCycleRH) : 0;
             row.querySelector('.max-qty-cell div:nth-child(1)').textContent = maxQtyLH;
             row.querySelector('.max-qty-cell div:nth-child(2)').textContent = maxQtyRH;
 
-            // CC Real - średni ważony czas cyklu
-            const effectiveTimeForProduction = (productionTime - inefficiencyTime) * 60; // in seconds
+            const effectiveTimeForProduction = (productionTime - inefficiencyTime) * 60;
             const realCycle = totalProduced > 0 ? effectiveTimeForProduction / totalProduced : 0;
             row.querySelector('.real-cycle-cell').textContent = realCycle.toFixed(2);
 
-            // OEE
             const availability = availableTime > 0 ? productionTime / availableTime : 0;
-            const targetCycle = (nominalCycleLH + nominalCycleRH) / 2 || 1; // Proste uśrednienie
-            const performance = totalProduced > 0 && productionTime > 0 ? (totalProduced * targetCycle) / (productionTime * 60) : 0;
+            const performance = totalProduced > 0 && productionTime > 0 && palletCycleTime > 0
+                ? (totalProduced * palletCycleTime) / (productionTime * 60)
+                : 0;
             const quality = totalProduced > 0 ? totalOk / totalProduced : 0;
             const oee = availability * performance * quality * 100;
             
             const oeeCell = row.querySelector('.oee-cell');
             oeeCell.textContent = oee.toFixed(2) + '%';
-            oeeCell.className = 'oee-cell font-bold'; // reset
+            oeeCell.className = 'oee-cell font-bold';
             if (oee <= 0) oeeCell.classList.add('oee-gray');
             else if (oee < 70) oeeCell.classList.add('oee-red');
             else if (oee < 80) oeeCell.classList.add('oee-yellow');
             else oeeCell.classList.add('oee-green');
             
-            // Rozliczenie Czasu
             const productiveTimeMinutes = (totalProduced * realCycle) / 60;
             const reconciliation = availableTime - totalDowntime - inefficiencyTime - productiveTimeMinutes;
             row.querySelector('.reconciliation-cell').textContent = reconciliation.toFixed(2);
@@ -628,23 +633,6 @@
         tableBody.addEventListener('change', e => {
             if(e.target.closest('.hour-row')) {
                 const row = e.target.closest('.hour-row');
-                // Jeśli zmieniono kod, zaktualizuj dane nominalne
-                if (e.target.classList.contains('code-select-lh') || e.target.classList.contains('code-select-rh')) {
-                    const code = e.target.value;
-                    const side = e.target.classList.contains('code-select-lh') ? 'LH' : 'RH';
-                    const data = productData.find(p => p.code === code);
-                    
-                    const peopleCell = side === 'LH' ? row.querySelector('.nominal-people-cell .split-cell div:nth-child(1)') : row.querySelector('.nominal-people-cell .split-cell div:nth-child(2)');
-                    const cycleCell = side === 'LH' ? row.querySelector('.nominal-cycle-cell .split-cell div:nth-child(1)') : row.querySelector('.nominal-cycle-cell .split-cell div:nth-child(2)');
-                    
-                    if (data) {
-                        peopleCell.textContent = data.people;
-                        cycleCell.textContent = data.cycleTime;
-                    } else {
-                        peopleCell.textContent = '-';
-                        cycleCell.textContent = '-';
-                    }
-                }
                 calculateRow(row);
             }
         });
@@ -654,7 +642,6 @@
             document.querySelectorAll('.hour-row').forEach(row => {
                 populateCodeSelects(row.querySelector('.code-select-lh'), selectedLine, 'LH');
                 populateCodeSelects(row.querySelector('.code-select-rh'), selectedLine, 'RH');
-                // Resetuj wybrane kody i przelicz
                 row.querySelector('.code-select-lh').value = '';
                 row.querySelector('.code-select-rh').value = '';
                 calculateRow(row);
@@ -734,7 +721,6 @@
         async function loadReport() {
             const reportId = getReportId();
             if (!reportId) {
-                // Jeśli nie ma ID, czyść tabelę i dodaj pierwszy wiersz
                 tableBody.innerHTML = '';
                 addNextHourRow(6);
                 return;
@@ -745,39 +731,40 @@
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                // Załaduj nagłówek
                 document.getElementById('brigade-select').value = data.header.brigade || 'A';
                 document.getElementById('leader-input').value = data.header.leader || '';
                 
-                // Załaduj wiersze
                 tableBody.innerHTML = '';
-                data.rows.forEach(rowData => {
-                    const newRow = createHourRow(parseInt(rowData.hour), rowData.isChangeover);
-                    newRow.querySelector('.real-people').value = rowData.realPeople;
-                    newRow.querySelector('.code-select-lh').value = rowData.codeLH;
-                    newRow.querySelector('.code-select-rh').value = rowData.codeRH;
-                    newRow.querySelector('.ok-qty-lh').value = rowData.okLH;
-                    newRow.querySelector('.ok-qty-rh').value = rowData.okRH;
-                    newRow.querySelector('.nok-qty-lh').value = rowData.nokLH;
-                    newRow.querySelector('.nok-qty-rh').value = rowData.nokRH;
-                    newRow.querySelector('.available-time').value = rowData.availableTime;
-                    
-                    newRow.querySelectorAll('.loss-row').forEach((lossRow, index) => {
-                        const lossData = rowData.losses[index];
-                        if (lossData) {
-                            lossRow.querySelector('.loss-reason').value = lossData.reason;
-                            lossRow.querySelector('.loss-operation').value = lossData.operation;
-                            lossRow.querySelector('.loss-time').value = lossData.time;
-                            lossRow.querySelector('.loss-events').value = lossData.events;
-                            lossRow.querySelector('.loss-desc').value = lossData.desc;
-                        }
+                if (data.rows && data.rows.length > 0) {
+                    data.rows.forEach(rowData => {
+                        const newRow = createHourRow(parseInt(rowData.hour), rowData.isChangeover);
+                        newRow.querySelector('.real-people').value = rowData.realPeople;
+                        newRow.querySelector('.code-select-lh').value = rowData.codeLH;
+                        newRow.querySelector('.code-select-rh').value = rowData.codeRH;
+                        newRow.querySelector('.ok-qty-lh').value = rowData.okLH;
+                        newRow.querySelector('.ok-qty-rh').value = rowData.okRH;
+                        newRow.querySelector('.nok-qty-lh').value = rowData.nokLH;
+                        newRow.querySelector('.nok-qty-rh').value = rowData.nokRH;
+                        newRow.querySelector('.available-time').value = rowData.availableTime;
+                        
+                        newRow.querySelectorAll('.loss-row').forEach((lossRow, index) => {
+                            const lossData = rowData.losses[index];
+                            if (lossData) {
+                                lossRow.querySelector('.loss-reason').value = lossData.reason;
+                                lossRow.querySelector('.loss-operation').value = lossData.operation;
+                                lossRow.querySelector('.loss-time').value = lossData.time;
+                                lossRow.querySelector('.loss-events').value = lossData.events;
+                                lossRow.querySelector('.loss-desc').value = lossData.desc;
+                            }
+                        });
+                        tableBody.appendChild(newRow);
                     });
-                    tableBody.appendChild(newRow);
-                });
+                } else {
+                     addNextHourRow(6);
+                }
                 calculateAll();
                 showToast("Raport załadowany.");
             } else {
-                // Jeśli nie ma raportu, wyczyść tabelę i dodaj pierwszy wiersz
                 tableBody.innerHTML = '';
                 addNextHourRow(6);
                 showToast("Nie znaleziono raportu. Utworzono nowy.");
@@ -787,9 +774,8 @@
         // --- Inicjalizacja ---
         function setupInitialListeners() {
             document.getElementById('report-date').valueAsDate = new Date();
-            addNextHourRow(6); // Dodaj pierwszy wiersz na start
+            addNextHourRow(6);
             
-            // Nasłuchuj na zmiany w nagłówku, aby przeładować raport
             document.getElementById('report-date').addEventListener('change', loadReport);
             document.getElementById('shift-select').addEventListener('change', loadReport);
         }
@@ -797,3 +783,4 @@
     </script>
 </body>
 </html>
+
