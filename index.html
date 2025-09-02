@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Raport Produkcji KPI</title>
-    <script src="https://cdn/tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -73,12 +73,16 @@
             height: 30px;
             border: none;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .split-cell > *:first-child {
             border-bottom: 1px solid #d1d5db;
         }
         .cell-input {
             width: 100%;
+            height: 100%;
             border: none;
             text-align: center;
             background-color: transparent;
@@ -347,7 +351,7 @@
         }
         
         function listenToProductData() {
-            const productsColRef = collection(db, 'artifacts', appId, 'public', 'product_definitions');
+            const productsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'product_definitions');
             onSnapshot(productsColRef, (snapshot) => {
                 productData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 productData.sort((a,b) => a.code.localeCompare(b.code));
@@ -374,7 +378,7 @@
                 const side = row.querySelector('.data-side').value;
 
                 if(code && !isNaN(cycleTime) && !isNaN(people)) {
-                     const docRef = doc(collection(db, 'artifacts', appId, 'public', 'product_definitions'), code);
+                     const docRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'product_definitions'), code);
                      batch.set(docRef, { line, code, cycleTime, people, side });
                 }
             });
@@ -382,7 +386,7 @@
             const currentCodesInUI = Array.from(rows).map(r => r.querySelector('.data-code').value.trim().toUpperCase());
             productData.forEach(item => {
                 if (!currentCodesInUI.includes(item.code)) {
-                     const docRef = doc(collection(db, 'artifacts', appId, 'public', 'product_definitions'), item.code);
+                     const docRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'product_definitions'), item.code);
                      batch.delete(docRef);
                 }
             });
@@ -448,8 +452,18 @@
                     </div>
                 </td>
                 <td class="oee-cell font-bold">0.00%</td>
-                <td class="nominal-people-cell">-</td>
-                <td class="nominal-cycle-cell">-</td>
+                <td class="nominal-people-cell">
+                     <div class="split-cell">
+                        <div>-</div>
+                        <div>-</div>
+                    </div>
+                </td>
+                <td class="nominal-cycle-cell">
+                     <div class="split-cell">
+                        <div>-</div>
+                        <div>-</div>
+                    </div>
+                </td>
                 <td><input type="number" class="cell-input real-people" value="0"></td>
                 <td class="real-cycle-cell">0.00</td>
                 <td>
@@ -557,15 +571,21 @@
             const dataLH = productData.find(p => p.code === codeLH);
             const dataRH = productData.find(p => p.code === codeRH);
 
-            // Dane nominalne dla całej paletki (priorytet LH)
+            // Dane nominalne dla całej paletki (priorytet LH, jeśli oba kody są wybrane)
             const palletData = dataLH || dataRH;
             const nominalPeople = palletData?.people;
             const palletCycleTime = palletData?.cycleTime;
             
-            row.querySelector('.nominal-people-cell').textContent = nominalPeople || '-';
-            row.querySelector('.nominal-cycle-cell').textContent = palletCycleTime || '-';
+            // Aktualizacja UI - obie połówki pokazują tę samą wartość dla całej paletki
+            const peopleCellDivs = row.querySelectorAll('.nominal-people-cell .split-cell div');
+            peopleCellDivs[0].textContent = nominalPeople || '-';
+            peopleCellDivs[1].textContent = nominalPeople || '-';
 
-            // Czasy cyklu dla poszczególnych stron (do planu/max)
+            const cycleCellDivs = row.querySelectorAll('.nominal-cycle-cell .split-cell div');
+            cycleCellDivs[0].textContent = palletCycleTime || '-';
+            cycleCellDivs[1].textContent = palletCycleTime || '-';
+
+            // Czasy cyklu dla poszczególnych stron (mogą być różne, używane do planu/max)
             const nominalCycleLH = dataLH?.cycleTime || 0;
             const nominalCycleRH = dataRH?.cycleTime || 0;
 
@@ -606,13 +626,17 @@
             row.querySelector('.max-qty-cell div:nth-child(1)').textContent = maxQtyLH;
             row.querySelector('.max-qty-cell div:nth-child(2)').textContent = maxQtyRH;
 
+            // Używamy liczby wyprodukowanych paletek (większa z ilości LH/RH)
+            const palletCount = Math.max(okQtyLH + nokQtyLH, okQtyRH + nokQtyRH);
             const effectiveTimeForProduction = (productionTime - inefficiencyTime) * 60;
-            const realCycle = totalProduced > 0 ? effectiveTimeForProduction / totalProduced : 0;
+            // CC Real jest liczony na podstawie paletek, a nie sumy sztuk
+            const realCycle = palletCount > 0 ? effectiveTimeForProduction / palletCount : 0;
             row.querySelector('.real-cycle-cell').textContent = realCycle.toFixed(2);
 
             const availability = availableTime > 0 ? productionTime / availableTime : 0;
-            const performance = totalProduced > 0 && productionTime > 0 && palletCycleTime > 0
-                ? (totalProduced * palletCycleTime) / (productionTime * 60)
+            // Performance liczone na podstawie paletek
+            const performance = palletCount > 0 && productionTime > 0 && palletCycleTime > 0
+                ? (palletCount * palletCycleTime) / (productionTime * 60)
                 : 0;
             const quality = totalProduced > 0 ? totalOk / totalProduced : 0;
             const oee = availability * performance * quality * 100;
@@ -625,7 +649,8 @@
             else if (oee < 80) oeeCell.classList.add('oee-yellow');
             else oeeCell.classList.add('oee-green');
             
-            const productiveTimeMinutes = (totalProduced * realCycle) / 60;
+            // Rozliczenie bazuje na czasie cyklu paletki i liczbie paletek
+            const productiveTimeMinutes = (palletCount * palletCycleTime) / 60;
             const reconciliation = availableTime - totalDowntime - inefficiencyTime - productiveTimeMinutes;
             row.querySelector('.reconciliation-cell').textContent = reconciliation.toFixed(2);
         }
@@ -704,7 +729,7 @@
             });
 
             try {
-                const reportRef = doc(db, 'artifacts', appId, 'public', 'reports', reportId);
+                const reportRef = doc(db, 'artifacts', appId, 'public', 'data', 'reports', reportId);
                 await setDoc(reportRef, reportData);
                 showToast("Raport został pomyślnie zapisany!");
             } catch (error) {
@@ -726,7 +751,7 @@
                 return;
             };
 
-            const reportRef = doc(db, 'artifacts', appId, 'public', 'reports', reportId);
+            const reportRef = doc(db, 'artifacts', appId, 'public', 'data', 'reports', reportId);
             const docSnap = await getDoc(reportRef);
 
             if (docSnap.exists()) {
