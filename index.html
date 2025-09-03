@@ -1,199 +1,646 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { initializeApp } from 'firebase/app';
-import { 
-    getAuth, 
-    signInAnonymously, 
-    signInWithCustomToken, 
-    onAuthStateChanged 
-} from 'firebase/auth';
-import { 
-    getFirestore, 
-    collection, 
-    addDoc, 
-    onSnapshot, 
-    deleteDoc, 
-    doc,
-    setLogLevel
-} from 'firebase/firestore';
-
-// --- Firebase Configuration ---
-// These global variables are provided by the environment.
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-// --- Main App Component ---
-export default function App() {
-    // --- State Management ---
-    const [auth, setAuth] = useState(null);
-    const [db, setDb] = useState(null);
-    const [userId, setUserId] = useState(null);
-    const [tasks, setTasks] = useState([]);
-    const [newTask, setNewTask] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState('');
-
-    // --- Firebase Initialization and Authentication ---
-    useEffect(() => {
-        try {
-            const app = initializeApp(firebaseConfig);
-            const authInstance = getAuth(app);
-            const dbInstance = getFirestore(app);
-            
-            // Enable debug logging for Firestore
-            setLogLevel('debug');
-
-            setAuth(authInstance);
-            setDb(dbInstance);
-
-            const unsubscribe = onAuthStateChanged(authInstance, async (user) => {
-                if (user) {
-                    console.log("User is signed in with UID:", user.uid);
-                    setUserId(user.uid);
-                } else {
-                    console.log("No user signed in. Attempting to sign in...");
-                    try {
-                        if (initialAuthToken) {
-                            await signInWithCustomToken(authInstance, initialAuthToken);
-                            console.log("Signed in with custom token.");
-                        } else {
-                            await signInAnonymously(authInstance);
-                            console.log("Signed in anonymously.");
-                        }
-                    } catch (authError) {
-                        console.error("Error during sign-in:", authError);
-                        setError("Failed to authenticate. Please refresh the page.");
-                    }
-                }
-                 // Initial loading is done once we have a user or tried to sign in.
-                setIsLoading(false);
-            });
-            
-            return () => unsubscribe();
-
-        } catch (e) {
-            console.error("Error initializing Firebase:", e);
-            setError("Could not initialize the application.");
-            setIsLoading(false);
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raport Produkcji KPI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
         }
-    }, []);
-
-    // --- Real-time Data Fetching ---
-    // This effect runs ONLY after userId and db are set, fixing the permission error.
-    useEffect(() => {
-        if (db && userId) {
-            console.log(`Setting up snapshot listener for user ${userId}`);
-            const tasksCollectionPath = `artifacts/${appId}/users/${userId}/tasks`;
-            
-            try {
-                const unsubscribe = onSnapshot(collection(db, tasksCollectionPath), (snapshot) => {
-                    const tasksData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    console.log("Received updated tasks:", tasksData);
-                    setTasks(tasksData);
-                }, (err) => {
-                    // This will now catch permission errors if they still occur.
-                    console.error("Error in onSnapshot listener:", err);
-                    setError("Failed to listen for task updates. Check database rules or connectivity.");
-                });
-
-                // Cleanup the listener when the component unmounts or dependencies change.
-                return () => {
-                    console.log("Cleaning up snapshot listener.");
-                    unsubscribe();
-                };
-            } catch (e) {
-                 console.error("Error creating collection reference:", e);
-                 setError("There was an issue setting up data synchronization.");
-            }
-        } else {
-            console.log("Skipping snapshot setup: db or userId not ready.");
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
         }
-    }, [db, userId, appId]); // Correct dependencies
-
-    // --- Firestore Actions ---
-    const addTask = async (e) => {
-        e.preventDefault();
-        if (!newTask.trim() || !db || !userId) return;
-
-        try {
-            const tasksCollectionPath = `artifacts/${appId}/users/${userId}/tasks`;
-            await addDoc(collection(db, tasksCollectionPath), {
-                text: newTask,
-                createdAt: new Date()
-            });
-            setNewTask('');
-        } catch (err) {
-            console.error("Error adding task:", err);
-            setError("Failed to add the task.");
+        table {
+            border-collapse: collapse;
+            width: 100%; /* Rozciąga tabelę na całą szerokość */
+            table-layout: fixed; /* Wymusza zdefiniowane szerokości kolumn */
         }
-    };
-
-    const deleteTask = async (taskId) => {
-        if (!db || !userId) return;
-        try {
-            const docPath = `artifacts/${appId}/users/${userId}/tasks/${taskId}`;
-            await deleteDoc(doc(db, docPath));
-        } catch (err) {
-            console.error("Error deleting task:", err);
-            setError("Failed to delete the task.");
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 6px 8px;
+            text-align: center;
+            font-size: 12px;
+            vertical-align: top;
+            word-wrap: break-word; /* Zapobiega rozpychaniu komórek */
         }
-    };
-    
-    // --- UI Rendering ---
-    return (
-        <div className="bg-gray-900 text-white min-h-screen font-sans p-4 sm:p-6 md:p-8 flex items-center justify-center">
-            <div className="w-full max-w-2xl mx-auto bg-gray-800 rounded-2xl shadow-2xl p-6 md:p-8 border border-gray-700">
-                <header className="mb-6 text-center">
-                    <h1 className="text-4xl font-bold text-cyan-400">Todo List</h1>
-                    <p className="text-gray-400 mt-2">A real-time collaborative todo app.</p>
-                     {userId && <p className="text-xs text-gray-500 mt-2 break-all">UserID: {userId}</p>}
-                </header>
+        th {
+            background-color: #e5e7eb;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        /* --- EDYCJA SZEROKOŚCI KOLUMN --- */
+        /* Zmień poniższe wartości procentowe, aby dostosować szerokość każdej kolumny. */
+        .col-godz { width: 5%; }
+        .col-oee { width: 5%; }
+        .col-osob-nominal { width: 5%; }
+        .col-cc-nominal { width: 5%; }
+        .col-osob-real { width: 5%; }
+        .col-cc-real { width: 5%; }
+        .col-kod { width: 8%; }
+        .col-ilosc-plan { width: 5%; }
+        .col-ilosc-max { width: 5%; }
+        .col-ok { width: 5%; }
+        .col-nok { width: 5%; }
+        .col-czas-dostepny { width: 6%; }
+        .col-postoje { width: 5%; }
+        .col-brak-wydajnosci { width: 6%; }
+        .col-rozliczenie { width: 6%; }
+        .col-straty { width: 24%; } /* Ta kolumna zawiera 5 pod-kolumn */
+        
+        .header-input, .header-select {
+            padding: 4px 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .split-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 0;
+            border: none;
+        }
+        .split-cell > div, .split-cell > select, .split-cell > input {
+            padding: 4px;
+            height: 30px;
+            border: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .split-cell > *:first-child {
+            border-bottom: 1px solid #d1d5db;
+        }
+        .cell-input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            background-color: transparent;
+            box-sizing: border-box;
+        }
+        .cell-input:focus {
+            outline: 1px solid #3b82f6;
+        }
+        .add-btn {
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2px;
+            color: white;
+            user-select: none;
+        }
+        .blue-plus { background-color: #3b82f6; }
+        .green-plus { background-color: #22c55e; }
+        .red-minus { background-color: #ef4444; }
+        
+        /* OEE Colors */
+        .oee-gray { color: #9ca3af; }
+        .oee-red { color: #ef4444; }
+        .oee-yellow { color: #f59e0b; }
+        .oee-green { color: #22c55e; }
+    </style>
+</head>
+<body class="p-4">
 
-                {error && <div className="bg-red-500/20 text-red-300 p-3 rounded-lg mb-4 text-center">{error}</div>}
+    <div id="app" class="space-y-4">
+        <!-- Nagłówek -->
+        <header class="bg-white p-4 rounded-lg shadow-md flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center gap-2">
+                <label for="report-date" class="font-semibold">DATA:</label>
+                <input type="date" id="report-date" class="header-input">
+            </div>
+            <div class="flex items-center gap-2">
+                <label for="line-select" class="font-semibold">LINIA:</label>
+                <select id="line-select" class="header-select">
+                    <option value="">Wybierz...</option>
+                    <option value="LINE_A">Linia A</option>
+                    <option value="LINE_B">Linia B</option>
+                    <option value="LINE_C">Linia C</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-2">
+                <label for="shift-select" class="font-semibold">ZMIANA:</label>
+                <select id="shift-select" class="header-select">
+                    <option value="I">I</option>
+                    <option value="II">II</option>
+                    <option value="III">III</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-2">
+                <label for="brigade-select" class="font-semibold">BRYGADA:</label>
+                <select id="brigade-select" class="header-select">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-2">
+                <label for="leader-input" class="font-semibold">LIDER:</label>
+                <input type="text" id="leader-input" class="header-input" placeholder="Wpisz nazwisko...">
+            </div>
+            <button id="menu-btn" class="bg-gray-700 text-white px-4 py-2 rounded-md font-semibold hover:bg-gray-800 transition">MENU</button>
+        </header>
 
-                {isLoading ? (
-                     <div className="text-center text-gray-400">Initializing...</div>
-                ) : (
-                    <>
-                        <form onSubmit={addTask} className="flex gap-3 mb-6">
-                            <input
-                                type="text"
-                                value={newTask}
-                                onChange={(e) => setNewTask(e.target.value)}
-                                placeholder="Add a new task..."
-                                className="flex-grow bg-gray-700 text-white placeholder-gray-500 rounded-lg px-4 py-3 border-2 border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all"
-                            />
-                            <button
-                                type="submit"
-                                className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
-                                disabled={!newTask.trim()}
-                            >
-                                Add
-                            </button>
-                        </form>
+        <!-- Tabela Produkcyjna -->
+        <main class="bg-white p-4 rounded-lg shadow-md">
+            <div class="table-container">
+                <table id="production-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" class="col-godz">GODZ</th>
+                            <th rowspan="2" class="col-oee">OEE</th>
+                            <th rowspan="2" class="col-osob-nominal">OSÓB NOMINAŁ</th>
+                            <th rowspan="2" class="col-cc-nominal">CZAS CYKLU NOMINAŁ (s)</th>
+                            <th rowspan="2" class="col-osob-real">OSÓB REAL</th>
+                            <th rowspan="2" class="col-cc-real">CC REAL (s)</th>
+                            <th rowspan="2" class="col-kod">KOD</th>
+                            <th rowspan="2" class="col-ilosc-plan">ILOŚĆ PLAN</th>
+                            <th rowspan="2" class="col-ilosc-max">ILOŚĆ MAX</th>
+                            <th rowspan="2" class="col-ok">OK</th>
+                            <th rowspan="2" class="col-nok">NOK</th>
+                            <th rowspan="2" class="col-czas-dostepny">CZAS DOSTĘPNY (min)</th>
+                            <th rowspan="2" class="col-postoje">POSTOJE (min)</th>
+                            <th rowspan="2" class="col-brak-wydajnosci">BRAK WYDAJNOŚCI (min)</th>
+                            <th rowspan="2" class="col-rozliczenie">ROZLICZENIE CZASU (min)</th>
+                            <th colspan="5" class="col-straty">STRATY</th>
+                        </tr>
+                        <tr>
+                            <th>POWÓD</th>
+                            <th>OPERACJA</th>
+                            <th>CZAS (min)</th>
+                            <th>ILOŚĆ ZDARZEŃ</th>
+                            <th>OPIS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Wiersze będą dodawane dynamicznie przez JS -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
 
-                        <div className="space-y-3">
-                            {tasks.length > 0 ? (
-                                tasks.map(task => (
-                                    <div key={task.id} className="bg-gray-700 rounded-lg p-4 flex justify-between items-center transition-all hover:bg-gray-600/50">
-                                        <p className="text-gray-200">{task.text}</p>
-                                        <button
-                                            onClick={() => deleteTask(task.id)}
-                                            className="text-red-400 hover:text-red-300 transition-colors font-semibold"
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="text-center text-gray-500 py-6">
-                                    <p>No tasks yet. Add one above!</p>
-                                </div>
-                            )}
-                        </div>
-                    </>
-                )}
+    <!-- Modal MENU -->
+    <div id="menu-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-20">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm text-center">
+            <h2 class="text-2xl font-bold mb-4">MENU GŁÓWNE</h2>
+            <div class="space-y-3">
+                 <button id="save-report-btn" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Zapisz Raport</button>
+                <button id="data-modify-btn" class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition">Modyfikacja Danych</button>
+                <button id="close-menu-modal" class="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition mt-6">Zamknij</button>
             </div>
         </div>
-    );
-}
+    </div>
+
+    <!-- Modal Modyfikacji Danych -->
+    <div id="data-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-30">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl">
+            <h2 class="text-2xl font-bold mb-4">Modyfikacja Danych Produktów</h2>
+            <div class="max-h-[60vh] overflow-y-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>LINIA</th>
+                            <th>KOD</th>
+                            <th>CZAS CYKLU (s)</th>
+                            <th>OSÓB NOMINAŁ</th>
+                            <th>STRONA</th>
+                            <th>AKCJA</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table-body">
+                        <!-- Wiersze z danymi produktów -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-4 flex justify-between">
+                <button id="add-data-row-btn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition font-semibold">Dodaj Wiersz</button>
+                <div>
+                    <button id="save-data-btn" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition font-semibold">Zapisz Zmiany</button>
+                    <button id="close-data-modal" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition ml-2">Anuluj</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-5 py-3 rounded-lg shadow-lg opacity-0 transition-opacity duration-300">
+      <p id="toast-message"></p>
+    </div>
+
+
+    <script type="module">
+        // Importy Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, getDocs, writeBatch, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Konfiguracja Firebase ---
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : { apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID" };
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'production-report-app';
+
+        // Inicjalizacja Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        let userId = null;
+        let productData = []; 
+        
+        // --- Uwierzytelnianie ---
+        signInAnonymously(auth).catch((error) => {
+            console.error("Błąd logowania anonimowego:", error);
+        });
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                userId = user.uid;
+                console.log("Zalogowano anonimowo, UID:", userId);
+                listenToProductData();
+                setupInitialListeners();
+            } else {
+                console.log("Użytkownik wylogowany.");
+            }
+        });
+        
+        // --- Globalne Elementy DOM ---
+        const tableBody = document.getElementById('table-body');
+        const lineSelect = document.getElementById('line-select');
+
+        // --- Toast Notification ---
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+
+        function showToast(message, duration = 3000) {
+            toastMessage.textContent = message;
+            toast.classList.remove('opacity-0');
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+            }, duration);
+        }
+
+        // --- Logika Modyfikacji Danych ---
+        const menuBtn = document.getElementById('menu-btn');
+        const menuModal = document.getElementById('menu-modal');
+        const dataModal = document.getElementById('data-modal');
+
+        menuBtn.addEventListener('click', () => menuModal.classList.remove('hidden'));
+        document.getElementById('close-menu-modal').addEventListener('click', () => menuModal.classList.add('hidden'));
+
+        document.getElementById('data-modify-btn').addEventListener('click', () => {
+            const password = prompt("Podaj hasło, aby kontynuować:");
+            if (password === "z") {
+                menuModal.classList.add('hidden');
+                renderDataModalTable();
+                dataModal.classList.remove('hidden');
+            } else if (password !== null) {
+                showToast("Nieprawidłowe hasło!", 3000);
+            }
+        });
+
+        document.getElementById('close-data-modal').addEventListener('click', () => dataModal.classList.add('hidden'));
+        
+        const dataTableBody = document.getElementById('data-table-body');
+        
+        function renderDataModalTable() {
+            dataTableBody.innerHTML = '';
+            productData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <select class="cell-input data-line" data-index="${index}">
+                            <option value="LINE_A" ${item.line === 'LINE_A' ? 'selected' : ''}>Linia A</option>
+                            <option value="LINE_B" ${item.line === 'LINE_B' ? 'selected' : ''}>Linia B</option>
+                            <option value="LINE_C" ${item.line === 'LINE_C' ? 'selected' : ''}>Linia C</option>
+                        </select>
+                    </td>
+                    <td><input type="text" class="cell-input data-code" value="${item.code}" data-index="${index}"></td>
+                    <td><input type="number" step="0.1" class="cell-input data-cycle" value="${item.cycleTime}" data-index="${index}"></td>
+                    <td><input type="number" class="cell-input data-people" value="${item.people}" data-index="${index}"></td>
+                    <td>
+                        <select class="cell-input data-side" data-index="${index}">
+                            <option value="LH" ${item.side === 'LH' ? 'selected' : ''}>LH</option>
+                            <option value="RH" ${item.side === 'RH' ? 'selected' : ''}>RH</option>
+                        </select>
+                    </td>
+                    <td><button class="text-red-500 font-bold delete-data-row" data-index="${index}">Usuń</button></td>
+                `;
+                dataTableBody.appendChild(row);
+            });
+        }
+        
+        // Ta funkcja nasłuchuje na zmiany w bazie danych produktów w czasie rzeczywistym.
+        // Gdy dane się zmienią (np. po zapisie w "Modyfikacji Danych"),
+        // automatycznie aktualizuje lokalną listę produktów (productData) i odświeża listy wyboru w tabeli.
+        function listenToProductData() {
+            const productsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'product_definitions');
+            onSnapshot(productsColRef, (snapshot) => {
+                productData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                productData.sort((a,b) => a.code.localeCompare(b.code));
+                console.log("Dane produktów zaktualizowane:", productData);
+                 document.querySelectorAll('.code-select-lh, .code-select-rh').forEach(select => {
+                    const currentLine = lineSelect.value;
+                    const currentVal = select.value;
+                    populateCodeSelects(select, currentLine, select.classList.contains('code-select-lh') ? 'LH' : 'RH');
+                    select.value = currentVal;
+                });
+                calculateAll(); // Przelicz wszystko po aktualizacji danych
+            });
+        }
+        
+        // Logika zapisu zmian z modyfikacji danych do bazy Firestore.
+        // Przechodzi przez każdy wiersz w modalnym oknie, tworzy lub aktualizuje produkty.
+        // Usuwa również produkty, które zostały usunięte z tabeli w UI.
+        document.getElementById('save-data-btn').addEventListener('click', async () => {
+            const batch = writeBatch(db);
+            const rows = dataTableBody.querySelectorAll('tr');
+
+            rows.forEach((row, index) => {
+                const line = row.querySelector('.data-line').value;
+                const code = row.querySelector('.data-code').value.trim().toUpperCase();
+                const cycleTime = parseFloat(row.querySelector('.data-cycle').value);
+                const people = parseInt(row.querySelector('.data-people').value);
+                const side = row.querySelector('.data-side').value;
+
+                if(code && !isNaN(cycleTime) && !isNaN(people)) {
+                     const docRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'product_definitions'), code);
+                     batch.set(docRef, { line, code, cycleTime, people, side });
+                }
+            });
+            
+            const currentCodesInUI = Array.from(rows).map(r => r.querySelector('.data-code').value.trim().toUpperCase());
+            productData.forEach(item => {
+                if (!currentCodesInUI.includes(item.code)) {
+                     const docRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'product_definitions'), item.code);
+                     batch.delete(docRef);
+                }
+            });
+
+            try {
+                await batch.commit();
+                showToast("Dane produktów zostały zapisane!");
+                dataModal.classList.add('hidden');
+            } catch (e) {
+                console.error("Błąd zapisu danych produktów:", e);
+                showToast("Błąd zapisu. Spróbuj ponownie.", 5000);
+            }
+        });
+        
+        document.getElementById('add-data-row-btn').addEventListener('click', () => {
+            const newRow = document.createElement('tr');
+            const newIndex = dataTableBody.rows.length;
+            newRow.innerHTML = `
+                <td>
+                    <select class="cell-input data-line" data-index="${newIndex}">
+                        <option value="LINE_A" selected>Linia A</option>
+                        <option value="LINE_B">Linia B</option>
+                        <option value="LINE_C">Linia C</option>
+                    </select>
+                </td>
+                <td><input type="text" class="cell-input data-code" placeholder="Nowy kod" data-index="${newIndex}"></td>
+                <td><input type="number" step="0.1" class="cell-input data-cycle" value="0" data-index="${newIndex}"></td>
+                <td><input type="number" class="cell-input data-people" value="0" data-index="${newIndex}"></td>
+                <td>
+                    <select class="cell-input data-side" data-index="${newIndex}">
+                        <option value="LH" selected>LH</option>
+                        <option value="RH">RH</option>
+                    </select>
+                </td>
+                <td><button class="text-red-500 font-bold delete-data-row" data-index="${newIndex}">Usuń</button></td>
+            `;
+            dataTableBody.appendChild(newRow);
+        });
+        
+        dataTableBody.addEventListener('click', e => {
+            if (e.target.classList.contains('delete-data-row')) {
+                e.target.closest('tr').remove();
+            }
+        });
+
+        // --- Logika Głównego Raportu ---
+
+        function createHourRow(hour, isChangeover = false) {
+            const row = document.createElement('tr');
+            row.classList.add('hour-row');
+            row.dataset.hour = hour;
+            row.dataset.isChangeover = isChangeover;
+
+            const hourText = isChangeover ? `P ${hour}-${hour+1}` : `${hour}-${hour+1}`;
+            
+            row.innerHTML = `
+                <td class="relative">
+                    <div class="font-semibold">${hourText}</div>
+                    <div class="absolute bottom-1 right-1 flex">
+                        <span class="add-btn blue-plus" title="Dodaj następną godzinę">+</span>
+                        <span class="add-btn green-plus" title="Dodaj przezbrojenie">+</span>
+                        <span class="add-btn red-minus" title="Usuń wiersz">-</span>
+                    </div>
+                </td>
+                <td class="oee-cell font-bold">0.00%</td>
+                <td class="nominal-people-cell">
+                     <div class="split-cell">
+                        <div>-</div>
+                        <div>-</div>
+                    </div>
+                </td>
+                <td class="nominal-cycle-cell">
+                     <div class="split-cell">
+                        <div>-</div>
+                        <div>-</div>
+                    </div>
+                </td>
+                <td><input type="number" class="cell-input real-people" value="0"></td>
+                <td class="real-cycle-cell">0.00</td>
+                <td>
+                    <div class="split-cell">
+                        <select class="cell-input code-select-lh"></select>
+                        <select class="cell-input code-select-rh"></select>
+                    </div>
+                </td>
+                <td class="plan-qty-cell">
+                    <div class="split-cell"><div>0</div><div>0</div></div>
+                </td>
+                <td class="max-qty-cell">
+                    <div class="split-cell"><div>0</div><div>0</div></div>
+                </td>
+                <td>
+                    <div class="split-cell">
+                        <input type="number" class="cell-input ok-qty-lh" value="0">
+                        <input type="number" class="cell-input ok-qty-rh" value="0">
+                    </div>
+                </td>
+                <td>
+                    <div class="split-cell">
+                        <input type="number" class="cell-input nok-qty-lh" value="0">
+                        <input type="number" class="cell-input nok-qty-rh" value="0">
+                    </div>
+                </td>
+                <td><input type="number" class="cell-input available-time" value="60"></td>
+                <td class="downtime-cell">0</td>
+                <td class="inefficiency-cell">0</td>
+                <td class="reconciliation-cell">60</td>
+                <td colspan="5" class="p-0">
+                    <table class="w-full losses-table">
+                        ${Array(5).fill(0).map(() => `
+                        <tr class="loss-row">
+                            <td>
+                                <select class="cell-input loss-reason">
+                                    <option value="">--</option>
+                                    <option value="BRAK_WYDAJNOSCI">Brak wydajności</option>
+                                    <option value="POSTOJ_TECHNICZNY">Postój techniczny</option>
+                                    <option value="BRAK_MATERIALU">Brak materiału</option>
+                                    <option value="INNE">Inne</option>
+                                </select>
+                            </td>
+                            <td><input type="text" class="cell-input loss-operation"></td>
+                            <td><input type="number" step="0.5" class="cell-input loss-time" value="0"></td>
+                            <td><input type="number" class="cell-input loss-events" value="1"></td>
+                            <td><input type="text" class="cell-input loss-desc"></td>
+                        </tr>`).join('')}
+                    </table>
+                </td>
+            `;
+            
+            const selectedLine = lineSelect.value;
+            populateCodeSelects(row.querySelector('.code-select-lh'), selectedLine, 'LH');
+            populateCodeSelects(row.querySelector('.code-select-rh'), selectedLine, 'RH');
+
+            return row;
+        }
+
+        // Ta funkcja wypełnia listę rozwijaną z kodami produktów.
+        // Filtruje produkty na podstawie wybranej linii i strony (LH/RH),
+        // a następnie dodaje je jako opcje do odpowiedniego selecta.
+        function populateCodeSelects(selectElement, line, side) {
+            const filteredData = productData.filter(p => p.line === line && p.side === side);
+            selectElement.innerHTML = '<option value="">Wybierz kod...</option>';
+            filteredData.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.code;
+                option.textContent = p.code;
+                selectElement.appendChild(option);
+            });
+        }
+        
+        function addNextHourRow(startHour, isChangeover) {
+            const existingHours = Array.from(document.querySelectorAll('.hour-row')).map(r => parseInt(r.dataset.hour));
+            const maxHour = existingHours.length > 0 ? Math.max(...existingHours) : 5;
+            const nextHour = startHour !== undefined ? startHour : maxHour + 1;
+            
+            if (nextHour > 23) return;
+
+            const newRow = createHourRow(nextHour, isChangeover);
+            tableBody.appendChild(newRow);
+        }
+
+        tableBody.addEventListener('click', e => {
+            if (e.target.classList.contains('blue-plus')) {
+                const parentRow = e.target.closest('.hour-row');
+                const currentHour = parseInt(parentRow.dataset.hour);
+                addNextHourRow(currentHour + 1, false);
+            }
+            if (e.target.classList.contains('green-plus')) {
+                const parentRow = e.target.closest('.hour-row');
+                const currentHour = parseInt(parentRow.dataset.hour);
+                addNextHourRow(currentHour, true);
+            }
+            if (e.target.classList.contains('red-minus')) {
+                e.target.closest('.hour-row').remove();
+            }
+        });
+        
+        function calculateAll() {
+            document.querySelectorAll('.hour-row').forEach(row => calculateRow(row));
+        }
+
+        function calculateRow(row) {
+            const codeLH = row.querySelector('.code-select-lh').value;
+            const codeRH = row.querySelector('.code-select-rh').value;
+            const dataLH = productData.find(p => p.code === codeLH);
+            const dataRH = productData.find(p => p.code === codeRH);
+
+            // Dane nominalne dla całej paletki (priorytet LH, jeśli oba kody są wybrane)
+            const palletData = dataLH || dataRH;
+            const nominalPeople = palletData?.people;
+            const palletCycleTime = palletData?.cycleTime;
+            
+            // Aktualizacja UI - obie połówki pokazują tę samą wartość dla całej paletki
+            const peopleCellDivs = row.querySelectorAll('.nominal-people-cell .split-cell div');
+            peopleCellDivs[0].textContent = nominalPeople || '-';
+            peopleCellDivs[1].textContent = nominalPeople || '-';
+
+            const cycleCellDivs = row.querySelectorAll('.nominal-cycle-cell .split-cell div');
+            cycleCellDivs[0].textContent = palletCycleTime || '-';
+            cycleCellDivs[1].textContent = palletCycleTime || '-';
+
+            // Czasy cyklu dla poszczególnych stron (mogą być różne, używane do planu/max)
+            const nominalCycleLH = dataLH?.cycleTime || 0;
+            const nominalCycleRH = dataRH?.cycleTime || 0;
+
+            const okQtyLH = parseInt(row.querySelector('.ok-qty-lh').value) || 0;
+            const okQtyRH = parseInt(row.querySelector('.ok-qty-rh').value) || 0;
+            const nokQtyLH = parseInt(row.querySelector('.nok-qty-lh').value) || 0;
+            const nokQtyRH = parseInt(row.querySelector('.nok-qty-rh').value) || 0;
+            const availableTime = parseFloat(row.querySelector('.available-time').value) || 0;
+            
+            let totalDowntime = 0;
+            let inefficiencyTime = 0;
+            row.querySelectorAll('.loss-row').forEach(lossRow => {
+                const time = parseFloat(lossRow.querySelector('.loss-time').value) || 0;
+                const reason = lossRow.querySelector('.loss-reason').value;
+                if(reason && reason !== 'BRAK_WYDAJNOSCI') {
+                    totalDowntime += time;
+                }
+                if(reason === 'BRAK_WYDAJNOSCI') {
+                    inefficiencyTime += time;
+                }
+            });
+
+            row.querySelector('.downtime-cell').textContent = totalDowntime.toFixed(2);
+            row.querySelector('.inefficiency-cell').textContent = inefficiencyTime.toFixed(2);
+            
+            const productionTime = availableTime - totalDowntime;
+            const totalOk = okQtyLH + okQtyRH;
+            const totalNok = nokQtyLH + nokQtyRH;
+            const totalProduced = totalOk + totalNok;
+
+            const planQtyLH = nominalCycleLH > 0 ? Math.floor((availableTime * 60) / nominalCycleLH) : 0;
+            const planQtyRH = nominalCycleRH > 0 ? Math.floor((availableTime * 60) / nominalCycleRH) : 0;
+            row.querySelector('.plan-qty-cell div:nth-child(1)').textContent = planQtyLH;
+            row.querySelector('.plan-qty-cell div:nth-child(2)').textContent = planQtyRH;
+            
+            const maxQtyLH = nominalCycleLH > 0 ? Math.floor((productionTime * 60) / nominalCycleLH) : 0;
+            const maxQtyRH = nominalCycleRH > 0 ? Math.floor((productionTime * 60) / nominalCycleRH) : 0;
+            row.querySelector('.max-qty-cell div:nth-child(1)').textContent = maxQtyLH;
+            row.querySelector('.max-qty-cell div:nth-child(2)').textContent = maxQtyRH;
+
+            // Używamy liczby wyprodukowanych paletek (większa z ilości LH/RH)
+            const palletCount = Math.max(okQtyLH + nokQtyLH, okQtyRH + nokQtyRH);
+            const effectiveTimeForProduction = (productionTime - inefficiencyTime) * 60;
+            // CC Real jest liczony na podstawie paletek, a nie sumy sztuk
+            const realCycle = palletCount > 0 ? effectiveTimeForProduction / palletCount : 0;
+            row.querySelector('.real-cycle-cell').textContent = realCycle.toFixed(2);
+
+            const availability = availableTime > 0 ? productionTime / availableTime :
+
