@@ -17,8 +17,8 @@
         }
         table {
             border-collapse: collapse;
-            width: 100%; /* Rozciąga tabelę na całą szerokość */
-            table-layout: fixed; /* Wymusza zdefiniowane szerokości kolumn */
+            width: 100%;
+            table-layout: fixed;
         }
         th, td {
             border: 1px solid #d1d5db;
@@ -26,7 +26,7 @@
             text-align: center;
             font-size: 12px;
             vertical-align: top;
-            word-wrap: break-word; /* Zapobiega rozpychaniu komórek */
+            word-wrap: break-word;
         }
         th {
             background-color: #e5e7eb;
@@ -36,8 +36,6 @@
             z-index: 10;
         }
         
-        /* --- EDYCJA SZEROKOŚCI KOLUMN --- */
-        /* Zmień poniższe wartości procentowe, aby dostosować szerokość każdej kolumny. */
         .col-godz { width: 2%; }
         .col-oee { width: 5%; }
         .col-osob-nominal { width: 5%; }
@@ -53,7 +51,7 @@
         .col-postoje { width: 5%; }
         .col-brak-wydajnosci { width: 6%; }
         .col-rozliczenie { width: 6%; }
-        .col-straty { width: 27%; } /* Ta kolumna zawiera 5 pod-kolumn */
+        .col-straty { width: 27%; }
         
         .header-input, .header-select {
             padding: 4px 8px;
@@ -108,7 +106,6 @@
         .green-plus { background-color: #22c55e; }
         .red-minus { background-color: #ef4444; }
         
-        /* OEE Colors */
         .oee-gray { color: #9ca3af; }
         .oee-red { color: #ef4444; }
         .oee-yellow { color: #f59e0b; }
@@ -246,215 +243,55 @@
       <p id="toast-message"></p>
     </div>
 
-
-    <script type="module">
-        // Importy Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, getDocs, writeBatch, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // --- Konfiguracja Firebase ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config) 
-            : { apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID" };
-
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'production-report-app';
-
-        // Inicjalizacja Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
+    <script>
+        // Ustawienie dzisiejszej daty
+        document.getElementById('report-date').valueAsDate = new Date();
         
-        let userId = null;
-        let productData = []; 
+        // Dodanie pierwszego wiersza
+        addNextHourRow(6, false);
         
-        // --- Uwierzytelnianie ---
-        signInAnonymously(auth).catch((error) => {
-            console.error("Błąd logowania anonimowego:", error);
-        });
-
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                userId = user.uid;
-                console.log("Zalogowano anonimowo, UID:", userId);
-                listenToProductData();
-                setupInitialListeners();
-            } else {
-                console.log("Użytkownik wylogowany.");
-            }
+        // Obsługa przycisku MENU
+        document.getElementById('menu-btn').addEventListener('click', function() {
+            document.getElementById('menu-modal').classList.remove('hidden');
         });
         
-        // --- Globalne Elementy DOM ---
-        const tableBody = document.getElementById('table-body');
-        const lineSelect = document.getElementById('line-select');
-
-        // --- Toast Notification ---
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toast-message');
-
-        function showToast(message, duration = 3000) {
-            toastMessage.textContent = message;
-            toast.classList.remove('opacity-0');
-            setTimeout(() => {
-                toast.classList.add('opacity-0');
-            }, duration);
-        }
-
-        // --- Logika Modyfikacji Danych ---
-        const menuBtn = document.getElementById('menu-btn');
-        const menuModal = document.getElementById('menu-modal');
-        const dataModal = document.getElementById('data-modal');
-
-        menuBtn.addEventListener('click', () => menuModal.classList.remove('hidden'));
-        document.getElementById('close-menu-modal').addEventListener('click', () => menuModal.classList.add('hidden'));
-
-        document.getElementById('data-modify-btn').addEventListener('click', () => {
+        // Obsługa zamykania modalu
+        document.getElementById('close-menu-modal').addEventListener('click', function() {
+            document.getElementById('menu-modal').classList.add('hidden');
+        });
+        
+        // Obsługa przycisku modyfikacji danych
+        document.getElementById('data-modify-btn').addEventListener('click', function() {
             const password = prompt("Podaj hasło, aby kontynuować:");
             if (password === "z") {
-                menuModal.classList.add('hidden');
+                document.getElementById('menu-modal').classList.add('hidden');
+                document.getElementById('data-modal').classList.remove('hidden');
                 renderDataModalTable();
-                dataModal.classList.remove('hidden');
             } else if (password !== null) {
-                showToast("Nieprawidłowe hasło!", 3000);
-            }
-        });
-
-        document.getElementById('close-data-modal').addEventListener('click', () => dataModal.classList.add('hidden'));
-        
-        const dataTableBody = document.getElementById('data-table-body');
-        
-        function renderDataModalTable() {
-            dataTableBody.innerHTML = '';
-            productData.forEach((item, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>
-                        <select class="cell-input data-line" data-index="${index}">
-                            <option value="LINE_A" ${item.line === 'LINE_A' ? 'selected' : ''}>Linia A</option>
-                            <option value="LINE_B" ${item.line === 'LINE_B' ? 'selected' : ''}>Linia B</option>
-                            <option value="LINE_C" ${item.line === 'LINE_C' ? 'selected' : ''}>Linia C</option>
-                        </select>
-                    </td>
-                    <td><input type="text" class="cell-input data-code" value="${item.code}" data-index="${index}"></td>
-                    <td><input type="number" step="0.1" class="cell-input data-cycle" value="${item.cycleTime}" data-index="${index}"></td>
-                    <td><input type="number" class="cell-input data-people" value="${item.people}" data-index="${index}"></td>
-                    <td>
-                        <select class="cell-input data-side" data-index="${index}">
-                            <option value="LH" ${item.side === 'LH' ? 'selected' : ''}>LH</option>
-                            <option value="RH" ${item.side === 'RH' ? 'selected' : ''}>RH</option>
-                        </select>
-                    </td>
-                    <td><button class="text-red-500 font-bold delete-data-row" data-index="${index}">Usuń</button></td>
-                `;
-                dataTableBody.appendChild(row);
-            });
-        }
-        
-        // Ta funkcja nasłuchuje na zmiany w bazie danych produktów w czasie rzeczywistym.
-        // Gdy dane się zmienią (np. po zapisie w "Modyfikacji Danych"),
-        // automatycznie aktualizuje lokalną listę produktów (productData) i odświeża listy wyboru w tabeli.
-        function listenToProductData() {
-            const productsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'product_definitions');
-            onSnapshot(productsColRef, (snapshot) => {
-                productData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                productData.sort((a,b) => a.code.localeCompare(b.code));
-                console.log("Dane produktów zaktualizowane:", productData);
-                 document.querySelectorAll('.code-select-lh, .code-select-rh').forEach(select => {
-                    const currentLine = lineSelect.value;
-                    const currentVal = select.value;
-                    populateCodeSelects(select, currentLine, select.classList.contains('code-select-lh') ? 'LH' : 'RH');
-                    select.value = currentVal;
-                });
-                calculateAll(); // Przelicz wszystko po aktualizacji danych
-            });
-        }
-        
-        // Logika zapisu zmian z modyfikacji danych do bazy Firestore.
-        // Przechodzi przez każdy wiersz w modalnym oknie, tworzy lub aktualizuje produkty.
-        // Usuwa również produkty, które zostały usunięte z tabeli w UI.
-        document.getElementById('save-data-btn').addEventListener('click', async () => {
-            const batch = writeBatch(db);
-            const rows = dataTableBody.querySelectorAll('tr');
-
-            rows.forEach((row, index) => {
-                const line = row.querySelector('.data-line').value;
-                const code = row.querySelector('.data-code').value.trim().toUpperCase();
-                const cycleTime = parseFloat(row.querySelector('.data-cycle').value);
-                const people = parseInt(row.querySelector('.data-people').value);
-                const side = row.querySelector('.data-side').value;
-
-                if(code && !isNaN(cycleTime) && !isNaN(people)) {
-                     const docRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'product_definitions'), code);
-                     batch.set(docRef, { line, code, cycleTime, people, side });
-                }
-            });
-            
-            const currentCodesInUI = Array.from(rows).map(r => r.querySelector('.data-code').value.trim().toUpperCase());
-            productData.forEach(item => {
-                if (!currentCodesInUI.includes(item.code)) {
-                     const docRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'product_definitions'), item.code);
-                     batch.delete(docRef);
-                }
-            });
-
-            try {
-                await batch.commit();
-                showToast("Dane produktów zostały zapisane!");
-                dataModal.classList.add('hidden');
-            } catch (e) {
-                console.error("Błąd zapisu danych produktów:", e);
-                showToast("Błąd zapisu. Spróbuj ponownie.", 5000);
+                alert("Nieprawidłowe hasło!");
             }
         });
         
-        document.getElementById('add-data-row-btn').addEventListener('click', () => {
-            const newRow = document.createElement('tr');
-            const newIndex = dataTableBody.rows.length;
-            newRow.innerHTML = `
-                <td>
-                    <select class="cell-input data-line" data-index="${newIndex}">
-                        <option value="LINE_A" selected>Linia A</option>
-                        <option value="LINE_B">Linia B</option>
-                        <option value="LINE_C">Linia C</option>
-                    </select>
-                </td>
-                <td><input type="text" class="cell-input data-code" placeholder="Nowy kod" data-index="${newIndex}"></td>
-                <td><input type="number" step="0.1" class="cell-input data-cycle" value="0" data-index="${newIndex}"></td>
-                <td><input type="number" class="cell-input data-people" value="0" data-index="${newIndex}"></td>
-                <td>
-                    <select class="cell-input data-side" data-index="${newIndex}">
-                        <option value="LH" selected>LH</option>
-                        <option value="RH">RH</option>
-                    </select>
-                </td>
-                <td><button class="text-red-500 font-bold delete-data-row" data-index="${newIndex}">Usuń</button></td>
-            `;
-            dataTableBody.appendChild(newRow);
+        // Obsługa zamykania modalu danych
+        document.getElementById('close-data-modal').addEventListener('click', function() {
+            document.getElementById('data-modal').classList.add('hidden');
         });
         
-        dataTableBody.addEventListener('click', e => {
-            if (e.target.classList.contains('delete-data-row')) {
-                e.target.closest('tr').remove();
-            }
-        });
-
-        // --- Logika Głównego Raportu ---
-
-        function createHourRow(hour, isChangeover = false) {
+        // Funkcja do dodawania wierszy godzin
+        function addNextHourRow(startHour, isChangeover) {
+            const tableBody = document.getElementById('table-body');
             const row = document.createElement('tr');
             row.classList.add('hour-row');
-            row.dataset.hour = hour;
-            row.dataset.isChangeover = isChangeover;
-
-            const hourText = isChangeover ? `P ${hour}-${hour+1}` : `${hour}-${hour+1}`;
+            
+            const hourText = isChangeover ? `P ${startHour}-${startHour+1}` : `${startHour}-${startHour+1}`;
             
             row.innerHTML = `
                 <td class="relative">
                     <div class="font-semibold">${hourText}</div>
                     <div class="absolute bottom-1 right-1 flex">
-                        <span class="add-btn blue-plus" title="Dodaj następną godzinę">+</span>
-                        <span class="add-btn green-plus" title="Dodaj przezbrojenie">+</span>
-                        <span class="add-btn red-minus" title="Usuń wiersz">-</span>
+                        <span class="add-btn blue-plus" title="Dodaj następną godzinę" onclick="addNextHourRow(${startHour+1}, false)">+</span>
+                        <span class="add-btn green-plus" title="Dodaj przezbrojenie" onclick="addNextHourRow(${startHour}, true)">+</span>
+                        <span class="add-btn red-minus" title="Usuń wiersz" onclick="this.closest('tr').remove()">-</span>
                     </div>
                 </td>
                 <td class="oee-cell font-bold">0.00%</td>
@@ -474,8 +311,18 @@
                 <td class="real-cycle-cell">0.00</td>
                 <td>
                     <div class="split-cell">
-                        <select class="cell-input code-select-lh"></select>
-                        <select class="cell-input code-select-rh"></select>
+                        <select class="cell-input code-select-lh">
+                            <option value="">Wybierz kod...</option>
+                            <option value="KOD1">KOD1</option>
+                            <option value="KOD2">KOD2</option>
+                            <option value="KOD3">KOD3</option>
+                        </select>
+                        <select class="cell-input code-select-rh">
+                            <option value="">Wybierz kod...</option>
+                            <option value="KOD4">KOD4</option>
+                            <option value="KOD5">KOD5</option>
+                            <option value="KOD6">KOD6</option>
+                        </select>
                     </div>
                 </td>
                 <td class="plan-qty-cell">
@@ -522,126 +369,98 @@
                 </td>
             `;
             
-            const selectedLine = lineSelect.value;
-            populateCodeSelects(row.querySelector('.code-select-lh'), selectedLine, 'LH');
-            populateCodeSelects(row.querySelector('.code-select-rh'), selectedLine, 'RH');
-
-            return row;
+            tableBody.appendChild(row);
         }
-
-        // Ta funkcja wypełnia listę rozwijaną z kodami produktów.
-        // Filtruje produkty na podstawie wybranej linii i strony (LH/RH),
-        // a następnie dodaje je jako opcje do odpowiedniego selecta.
-        function populateCodeSelects(selectElement, line, side) {
-            const filteredData = productData.filter(p => p.line === line && p.side === side);
-            selectElement.innerHTML = '<option value="">Wybierz kod...</option>';
-            filteredData.forEach(p => {
-                const option = document.createElement('option');
-                option.value = p.code;
-                option.textContent = p.code;
-                selectElement.appendChild(option);
+        
+        // Funkcja do renderowania tabeli w modalnym oknie danych
+        function renderDataModalTable() {
+            const dataTableBody = document.getElementById('data-table-body');
+            dataTableBody.innerHTML = '';
+            
+            // Przykładowe dane
+            const sampleData = [
+                { line: 'LINE_A', code: 'KOD1', cycleTime: 30, people: 4, side: 'LH' },
+                { line: 'LINE_A', code: 'KOD2', cycleTime: 45, people: 3, side: 'RH' },
+                { line: 'LINE_B', code: 'KOD3', cycleTime: 25, people: 5, side: 'LH' }
+            ];
+            
+            sampleData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <select class="cell-input data-line" data-index="${index}">
+                            <option value="LINE_A" ${item.line === 'LINE_A' ? 'selected' : ''}>Linia A</option>
+                            <option value="LINE_B" ${item.line === 'LINE_B' ? 'selected' : ''}>Linia B</option>
+                            <option value="LINE_C" ${item.line === 'LINE_C' ? 'selected' : ''}>Linia C</option>
+                        </select>
+                    </td>
+                    <td><input type="text" class="cell-input data-code" value="${item.code}" data-index="${index}"></td>
+                    <td><input type="number" step="0.1" class="cell-input data-cycle" value="${item.cycleTime}" data-index="${index}"></td>
+                    <td><input type="number" class="cell-input data-people" value="${item.people}" data-index="${index}"></td>
+                    <td>
+                        <select class="cell-input data-side" data-index="${index}">
+                            <option value="LH" ${item.side === 'LH' ? 'selected' : ''}>LH</option>
+                            <option value="RH" ${item.side === 'RH' ? 'selected' : ''}>RH</option>
+                        </select>
+                    </td>
+                    <td><button class="text-red-500 font-bold delete-data-row" data-index="${index}">Usuń</button></td>
+                `;
+                dataTableBody.appendChild(row);
+            });
+            
+            // Obsługa przycisku usuwania
+            document.querySelectorAll('.delete-data-row').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.closest('tr').remove();
+                });
             });
         }
         
-        function addNextHourRow(startHour, isChangeover) {
-            const existingHours = Array.from(document.querySelectorAll('.hour-row')).map(r => parseInt(r.dataset.hour));
-            const maxHour = existingHours.length > 0 ? Math.max(...existingHours) : 5;
-            const nextHour = startHour !== undefined ? startHour : maxHour + 1;
+        // Dodawanie nowego wiersza w modalu danych
+        document.getElementById('add-data-row-btn').addEventListener('click', function() {
+            const dataTableBody = document.getElementById('data-table-body');
+            const newRow = document.createElement('tr');
+            const newIndex = dataTableBody.rows.length;
             
-            if (nextHour > 23) return;
-
-            const newRow = createHourRow(nextHour, isChangeover);
-            tableBody.appendChild(newRow);
-        }
-
-        tableBody.addEventListener('click', e => {
-            if (e.target.classList.contains('blue-plus')) {
-                const parentRow = e.target.closest('.hour-row');
-                const currentHour = parseInt(parentRow.dataset.hour);
-                addNextHourRow(currentHour + 1, false);
-            }
-            if (e.target.classList.contains('green-plus')) {
-                const parentRow = e.target.closest('.hour-row');
-                const currentHour = parseInt(parentRow.dataset.hour);
-                addNextHourRow(currentHour, true);
-            }
-            if (e.target.classList.contains('red-minus')) {
-                e.target.closest('.hour-row').remove();
-            }
+            newRow.innerHTML = `
+                <td>
+                    <select class="cell-input data-line" data-index="${newIndex}">
+                        <option value="LINE_A">Linia A</option>
+                        <option value="LINE_B">Linia B</option>
+                        <option value="LINE_C">Linia C</option>
+                    </select>
+                </td>
+                <td><input type="text" class="cell-input data-code" placeholder="Nowy kod" data-index="${newIndex}"></td>
+                <td><input type="number" step="0.1" class="cell-input data-cycle" value="0" data-index="${newIndex}"></td>
+                <td><input type="number" class="cell-input data-people" value="0" data-index="${newIndex}"></td>
+                <td>
+                    <select class="cell-input data-side" data-index="${newIndex}">
+                        <option value="LH">LH</option>
+                        <option value="RH">RH</option>
+                    </select>
+                </td>
+                <td><button class="text-red-500 font-bold delete-data-row" data-index="${newIndex}">Usuń</button></td>
+            `;
+            
+            dataTableBody.appendChild(newRow);
+            
+            // Obsługa przycisku usuwania dla nowego wiersza
+            newRow.querySelector('.delete-data-row').addEventListener('click', function() {
+                this.closest('tr').remove();
+            });
         });
         
-        function calculateAll() {
-            document.querySelectorAll('.hour-row').forEach(row => calculateRow(row));
-        }
-
-        function calculateRow(row) {
-            const codeLH = row.querySelector('.code-select-lh').value;
-            const codeRH = row.querySelector('.code-select-rh').value;
-            const dataLH = productData.find(p => p.code === codeLH);
-            const dataRH = productData.find(p => p.code === codeRH);
-
-            // Dane nominalne dla całej paletki (priorytet LH, jeśli oba kody są wybrane)
-            const palletData = dataLH || dataRH;
-            const nominalPeople = palletData?.people;
-            const palletCycleTime = palletData?.cycleTime;
-            
-            // Aktualizacja UI - obie połówki pokazują tę samą wartość dla całej paletki
-            const peopleCellDivs = row.querySelectorAll('.nominal-people-cell .split-cell div');
-            peopleCellDivs[0].textContent = nominalPeople || '-';
-            peopleCellDivs[1].textContent = nominalPeople || '-';
-
-            const cycleCellDivs = row.querySelectorAll('.nominal-cycle-cell .split-cell div');
-            cycleCellDivs[0].textContent = palletCycleTime || '-';
-            cycleCellDivs[1].textContent = palletCycleTime || '-';
-
-            // Czasy cyklu dla poszczególnych stron (mogą być różne, używane do planu/max)
-            const nominalCycleLH = dataLH?.cycleTime || 0;
-            const nominalCycleRH = dataRH?.cycleTime || 0;
-
-            const okQtyLH = parseInt(row.querySelector('.ok-qty-lh').value) || 0;
-            const okQtyRH = parseInt(row.querySelector('.ok-qty-rh').value) || 0;
-            const nokQtyLH = parseInt(row.querySelector('.nok-qty-lh').value) || 0;
-            const nokQtyRH = parseInt(row.querySelector('.nok-qty-rh').value) || 0;
-            const availableTime = parseFloat(row.querySelector('.available-time').value) || 0;
-            
-            let totalDowntime = 0;
-            let inefficiencyTime = 0;
-            row.querySelectorAll('.loss-row').forEach(lossRow => {
-                const time = parseFloat(lossRow.querySelector('.loss-time').value) || 0;
-                const reason = lossRow.querySelector('.loss-reason').value;
-                if(reason && reason !== 'BRAK_WYDAJNOSCI') {
-                    totalDowntime += time;
-                }
-                if(reason === 'BRAK_WYDAJNOSCI') {
-                    inefficiencyTime += time;
-                }
-            });
-
-            row.querySelector('.downtime-cell').textContent = totalDowntime.toFixed(2);
-            row.querySelector('.inefficiency-cell').textContent = inefficiencyTime.toFixed(2);
-            
-            const productionTime = availableTime - totalDowntime;
-            const totalOk = okQtyLH + okQtyRH;
-            const totalNok = nokQtyLH + nokQtyRH;
-            const totalProduced = totalOk + totalNok;
-
-            const planQtyLH = nominalCycleLH > 0 ? Math.floor((availableTime * 60) / nominalCycleLH) : 0;
-            const planQtyRH = nominalCycleRH > 0 ? Math.floor((availableTime * 60) / nominalCycleRH) : 0;
-            row.querySelector('.plan-qty-cell div:nth-child(1)').textContent = planQtyLH;
-            row.querySelector('.plan-qty-cell div:nth-child(2)').textContent = planQtyRH;
-            
-            const maxQtyLH = nominalCycleLH > 0 ? Math.floor((productionTime * 60) / nominalCycleLH) : 0;
-            const maxQtyRH = nominalCycleRH > 0 ? Math.floor((productionTime * 60) / nominalCycleRH) : 0;
-            row.querySelector('.max-qty-cell div:nth-child(1)').textContent = maxQtyLH;
-            row.querySelector('.max-qty-cell div:nth-child(2)').textContent = maxQtyRH;
-
-            // Używamy liczby wyprodukowanych paletek (większa z ilości LH/RH)
-            const palletCount = Math.max(okQtyLH + nokQtyLH, okQtyRH + nokQtyRH);
-            const effectiveTimeForProduction = (productionTime - inefficiencyTime) * 60;
-            // CC Real jest liczony na podstawie paletek, a nie sumy sztuk
-            const realCycle = palletCount > 0 ? effectiveTimeForProduction / palletCount : 0;
-            row.querySelector('.real-cycle-cell').textContent = realCycle.toFixed(2);
-
-            const availability = availableTime > 0 ? productionTime / availableTime :
-
-
+        // Obsługa zapisywania danych
+        document.getElementById('save-data-btn').addEventListener('click', function() {
+            alert('Dane zostały zapisane!');
+            document.getElementById('data-modal').classList.add('hidden');
+        });
+        
+        // Obsługa zapisywania raportu
+        document.getElementById('save-report-btn').addEventListener('click', function() {
+            alert('Raport został zapisany!');
+            document.getElementById('menu-modal').classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
