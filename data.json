@@ -1,1 +1,15 @@
+// Klucz do przechowywania danych w localStorage
+const STORAGE_KEY = 'productData';
 
+// Próba wczytania danych z localStorage, jeśli ich nie ma, użyj domyślnych
+let productData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
+    { line: 'LINE_A', code: 'KOD1', cycleTime: 30, people: 4, side: 'LH' },
+    { line: 'LINE_A', code: 'KOD2', cycleTime: 45, people: 3, side: 'RH' },
+    { line: 'LINE_B', code: 'KOD3', cycleTime: 25, people: 5, side: 'LH' }
+];
+
+// Funkcja do zapisu danych w localStorage
+function saveProductData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(productData));
+    showToast('Dane produktów zostały zapisane!', 'bg-green-600');
+}
