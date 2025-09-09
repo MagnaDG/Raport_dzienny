@@ -43,7 +43,6 @@ th {
 /* Poprawione style dla komórek tabeli, aby zapewnić wyśrodkowanie w pionie i poziomie */
 .hour-row td {
     height: 40px; /* Zmniejszona wysokość wiersza */
-    display: table-cell;
     vertical-align: middle;
 }
 /* Nowa reguła dla podwójnych komórek */
