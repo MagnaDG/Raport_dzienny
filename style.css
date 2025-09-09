@@ -40,7 +40,7 @@ th {
     border-radius: 4px;
     font-size: 14px;
 }
-/* Kluczowa zmiana: wyrównanie i podział komórek */
+/* Wyśrodkowanie w pionie i poziomie dla zawartości */
 .split-cell {
     display: flex;
     flex-direction: column;
@@ -50,6 +50,7 @@ th {
     border: none;
     height: 100%;
 }
+/* Równy podział i wyśrodkowanie dla każdego elementu w podzielonej komórce */
 .split-cell > span, .split-cell > select, .split-cell > input {
     padding: 4px;
     height: 100%;
@@ -61,6 +62,7 @@ th {
     width: 100%;
     box-sizing: border-box;
 }
+/* Linia oddzielająca obie połówki */
 .split-cell > *:first-child {
     border-bottom: 1px solid #d1d5db;
 }
