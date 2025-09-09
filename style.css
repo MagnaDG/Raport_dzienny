@@ -42,14 +42,14 @@ th {
 }
 /* Poprawione style dla komórek tabeli, aby zapewnić wyśrodkowanie w pionie i poziomie */
 .hour-row td {
-    height: 60px; /* Stała wysokość wiersza dla lepszego wyglądu */
+    height: 40px; /* Zmniejszona wysokość wiersza */
     display: table-cell;
     vertical-align: middle;
 }
 /* Nowa reguła dla podwójnych komórek */
 .split-cell-td {
     padding: 0;
-    height: 60px;
+    height: 40px; /* Zmniejszona wysokość dla podzielonych komórek */
 }
 .split-cell {
     display: flex;
