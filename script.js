@@ -160,13 +160,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </td>
             <td class="oee-cell font-bold">0.00%</td>
-            <td class="nominal-people-cell"><div class="split-cell"><div>-</div><div>-</div></div></td>
-            <td class="nominal-cycle-cell"><div class="split-cell"><div>-</div><div>-</div></div></td>
+            <td class="nominal-people-cell"><div class="split-cell"><span>-</span><span>-</span></div></td>
+            <td class="nominal-cycle-cell"><div class="split-cell"><span>-</span><span>-</span></div></td>
             <td><input type="number" class="cell-input real-people" value="0"></td>
             <td class="real-cycle-cell">0.00</td>
             <td><div class="split-cell">${codeSelectOptions()}</div></td>
-            <td class="plan-qty-cell"><div class="split-cell"><div>0</div><div>0</div></div></td>
-            <td class="max-qty-cell"><div class="split-cell"><div>0</div><div>0</div></div></td>
+            <td class="plan-qty-cell"><div class="split-cell"><span>0</span><span>0</span></div></td>
+            <td class="max-qty-cell"><div class="split-cell"><span>0</span><span>0</span></div></td>
             <td><div class="split-cell"><input type="number" class="cell-input ok-qty-lh" value="0"><input type="number" class="cell-input ok-qty-rh" value="0"></div></td>
             <td><div class="split-cell"><input type="number" class="cell-input nok-qty-lh" value="0"><input type="number" class="cell-input nok-qty-rh" value="0"></div></td>
             <td><input type="number" class="cell-input available-time" value="60"></td>
