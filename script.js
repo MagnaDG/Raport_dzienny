@@ -6,9 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- LOGIKA ZARZĄDZANIA DANYMI ---
     const STORAGE_KEY = 'productData';
     let productData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-        { line: 'MP4', code: '36000123MXX', cycleTime: 312,5, people: 24, side: 'LH' },
-        { line: 'MP4', code: '36000321MXX', cycleTime: 12,5, people: 24, side: 'RH' },
-        { line: 'M4', code: '36000444MXX', cycleTime: 25, people: 5, side: 'LH' }
+        { line: 'MP4', code: '36000123MXX', cycleTime: 30, people: 4, side: 'LH' },
+        { line: 'MP4', code: '36000456MXX', cycleTime: 45, people: 3, side: 'RH' },
+        { line: 'MP5', code: '36000789MXX', cycleTime: 25, people: 5, side: 'LH' }
     ];
 
     function saveProductData() {
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lines.forEach(line => {
             const option = document.createElement('option');
             option.value = line;
-            option.textContent = line.replace('LINE_', 'Linia ');
+            option.textContent = line;
             lineSelect.appendChild(option);
         });
     }
@@ -74,12 +74,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const nominalCycleCell = row.querySelector('.nominal-cycle-cell');
         const realCycleCell = row.querySelector('.real-cycle-cell');
 
-        const people = (productLH ? productLH.people : 0) + (productRH ? productRH.people : 0);
-        const cycle = Math.max((productLH ? productLH.cycleTime : 0), (productRH ? productRH.cycleTime : 0));
+        let people = 0;
+        let cycle = 0;
+
+        if (productLH) {
+            people += productLH.people;
+            cycle = Math.max(cycle, productLH.cycleTime);
+        }
+        if (productRH) {
+            people += productRH.people;
+            cycle = Math.max(cycle, productRH.cycleTime);
+        }
         
         nominalPeopleCell.textContent = people > 0 ? people : '-';
         nominalCycleCell.textContent = cycle > 0 ? cycle.toFixed(1) : '-';
-        realCycleCell.textContent = cycle > 0 ? cycle.toFixed(1) : '0.00';
+        realCycleCell.textContent = cycle.toFixed(1);
     }
 
     // --- LOGIKA MODALU DANYCH ---
@@ -92,9 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             row.innerHTML = `
                 <td>
                     <select class="cell-input data-line" data-index="${index}">
-                        <option value="LINE_A" ${item.line === 'LINE_A' ? 'selected' : ''}>Linia A</option>
-                        <option value="LINE_B" ${item.line === 'LINE_B' ? 'selected' : ''}>Linia B</option>
-                        <option value="LINE_C" ${item.line === 'LINE_C' ? 'selected' : ''}>Linia C</option>
+                        ${[...new Set(productData.map(p => p.line))].sort().map(line => `<option value="${line}" ${item.line === line ? 'selected' : ''}>${line}</option>`).join('')}
                     </select>
                 </td>
                 <td><input type="text" class="cell-input data-code" value="${item.code}" data-index="${index}"></td>
@@ -114,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Obsługa dodawania wiersza w modalu danych
     document.getElementById('add-data-row-btn').addEventListener('click', function() {
-        productData.push({ line: 'LINE_A', code: '', cycleTime: 0, people: 0, side: 'LH' });
+        productData.push({ line: 'MP4', code: '', cycleTime: 0, people: 0, side: 'LH' });
         renderDataModalTable();
     });
 
@@ -185,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <td class="nominal-people-cell">-</td>
             <td class="nominal-cycle-cell">-</td>
             <td><input type="number" class="cell-input real-people" value="0"></td>
-            <td class="real-cycle-cell">0.00</td>
+            <td class="real-cycle-cell">0.0</td>
             <td class="split-cell-td"><div class="split-cell">${codeSelectOptions()}</div></td>
             <td class="split-cell-td"><div class="split-cell"><span>0</span><span>0</span></div></td>
             <td class="split-cell-td"><div class="split-cell"><span>0</span><span>0</span></div></td>
@@ -213,16 +220,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td><input type="number" class="cell-input loss-events" value="0"></td>
                         <td><input type="text" class="cell-input loss-desc"></td>
                     </tr>`).join('')}
-            </table>
-        </td>
-    `;
-    tableBody.appendChild(row);
-    
-    // Dodajemy nasłuchiwanie na zdarzenia 'change' na selectach kodu
-    row.querySelectorAll('.code-select-lh, .code-select-rh').forEach(select => {
-        select.addEventListener('change', () => updateProductInfo(row));
-    });
-}
+                </table>
+            </td>
+        `;
+        tableBody.appendChild(row);
+        
+        // Dodajemy nasłuchiwanie na zdarzenia 'change' na selectach kodu
+        row.querySelectorAll('.code-select-lh, .code-select-rh').forEach(select => {
+            select.addEventListener('change', () => updateProductInfo(row));
+        });
+    }
     
     // --- OBSŁUGA MODALI I PRZYCISKÓW ---
     const menuModal = document.getElementById('menu-modal');
@@ -241,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     document.getElementById('close-data-modal').addEventListener('click', () => dataModal.classList.remove('open'));
-    document.getElementById('save-report-btn').addEventListener('click', () => {
+    document.getElementById('save-data-btn').addEventListener('click', () => {
         alert('Raport został zapisany!');
         menuModal.classList.remove('open');
     });
@@ -256,5 +263,3 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLineSelect();
     addNextHourRow(6, false);
 });
-
-
