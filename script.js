@@ -159,9 +159,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="add-btn red-minus" title="Usuń wiersz" onclick="this.closest('tr').remove()">-</span>
                 </div>
             </td>
-            <td class="oee-cell font-bold">0.00%</td>
-            <td class="nominal-people-cell"><div class="split-cell"><span>-</span><span>-</span></div></td>
-            <td class="nominal-cycle-cell"><div class="split-cell"><span>-</span><span>-</span></div></td>
+            <td class="oee-cell font-bold">0%</td>
+            <td class="nominal-people-cell">-</td>
+            <td class="nominal-cycle-cell">-</td>
             <td><input type="number" class="cell-input real-people" value="0"></td>
             <td class="real-cycle-cell">0.00</td>
             <td><div class="split-cell">${codeSelectOptions()}</div></td>
