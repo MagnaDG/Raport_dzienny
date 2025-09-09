@@ -40,26 +40,34 @@ th {
     border-radius: 4px;
     font-size: 14px;
 }
-/* Wyśrodkowanie w pionie i poziomie dla zawartości */
+/* Poprawione style dla komórek tabeli, aby zapewnić wyśrodkowanie w pionie i poziomie */
+.hour-row td {
+    height: 60px; /* Stała wysokość wiersza dla lepszego wyglądu */
+    display: table-cell;
+    vertical-align: middle;
+}
+/* Nowa reguła dla podwójnych komórek */
+.split-cell-td {
+    padding: 0;
+    height: 60px;
+}
 .split-cell {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 0;
+    height: 100%;
     border: none;
-    height: 100%;
 }
-/* Równy podział i wyśrodkowanie dla każdego elementu w podzielonej komórce */
+/* Wyrównanie i rozmiar dla elementów wewnątrz podzielonych komórek */
 .split-cell > span, .split-cell > select, .split-cell > input {
-    padding: 4px;
-    height: 100%;
+    height: 50%; /* Równy podział wysokości */
+    width: 100%;
     border: none;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
     box-sizing: border-box;
 }
 /* Linia oddzielająca obie połówki */
