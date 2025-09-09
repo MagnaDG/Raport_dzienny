@@ -6,9 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- LOGIKA ZARZĄDZANIA DANYMI ---
     const STORAGE_KEY = 'productData';
     let productData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-        { line: 'LINE_A', code: 'KOD1', cycleTime: 30, people: 4, side: 'LH' },
-        { line: 'LINE_A', code: 'KOD2', cycleTime: 45, people: 3, side: 'RH' },
-        { line: 'LINE_B', code: 'KOD3', cycleTime: 25, people: 5, side: 'LH' }
+        { line: 'MP4', code: '36000123MXX', cycleTime: 312,5, people: 24, side: 'LH' },
+        { line: 'MP4', code: '36000321MXX', cycleTime: 12,5, people: 24, side: 'RH' },
+        { line: 'M4', code: '36000444MXX', cycleTime: 25, people: 5, side: 'LH' }
     ];
 
     function saveProductData() {
@@ -256,4 +256,5 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLineSelect();
     addNextHourRow(6, false);
 });
+
 
