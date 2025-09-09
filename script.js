@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </td>
                         <td><input type="text" class="cell-input loss-operation"></td>
                         <td><input type="number" step="0.5" class="cell-input loss-time" value="0"></td>
-                        <td><input type="number" class="cell-input loss-events" value="1"></td>
+                        <td><input type="number" class="cell-input loss-events" value="0"></td>
                         <td><input type="text" class="cell-input loss-desc"></td>
                     </tr>`).join('')}
             </table>
@@ -256,3 +256,4 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLineSelect();
     addNextHourRow(6, false);
 });
+
