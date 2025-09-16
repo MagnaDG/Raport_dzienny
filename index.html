@@ -3,251 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel AQA</title>
+    <title>Nagłówek projektu</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
         }
         
-        .header-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 2px solid black;
-            padding: 10px;
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0 10px;
-        }
-
-        .label {
-            font-size: 14px;
-            font-weight: bold;
-            text-decoration: underline;
-            margin-bottom: 5px;
-            white-space: nowrap;
-        }
-
-        .input-container {
-            border: 2px solid black;
-            padding: 5px;
-            width: 150px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .dropdown-select {
+        body, html {
+            height: 100%;
             width: 100%;
-            border: none;
-            background: none;
-            outline: none;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .table-section {
-            display: flex;
-            margin-right: 20px;
-            border-collapse: collapse;
-        }
-
-        .table-container {
-            border: 2px solid black;
-            border-left: none;
-        }
-
-        .table-header-row {
-            display: flex;
-            align-items: stretch;
+            overflow: hidden;
         }
         
-        .table-header-cell {
-            font-size: 12px;
-            font-weight: bold;
-            border: 1px solid black;
-            padding: 5px;
-            text-align: center;
-            background-color: #e0e0e0;
-            min-width: 30px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-        }
-
-        .header-cell-nr {
-            width: 180px;
-            border-left: 2px solid black;
-            white-space: nowrap;
-            padding: 5px 10px;
-        }
-        
-        .header-cell-status {
-            width: 50px;
-            border-left: none;
-            background-color: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            border-bottom: 1px solid black;
-            text-align: center;
-        }
-
-        .table-data-row {
-            display: flex;
-        }
-
-        .table-data-cell {
-            border: 1px solid black;
-            padding: 5px;
-            text-align: center;
-            width: 30px;
-            height: 20px;
-        }
-
-        .data-cell-nr {
-            width: 180px;
-            border-left: 2px solid black;
-            white-space: nowrap;
-        }
-
-        .data-cell-status-container {
-            display: flex;
-            align-items: stretch;
-        }
-        
-        .data-cell-status-box {
-            width: 30px;
-            height: 20px;
-            border: 1px solid black;
-        }
-
-        .comment-section {
+        .container {
             display: flex;
             flex-direction: column;
-            margin-left: auto;
+            height: 100vh;
+            width: 100%;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        .header {
+            font-size: 2.5vw;
+            margin-bottom: 2vh;
+            letter-spacing: 1px;
+        }
+        
+        .content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
         }
         
-        .comment-label {
-            font-size: 14px;
+        .comment {
+            font-size: 2vw;
+            text-align: center;
+            margin-bottom: 5vh;
+        }
+        
+        .menu {
+            font-size: 3vw;
+            text-align: center;
             font-weight: bold;
-            text-decoration: underline;
-            white-space: nowrap;
+            margin-top: auto;
+            margin-bottom: 5vh;
         }
-
-        .comment-box {
-            border: 2px solid black;
-            border-radius: 25px;
-            width: 300px;
-            height: 50px;
-            margin-top: 5px;
-            background-color: #f0f0f0;
-        }
-
-        .menu-section {
-            margin-left: 20px;
-            display: flex;
-            align-items: center;
-        }
-
-        .menu-button {
-            border: 2px solid black;
-            background-color: #f0f0f0;
-            padding: 15px 30px;
-            cursor: pointer;
-            font-weight: bold;
-            white-space: nowrap;
-            border-radius: 5px;
+        
+        @media (max-width: 768px) {
+            .header {
+                font-size: 4vw;
+            }
+            
+            .comment {
+                font-size: 3.5vw;
+            }
+            
+            .menu {
+                font-size: 5vw;
+            }
         }
     </style>
 </head>
 <body>
-
-    <div class="header-container">
-        <div class="section">
-            <span class="label">DATA</span>
-            <div class="input-container">
-                <select class="dropdown-select">
-                    <option value="" disabled selected></option>
-                    <option value="data1">2025-09-16</option>
-                    <option value="data2">2025-09-17</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="section">
-            <span class="label">LINIA</span>
-            <div class="input-container">
-                <select class="dropdown-select">
-                    <option value="" disabled selected></option>
-                    <option value="linia1">Linia Produkcyjna 1</option>
-                    <option value="linia2">Linia Produkcyjna 2</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="table-section">
-            <div class="table-header-row">
-                <div class="table-header-cell header-cell-nr">NR. LIDER/Nazwisko Imię</div>
-                <div class="table-header-cell header-cell-status">STATUS</div>
-                <div class="table-header-cell">Q</div>
-                <div class="table-header-cell">C</div>
-                <div class="table-header-cell">O</div>
-                <div class="table-header-cell">M</div>
-                <div class="table-header-cell">DL</div>
-                <div class="table-header-cell" style="color: green;">OK</div>
-                <div class="table-header-cell" style="color: red;">NOK</div>
-            </div>
-            <div class="table-container">
-                <div class="table-data-row">
-                    <div class="table-data-cell data-cell-nr"></div>
-                    <div class="data-cell-status-container">
-                        <div class="data-cell-status-box"></div>
-                        <div class="data-cell-status-box"></div>
-                        <div class="data-cell-status-box"></div>
-                        <div class="data-cell-status-box"></div>
-                        <div class="data-cell-status-box"></div>
-                        <div class="data-cell-status-box"></div>
-                        <div class="data-cell-status-box"></div>
-                    </div>
-                </div>
-                <div class="table-data-row">
-                    <div class="table-data-cell data-cell-nr"></div>
-                    <div class="data-cell-status-container">
-                        <div class="data-cell-status-box"></div>
-                        <div class="data-cell-status-box"></div>
-                        <div class="data-cell-status-box"></div>
-                        <div class="data-cell-status-box"></div>
-                        <div class="data-cell-status-box"></div>
-                        <div class="data-cell-status-box"></div>
-                        <div class="data-cell-status-box"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="comment-section">
-            <span class="comment-label">KOMENTARZ DO WYŚWIETLANIA NA TV</span>
-            <div class="comment-box"></div>
-        </div>
-
-        <div class="menu-section">
-            <button class="menu-button">MENU</button>
+    <div class="container">
+        <div class="header">eR _UDER(Nanwiskoimie) [Ta       a a  KOMENTARZ DO WYSWIETANANATV</div>
+        
+        <div class="content">
+            <div class="comment">a</div>
+            <div class="menu">MENU</div>
         </div>
     </div>
-
 </body>
 </html>
