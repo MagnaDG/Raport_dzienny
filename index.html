@@ -1,374 +1,253 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Nagłówek — data z kalendarzem</title>
-<style>
-  :root{
-    --black:#000;
-    --grid:#9ea6ad;
-    --head-bg:#fff;
-    --input-bg:#f7fbff;
-    --tv-bg:#f3f7ff;
-    --ok:#c8f7c9;
-    --nok:#ffdede;
-    font-family: "Segoe UI", Roboto, Arial, sans-serif;
-  }
-  *{box-sizing:border-box}
-  body{ margin:0; background:#fff; padding:18px; -webkit-font-smoothing:antialiased;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel AQA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 2px solid black;
+            padding: 10px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-  /* outer frame (header only) */
-  .header-frame{
-    width:100%;
-    margin:0 auto;
-    border:3px solid var(--black);
-    padding:12px 14px;
-    background:#fff;
-    border-radius:2px;
-  }
+        .section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px;
+        }
 
-  /* layout grid: data | line | leader | status | kpi | comment | menu */
-  .hdr-grid{
-    display:grid;
-    grid-template-columns: 230px 230px 420px 78px 420px 420px 120px;
-    gap:12px;
-    align-items:start;
-  }
+        .label {
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
 
-  .lbl { font-size:11px; font-weight:800; color:#222; margin-bottom:6px; text-align:center; letter-spacing:0.6px; }
-  .lbl.italic { font-style:italic; text-decoration:underline; }
+        .input-container {
+            border: 2px solid black;
+            padding: 5px;
+            width: 150px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-  /* DATA and LINIA boxes */
-  .box {
-    border:1px solid var(--black);
-    padding:10px;
-    border-radius:6px;
-    background:var(--head-bg);
-    min-height:58px;
-  }
-  .box .control {
-    width:100%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-  }
+        .dropdown-select {
+            width: 100%;
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
 
-  /* visible date display */
-  .date-display {
-    width:88%;
-    padding:10px 12px;
-    border-radius:8px;
-    border:1px solid #bfc7ce;
-    background:var(--input-bg);
-    font-size:15px;
-    text-align:center;
-    cursor:pointer;
-    user-select:none;
-  }
-  .date-display:focus { outline:2px solid #9bbef8; }
+        .table-section {
+            display: flex;
+            margin-right: 20px;
+            border-collapse: collapse;
+        }
 
-  /* hidden native date input (used to open picker) */
-  #nativeDate {
-    position: absolute;
-    left: -9999px;
-    width:1px; height:1px; opacity:0;
-  }
+        .table-container {
+            border: 2px solid black;
+            border-left: none;
+        }
 
-  select {
-    padding:8px 10px;
-    border-radius:8px;
-    border:1px solid #bfc7ce;
-    background:var(--input-bg);
-    font-size:14px;
-    width:88%;
-    cursor:pointer;
-  }
+        .table-header-row {
+            display: flex;
+            align-items: stretch;
+        }
+        
+        .table-header-cell {
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid black;
+            padding: 5px;
+            text-align: center;
+            background-color: #e0e0e0;
+            min-width: 30px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
 
-  /* Leader / BR. area (complex grid) */
-  .leader-box{
-    border:1px solid var(--black);
-    padding:8px;
-    border-radius:6px;
-    background:#fff;
-  }
-  .leader-top{
-    display:flex;
-    gap:8px;
-    align-items:center;
-  }
-  .leader-top .br {
-    border:1px solid var(--black);
-    padding:6px 8px;
-    min-width:40px;
-    text-align:center;
-    font-weight:900;
-    background:#fff;
-  }
-  .leader-top .title{
-    border:1px solid var(--black);
-    padding:6px 10px;
-    flex:1;
-    font-weight:800;
-    text-align:center;
-    background:#fff;
-  }
-  .leader-grid{
-    display:grid;
-    grid-template-columns:60px 1fr;
-    gap:6px;
-    margin-top:8px;
-  }
-  .leader-grid .key{ border:1px solid var(--grid); padding:6px; text-align:center; background:#fff; font-weight:700; }
-  .leader-grid .val{ border:1px solid var(--grid); padding:6px; background:#fff; }
+        .header-cell-nr {
+            width: 180px;
+            border-left: 2px solid black;
+            white-space: nowrap;
+            padding: 5px 10px;
+        }
+        
+        .header-cell-status {
+            width: 50px;
+            border-left: none;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            border-bottom: 1px solid black;
+            text-align: center;
+        }
 
-  /* STATUS vertical small box */
-  .status-box{
-    border:1px solid var(--black);
-    border-radius:4px;
-    height:86px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:900;
-    background:#fff;
-  }
+        .table-data-row {
+            display: flex;
+        }
 
-  /* KPI small grid */
-  .kpi-box{
-    border:1px solid var(--black);
-    padding:6px;
-    border-radius:6px;
-    background:#fff;
-  }
-  .kpi-grid{
-    display:grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap:6px;
-    align-items:center;
-  }
-  .kpi-grid .kpi-label{
-    border:1px solid var(--grid);
-    padding:6px;
-    text-align:center;
-    font-weight:800;
-    background:#f8fbff;
-    font-size:12px;
-  }
-  .kpi-grid .kpi-val{
-    border:1px solid var(--grid);
-    padding:8px;
-    text-align:center;
-    font-weight:800;
-    background:#fff;
-  }
-  .kpi-grid .kpi-ok{ background:var(--ok); }
-  .kpi-grid .kpi-nok{ background:var(--nok); }
+        .table-data-cell {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: center;
+            width: 30px;
+            height: 20px;
+        }
 
-  /* COMMENT area (to display on TV) */
-  .tv-box{
-    border:1px solid var(--black);
-    padding:8px;
-    border-radius:8px;
-    background:var(--tv-bg);
-  }
-  .tv-label{ font-weight:800; font-size:12px; text-align:left; margin-bottom:6px; }
-  .tv-input{
-    display:block;
-    width:100%;
-    height:52px;
-    border-radius:10px;
-    border:1px solid #bfc7ce;
-    background:#fff;
-    padding:10px;
-    font-size:14px;
-    box-shadow: inset 0 2px 6px rgba(0,0,0,0.04);
-    resize:none;
-  }
+        .data-cell-nr {
+            width: 180px;
+            border-left: 2px solid black;
+            white-space: nowrap;
+        }
 
-  /* MENU plaque on right */
-  .menu-plaque{
-    border:1px solid var(--black);
-    background: linear-gradient(#f7f7f7,#e8e8e8);
-    box-shadow: 6px 6px 0 rgba(0,0,0,0.08);
-    border-radius:4px;
-    height:72px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:900;
-    font-size:18px;
-    cursor:pointer;
-  }
+        .data-cell-status-container {
+            display: flex;
+            align-items: stretch;
+        }
+        
+        .data-cell-status-box {
+            width: 30px;
+            height: 20px;
+            border: 1px solid black;
+        }
 
-  /* responsive: allow scroll horizontally */
-  @media (max-width:1300px){
-    .hdr-grid{ grid-template-columns: 180px 180px 360px 64px 320px 300px 110px; gap:8px; }
-  }
-  @media (max-width:1000px){
-    .header-frame{ padding:10px; }
-    .hdr-grid{ grid-template-columns: 1fr; gap:10px; }
-    .menu-plaque{ justify-self:center; width:120px; }
-  }
-</style>
+        .comment-section {
+            display: flex;
+            flex-direction: column;
+            margin-left: auto;
+            align-items: center;
+        }
+        
+        .comment-label {
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: underline;
+            white-space: nowrap;
+        }
+
+        .comment-box {
+            border: 2px solid black;
+            border-radius: 25px;
+            width: 300px;
+            height: 50px;
+            margin-top: 5px;
+            background-color: #f0f0f0;
+        }
+
+        .menu-section {
+            margin-left: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-button {
+            border: 2px solid black;
+            background-color: #f0f0f0;
+            padding: 15px 30px;
+            cursor: pointer;
+            font-weight: bold;
+            white-space: nowrap;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-  <div class="header-frame" role="banner" aria-label="Nagłówek raportu">
-    <div class="hdr-grid">
-      <!-- DATA -->
-      <div>
-        <div class="lbl italic">DATA</div>
-        <div class="box">
-          <div class="control">
-            <!-- visible date -->
-            <div id="dateDisplay" class="date-display" role="button" tabindex="0" aria-label="Aktualna data, kliknij aby wybrać inną">
-              <!-- filled by JS -->
+
+    <div class="header-container">
+        <div class="section">
+            <span class="label">DATA</span>
+            <div class="input-container">
+                <select class="dropdown-select">
+                    <option value="" disabled selected></option>
+                    <option value="data1">2025-09-16</option>
+                    <option value="data2">2025-09-17</option>
+                </select>
             </div>
-            <!-- hidden native date input used only to show calendar -->
-            <input id="nativeDate" type="date" aria-hidden="true" />
-          </div>
         </div>
-      </div>
 
-      <!-- LINIA -->
-      <div>
-        <div class="lbl italic">LINIA</div>
-        <div class="box">
-          <div class="control">
-            <select id="lineSelect" aria-label="Wybierz linię">
-              <option value="">-- wybierz --</option>
-              <option>MP4</option>
-              <option>MP3</option>
-              <option>MP2</option>
-            </select>
-          </div>
+        <div class="section">
+            <span class="label">LINIA</span>
+            <div class="input-container">
+                <select class="dropdown-select">
+                    <option value="" disabled selected></option>
+                    <option value="linia1">Linia Produkcyjna 1</option>
+                    <option value="linia2">Linia Produkcyjna 2</option>
+                </select>
+            </div>
         </div>
-      </div>
 
-      <!-- BR. / LIDER -->
-      <div>
-        <div class="lbl">BR. <span style="margin-left:8px; font-weight:700;">LIDER ( Nazwisko Imię )</span></div>
-        <div class="leader-box" role="group" aria-label="BR lider">
-          <div class="leader-top">
-            <div class="br">BR.</div>
-            <div class="title">LIDER ( Nazwisko Imię )</div>
-          </div>
-
-          <div class="leader-grid" style="margin-top:8px;">
-            <div class="key">C</div><div class="val">P.Zawadzka / Ł.Chowaniak</div>
-            <div class="key">B</div><div class="val">WITAJCIE</div>
-            <div class="key">A</div><div class="val">WITAJCIE</div>
-          </div>
+        <div class="table-section">
+            <div class="table-header-row">
+                <div class="table-header-cell header-cell-nr">NR. LIDER/Nazwisko Imię</div>
+                <div class="table-header-cell header-cell-status">STATUS</div>
+                <div class="table-header-cell">Q</div>
+                <div class="table-header-cell">C</div>
+                <div class="table-header-cell">O</div>
+                <div class="table-header-cell">M</div>
+                <div class="table-header-cell">DL</div>
+                <div class="table-header-cell" style="color: green;">OK</div>
+                <div class="table-header-cell" style="color: red;">NOK</div>
+            </div>
+            <div class="table-container">
+                <div class="table-data-row">
+                    <div class="table-data-cell data-cell-nr"></div>
+                    <div class="data-cell-status-container">
+                        <div class="data-cell-status-box"></div>
+                        <div class="data-cell-status-box"></div>
+                        <div class="data-cell-status-box"></div>
+                        <div class="data-cell-status-box"></div>
+                        <div class="data-cell-status-box"></div>
+                        <div class="data-cell-status-box"></div>
+                        <div class="data-cell-status-box"></div>
+                    </div>
+                </div>
+                <div class="table-data-row">
+                    <div class="table-data-cell data-cell-nr"></div>
+                    <div class="data-cell-status-container">
+                        <div class="data-cell-status-box"></div>
+                        <div class="data-cell-status-box"></div>
+                        <div class="data-cell-status-box"></div>
+                        <div class="data-cell-status-box"></div>
+                        <div class="data-cell-status-box"></div>
+                        <div class="data-cell-status-box"></div>
+                        <div class="data-cell-status-box"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
 
-      <!-- STATUS -->
-      <div>
-        <div class="lbl">STATUS</div>
-        <div class="status-box" role="status" aria-label="Status"> </div>
-      </div>
-
-      <!-- KPI grid -->
-      <div>
-        <div class="lbl" aria-hidden="true"> </div>
-        <div class="kpi-box" aria-hidden="false">
-          <div class="kpi-grid" role="table" aria-label="KPI">
-            <div class="kpi-label">Q</div>
-            <div class="kpi-label">C</div>
-            <div class="kpi-label">D</div>
-            <div class="kpi-label">M</div>
-            <div class="kpi-label">DL</div>
-            <div class="kpi-label">OK</div>
-            <div class="kpi-label">NOK</div>
-
-            <div class="kpi-val"> </div>
-            <div class="kpi-val"> </div>
-            <div class="kpi-val"> </div>
-            <div class="kpi-val"> </div>
-            <div class="kpi-val"> </div>
-            <div class="kpi-val kpi-ok"> </div>
-            <div class="kpi-val kpi-nok"> </div>
-          </div>
+        <div class="comment-section">
+            <span class="comment-label">KOMENTARZ DO WYŚWIETLANIA NA TV</span>
+            <div class="comment-box"></div>
         </div>
-      </div>
 
-      <!-- Comment for TV -->
-      <div>
-        <div class="lbl">KOMENTARZ DO WYŚWIETLANIA NA TV</div>
-        <div class="tv-box">
-          <textarea class="tv-input" placeholder="Tutaj wpisz komentarz wyświetlany na telewizorze..." aria-label="Komentarz do wyświetlenia na TV"></textarea>
+        <div class="menu-section">
+            <button class="menu-button">MENU</button>
         </div>
-      </div>
-
-      <!-- MENU plaque -->
-      <div>
-        <div class="lbl" style="visibility:hidden">MENU</div>
-        <div class="menu-plaque" role="button" tabindex="0" aria-label="Otwórz menu">
-          MENU
-        </div>
-      </div>
-
     </div>
-  </div>
 
-<script>
-  // polish weekday names
-  const weekPL = ['niedziela','poniedziałek','wtorek','środa','czwartek','piątek','sobota'];
-
-  const dateDisplay = document.getElementById('dateDisplay');
-  const nativeDate = document.getElementById('nativeDate');
-
-  function pad(n){ return String(n).padStart(2,'0'); }
-
-  function formatPolish(dateObj){
-    const d = dateObj.getDate();
-    const m = dateObj.getMonth()+1;
-    const y = dateObj.getFullYear();
-    const weekday = weekPL[dateObj.getDay()];
-    return `${weekday} ${pad(d)}.${pad(m)}.${y}`;
-  }
-
-  function setDisplayFromInput(){
-    if(nativeDate.value){
-      const parts = nativeDate.value.split('-');
-      const dt = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-      dateDisplay.innerText = formatPolish(dt);
-    }
-  }
-
-  // set today's date initially
-  (function initDate(){
-    const now = new Date();
-    const iso = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate());
-    nativeDate.value = iso;
-    setDisplayFromInput();
-  })();
-
-  // clicking visible display opens native picker
-  function openPicker(){
-    // try modern API first
-    if (typeof nativeDate.showPicker === 'function') {
-      nativeDate.showPicker();
-    } else {
-      // fallback: focus+click
-      nativeDate.focus();
-      nativeDate.click();
-    }
-  }
-
-  dateDisplay.addEventListener('click', openPicker);
-  dateDisplay.addEventListener('keydown', (e)=>{
-    if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPicker(); }
-  });
-
-  nativeDate.addEventListener('change', ()=>{
-    setDisplayFromInput();
-  });
-
-  // accessibility: pressing Enter on menu plaque (visual)
-  document.querySelector('.menu-plaque').addEventListener('keydown', (e)=> {
-    if(e.key === 'Enter' || e.key === ' ') e.target.click();
-  });
-</script>
 </body>
 </html>
