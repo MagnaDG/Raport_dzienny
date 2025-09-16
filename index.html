@@ -1,409 +1,216 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Raport - interfejs (statyczny)</title>
-<style>
-  :root{
-    --bg:#efefef;
-    --paper:#fffdfc;
-    --frame-border:#111;
-    --grid:#bfc6cc;
-    --head:#eef6ff;
-    --muted:#444;
-    --accent-yellow:#fff8cc;
-    --accent-green:#e9f7ea;
-    --shadow: 0 10px 30px rgba(16,24,40,0.08);
-    font-family: "Segoe UI", Roboto, Arial, sans-serif;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%; margin:0; background:var(--bg); -webkit-font-smoothing:antialiased;}
-  body{padding:14px; display:flex; align-items:stretch; justify-content:center;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel AQA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
 
-  /* FRAME covers full viewport height minus padding */
-  .frame{
-    width:calc(100% - 28px);
-    max-width:1600px;
-    height:calc(100vh - 28px);
-    background:var(--paper);
-    border:4px solid var(--frame-border);
-    border-radius:12px;
-    box-shadow:var(--shadow);
-    display:flex;
-    flex-direction:column;
-    padding:14px;
-    gap:12px;
-  }
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 2px solid black;
+            padding: 10px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-  /* HEADER */
-  .header {
-    display:flex;
-    gap:12px;
-    align-items:flex-start;
-    justify-content:space-between;
-  }
-  .header-left { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+        .section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 15px;
+        }
 
-  .box {
-    border:2px solid var(--frame-border);
-    background:#fff;
-    padding:8px 12px;
-    border-radius:8px;
-    text-align:center;
-    min-width:120px;
-  }
-  .box .label{ font-size:12px; color:var(--muted); font-weight:800; display:block; margin-bottom:6px; }
-  .box .value{ font-weight:900; font-size:16px; letter-spacing:1px; }
+        .label {
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 5px;
+        }
 
-  .line-box {
-    border:4px solid var(--frame-border);
-    padding:12px 20px;
-    min-width:260px;
-    border-radius:10px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    background:linear-gradient(#fff,#fbfbfb);
-  }
-  .line-box .label{ font-size:13px; }
-  .line-box .value{ font-size:34px; letter-spacing:4px; }
+        .dropdown-container {
+            border: 2px solid black;
+            border-radius: 5px;
+            padding: 5px;
+            background-color: #e0e0e0;
+            width: 150px;
+            text-align: center;
+            position: relative;
+        }
 
-  .leader {
-    min-width:360px;
-    border:2px solid var(--frame-border);
-    padding:8px;
-    border-radius:8px;
-    background:#fff;
-  }
-  .leader .lead-grid { display:grid; grid-template-columns:40px 1fr; gap:6px; align-items:center; }
-  .lead-grid .h{ font-weight:800; background:var(--head); padding:6px; border:1px solid var(--grid); text-align:center; }
-  .lead-grid .v{ padding:6px; border:1px solid var(--grid); background:#fff; font-size:13px; }
+        .dropdown-select {
+            width: 100%;
+            background-color: transparent;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
 
-  /* RIGHT SIDE with KPI and menu plaque */
-  .header-right { display:flex; gap:12px; align-items:flex-start; }
+        .table-section {
+            display: flex;
+            flex-direction: column;
+            margin-right: 20px;
+        }
 
-  .kpi-strip {
-    display:flex;
-    gap:6px;
-    align-items:center;
-    justify-content:flex-end;
-  }
-  .kpi-item{
-    min-width:48px;
-    border:1px solid var(--grid);
-    padding:6px 8px;
-    text-align:center;
-    font-weight:800;
-    border-radius:6px;
-    background:#fff;
-  }
+        .table-header {
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 5px;
+        }
 
-  .plaque {
-    border:3px solid var(--frame-border);
-    padding:10px;
-    min-width:280px;
-    border-radius:10px;
-    background:linear-gradient(#fff,#f5f9ff);
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-  }
-  .plaque .title{ font-weight:900; text-align:center; letter-spacing:1px; }
-  .plaque .kpis {
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:6px;
-  }
-  .plaque .kpis .lab { font-weight:800; background:var(--head); padding:6px; border:1px solid var(--grid); text-align:center; }
-  .plaque .kpis .val { padding:8px; border:1px solid var(--grid); text-align:center; font-weight:800; background:#fff; }
+        .table-header-cell {
+            font-weight: bold;
+            border: 1px solid black;
+            padding: 5px;
+            text-align: center;
+            background-color: #e0e0e0;
+        }
 
-  /* MENU plaque (top-right clickable board) */
-  .menu-plaque{
-    border:3px solid var(--frame-border);
-    padding:8px 12px;
-    border-radius:8px;
-    background:linear-gradient(#fff,#f3f3f3);
-    display:flex;
-    gap:10px;
-    align-items:center;
-    cursor:pointer;
-    height:fit-content;
-  }
-  .menu-plaque .icon{ font-size:20px; }
-  .menu-plaque .txt{ font-weight:900; letter-spacing:1px; }
+        .table-row {
+            display: flex;
+        }
 
-  /* TABLE AREA: fills remaining space */
-  .table-wrap{
-    flex:1 1 auto;
-    border-top:2px solid var(--frame-border);
-    padding-top:10px;
-    overflow:auto;
-    min-height:0; /* for flex */
-  }
+        .table-cell {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: center;
+            width: 50px;
+        }
 
-  table.sheet{
-    width:100%;
-    border-collapse:collapse;
-    min-width:1600px; /* keep proportions like sheet */
-    table-layout:fixed;
-    font-size:13px;
-  }
-  thead th {
-    position:sticky;
-    top:0;
-    background:var(--head);
-    border:2px solid var(--frame-border);
-    padding:10px;
-    font-weight:900;
-    text-align:center;
-    z-index:2;
-  }
-  tbody td {
-    border:1px solid var(--grid);
-    padding:8px;
-    background:#fff;
-    vertical-align:middle;
-  }
+        .table-cell.wider {
+            width: 120px;
+        }
 
-  .hours {
-    background:linear-gradient(#f7fff3,#eafbea);
-    font-weight:900;
-    text-align:center;
-    width:80px;
-  }
+        .status-header {
+            background-color: #e0e0e0;
+            font-weight: bold;
+            border: 1px solid black;
+            padding: 5px;
+            text-align: center;
+        }
 
-  /* special appearances like in screenshot */
-  .cell-yellow { background:var(--accent-yellow); }
-  .cell-green { background:var(--accent-green); font-weight:800; }
-  .small { font-size:12px; color:#333; }
-  .comment { min-width:300px; width:100%; border:0; resize:vertical; font-family:inherit; font-size:13px; background:transparent; }
+        .status-container {
+            display: flex;
+        }
 
-  /* thin lines between some columns to mimic thicker separations */
-  th.sep-right, td.sep-right { border-right:3px solid var(--frame-border); }
+        .status-cell {
+            width: 30px;
+        }
 
-  /* narrow columns */
-  .w-xs{ width:70px; }
-  .w-s{ width:95px; }
-  .w-m{ width:120px; }
-  .w-l{ width:160px; }
-  .w-xl{ width:220px; }
+        .status-cell.ok { color: green; }
+        .status-cell.nok { color: red; }
 
-  /* sample filled rows look */
-  .filled td { background:#fff; }
-  .filled .cell-yellow { background:var(--accent-yellow); }
-  .filled .cell-green { background:var(--accent-green); }
+        .comment-section {
+            display: flex;
+            flex-direction: column;
+            margin-left: auto;
+            align-items: flex-end;
+        }
 
-  /* responsive: horizontal scroll on small screens */
-  @media (max-width:1400px){
-    table.sheet{ min-width:1400px; font-size:12px;}
-  }
-  @media (max-width:1100px){
-    table.sheet{ min-width:1200px; font-size:12px;}
-  }
-  @media (max-width:800px){
-    table.sheet{ min-width:1000px; font-size:11px;}
-    .leader { min-width:200px; }
-  }
-</style>
+        .comment-box {
+            border: 2px solid black;
+            border-radius: 25px;
+            width: 300px;
+            height: 50px;
+            padding: 10px;
+            margin-top: 5px;
+            background-color: #e0e0e0;
+        }
+
+        .menu-section {
+            margin-left: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-button {
+            border: 2px solid black;
+            background-color: #f0f0f0;
+            padding: 15px 30px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 5px;
+            white-space: nowrap;
+        }
+    </style>
 </head>
 <body>
-  <div class="frame" role="document" aria-label="Raport produkcyjny">
-    <div class="header" role="banner">
-      <div class="header-left">
-        <div class="box">
-          <span class="label">DATA</span>
-          <span class="value">wtorek<br><small style="font-size:14px">16.09.2025</small></span>
-        </div>
 
-        <div class="line-box" aria-label="Linia">
-          <span class="label">LINIA</span>
-          <span class="value">MP4</span>
-        </div>
-
-        <div class="leader">
-          <span class="label">BR. LIDER (Nazwisko Imię)</span>
-          <div class="lead-grid" style="margin-top:6px;">
-            <div class="h">C</div><div class="v">P.Zawadzka / Ł.Chowaniak</div>
-            <div class="h">B</div><div class="v">WITAJCIE</div>
-            <div class="h">A</div><div class="v">WITAJCIE</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="header-right" aria-hidden="false">
-        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
-          <div class="kpi-strip" aria-hidden="true">
-            <div class="kpi-item">Q</div>
-            <div class="kpi-item">C</div>
-            <div class="kpi-item">D</div>
-            <div class="kpi-item">M</div>
-            <div class="kpi-item">DL</div>
-            <div class="kpi-item" style="background:var(--accent-green)">OK</div>
-            <div class="kpi-item" style="background:#ffdede">NOK</div>
-            <div class="kpi-item">FTT</div>
-          </div>
-
-          <div class="plaque" aria-hidden="true">
-            <div class="title">STATUS</div>
-            <div class="kpis">
-              <div class="lab">Q</div><div class="val">100%</div>
-              <div class="lab">C</div><div class="val">76%</div>
-              <div class="lab">D</div><div class="val">93%</div>
-              <div class="lab">M</div><div class="val">82%</div>
-              <div class="lab">DL</div><div class="val">69%</div>
-              <div class="lab">OK</div><div class="val cell-green">91%</div>
+    <div class="container">
+        <div class="section">
+            <span class="label">DATA</span>
+            <div class="dropdown-container">
+                <select class="dropdown-select">
+                    <option value="" disabled selected>Wybierz datę</option>
+                    <option value="data1">2025-09-16</option>
+                    <option value="data2">2025-09-17</option>
+                </select>
             </div>
-          </div>
-
-          <div class="menu-plaque" title="Menu (kliknij)">
-            <div class="icon">📋</div>
-            <div class="txt">MENU</div>
-          </div>
         </div>
-      </div>
+
+        <div class="section">
+            <span class="label">LINIA</span>
+            <div class="dropdown-container">
+                <select class="dropdown-select">
+                    <option value="" disabled selected>Wybierz linię</option>
+                    <option value="linia1">Linia Produkcyjna 1</option>
+                    <option value="linia2">Linia Produkcyjna 2</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <div class="table-header">
+                <div class="table-header-cell wider">NR. LIDER/Nazwisko Imię</div>
+                <div class="status-header">STATUS</div>
+                <div class="table-header-cell status-cell">Q</div>
+                <div class="table-header-cell status-cell">C</div>
+                <div class="table-header-cell status-cell">O</div>
+                <div class="table-header-cell status-cell">M</div>
+                <div class="table-header-cell status-cell">DL</div>
+                <div class="table-header-cell status-cell ok">OK</div>
+                <div class="table-header-cell status-cell nok">NOK</div>
+            </div>
+            <div class="table-row">
+                <div class="table-cell wider">Jan Kowalski</div>
+                <div class="table-cell status-cell"></div>
+                <div class="table-cell status-cell"></div>
+                <div class="table-cell status-cell"></div>
+                <div class="table-cell status-cell"></div>
+                <div class="table-cell status-cell"></div>
+                <div class="table-cell status-cell"></div>
+                <div class="table-cell status-cell"></div>
+            </div>
+            <div class="table-row">
+                <div class="table-cell wider">Anna Nowak</div>
+                <div class="table-cell status-cell"></div>
+                <div class="table-cell status-cell"></div>
+                <div class="table-cell status-cell"></div>
+                <div class="table-cell status-cell"></div>
+                <div class="table-cell status-cell"></div>
+                <div class="table-cell status-cell"></div>
+                <div class="table-cell status-cell"></div>
+            </div>
+        </div>
+
+        <div class="comment-section">
+            <span class="label">KOMENTARZ DO WYŚWIETLANIA NA TV</span>
+            <div class="comment-box"></div>
+        </div>
+
+        <div class="menu-section">
+            <button class="menu-button">MENU</button>
+        </div>
+
     </div>
 
-    <div class="table-wrap" role="main">
-      <table class="sheet" role="table" aria-label="Tabela godzinowa">
-        <thead>
-          <tr>
-            <th class="hours">GODZ.</th>
-            <th class="w-xs sep-right">OEE</th>
-            <th class="w-xs">FTT</th>
-            <th class="w-s">DOST.</th>
-            <th class="w-s">WYDAJ.</th>
-            <th class="w-xs">OSÓB NOM.</th>
-            <th class="w-xs">OSÓB REAL</th>
-            <th class="w-xs">ILOŚĆ T.L.</th>
-            <th class="w-s">Tt NOM</th>
-            <th class="w-s">Tt real</th>
-            <th class="w-m">ILOŚĆ PLAN</th>
-            <th class="w-m">ILOŚĆ MAX</th>
-            <th class="w-m">ILOŚĆ OK</th>
-            <th class="w-m">ILOŚĆ NOK</th>
-            <th class="w-s">CZAS DOST.</th>
-            <th class="w-s">CZAS PRACY</th>
-            <th class="w-s">POSTOJE</th>
-            <th class="w-s">MIKRO</th>
-            <th class="w-s">BRAK WYD.</th>
-            <th class="w-s">rozlicz. czasu</th>
-            <th class="w-s">POWÓD</th>
-            <th class="w-s">OP</th>
-            <th class="w-s">CZAS</th>
-            <th class="w-s">LZ</th>
-            <th class="w-l">KOD</th>
-            <th class="w-l">KOD</th>
-            <th class="w-xs">CC</th>
-            <th class="comment">OPIS / KOMENTARZ</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- wiersz 6-7 -->
-          <tr class="filled">
-            <td class="hours">6-7<br><span class="small">rzeczhr.</span></td>
-            <td class="cell-yellow">64%</td>
-            <td class="cell-yellow">100%</td>
-            <td class="cell-yellow">71%</td>
-            <td class="cell-yellow">97%</td>
-            <td class="cell-yellow">24</td>
-            <td class="cell-yellow">25</td>
-            <td class="cell-yellow">2</td>
-            <td>13,6</td>
-            <td>13,9</td>
-            <td>243</td>
-            <td>159</td>
-            <td>155</td>
-            <td> - </td>
-            <td> </td>
-            <td>55</td>
-            <td>36</td>
-            <td class="cell-yellow">16</td>
-            <td>3</td>
-            <td class="cell-green">0</td>
-            <td class="small">ZEBRANIE<br>MIKROPRZESTOJE</td>
-            <td class="small">linia 250/260</td>
-            <td class="small">13</td>
-            <td class="small">LZ</td>
-            <td>36000296mxx</td>
-            <td>36000297mxx</td>
-            <td>55</td>
-            <td class="comment"><textarea class="comment" rows="3">zablokowane śruby, brak cięgien 1007116</textarea></td>
-          </tr>
-
-          <!-- wiersz 7-8 -->
-          <tr class="filled">
-            <td class="hours">7-8<br><span class="small">rzeczhr.</span></td>
-            <td class="cell-yellow">84%</td>
-            <td class="cell-yellow">100%</td>
-            <td class="cell-yellow">100%</td>
-            <td class="cell-yellow">91%</td>
-            <td class="cell-yellow">24</td>
-            <td class="cell-yellow">25</td>
-            <td class="cell-yellow">2</td>
-            <td>13,6</td>
-            <td>14,9</td>
-            <td>243</td>
-            <td>159</td>
-            <td>200</td>
-            <td> - </td>
-            <td> </td>
-            <td>55</td>
-            <td>51</td>
-            <td class="cell-yellow">0</td>
-            <td>4</td>
-            <td class="cell-green">0</td>
-            <td class="small">MIKROPRZESTOJE</td>
-            <td class="small">linia 280/260</td>
-            <td class="small">13</td>
-            <td class="small">LZ</td>
-            <td>36000296mxx</td>
-            <td>36000297mxx</td>
-            <td>55</td>
-            <td class="comment"><textarea class="comment" rows="3">MIKROPRZESTOJE: zablokowany separator</textarea></td>
-          </tr>
-
-          <!-- wiersz 8-9 -->
-          <tr class="filled">
-            <td class="hours">8-9<br><span class="small">rzeczhr.</span></td>
-            <td class="cell-yellow">80%</td>
-            <td class="cell-yellow">100%</td>
-            <td class="cell-yellow">100%</td>
-            <td class="cell-yellow">91%</td>
-            <td class="cell-yellow">24</td>
-            <td class="cell-yellow">25</td>
-            <td class="cell-yellow">2</td>
-            <td>13,6</td>
-            <td>15,0</td>
-            <td>265</td>
-            <td>234</td>
-            <td>214</td>
-            <td> - </td>
-            <td> </td>
-            <td>60</td>
-            <td>53</td>
-            <td class="cell-yellow">0</td>
-            <td>7</td>
-            <td class="cell-green">0</td>
-            <td class="small">MIKROPRZESTOJE</td>
-            <td class="small">linia 750/260</td>
-            <td class="small">13</td>
-            <td class="small">LZ</td>
-            <td>36000296mxx</td>
-            <td>36000297mxx</td>
-            <td>60</td>
-            <td class="comment"><textarea class="comment" rows="3">MIKROPRZESTOJE - zablokowany separator</textarea></td>
-          </tr>
-
-          <!-- puste wiersze 9-14 -->
-          <tr><td class="hours">9-10</td><td colspan="26" style="text-align:center;color:#999">0 / 0 / 0</td></tr>
-          <tr><td class="hours">10-11</td><td colspan="26" style="text-align:center;color:#999">0 / 0 / 0</td></tr>
-          <tr><td class="hours">11-12</td><td colspan="26" style="text-align:center;color:#999">0 / 0 / 0</td></tr>
-          <tr><td class="hours">12-13</td><td colspan="26" style="text-align:center;color:#999">0 / 0 / 0</td></tr>
-          <tr><td class="hours">13-14</td><td colspan="26" style="text-align:center;color:#999">0 / 0 / 0</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 </body>
 </html>
