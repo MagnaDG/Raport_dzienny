@@ -1,146 +1,61 @@
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: #f3f4f6;
-}
-.table-container {
-    width: 100%;
-    overflow-x: auto;
-}
-table {
-    border-collapse: collapse;
-    width: 100%;
-    table-layout: fixed;
-}
-th, td {
-    border: 1px solid #d1d5db;
-    padding: 6px 8px;
-    text-align: center;
-    font-size: 12px;
-    vertical-align: middle;
-    word-wrap: break-word;
-}
-th {
-    background-color: #e5e7eb;
-    font-weight: 600;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-/* Nowe szerokości kolumn */
-.col-godz { width: 4%; }
-.col-oee { width: 5%; }
-.col-osob-nominal, .col-cc-nominal, .col-osob-real, .col-cc-real, .col-ok, .col-nok { width: 5%; }
-.col-kod { width: 8%; }
-.col-ilosc-plan, .col-ilosc-max, .col-czas-dostepny, .col-postoje, .col-brak-wydajnosci, .col-rozliczenie { width: 6%; }
-.col-straty { width: 29%; }
-
-.header-input, .header-select {
-    padding: 4px 8px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    font-size: 14px;
-}
-/* Poprawione style dla komórek tabeli, aby zapewnić wyśrodkowanie w pionie i poziomie */
-.hour-row td {
-    height: 40px; /* Zmniejszona wysokość wiersza */
-    vertical-align: middle;
-}
-/* Nowa reguła dla podwójnych komórek */
-.split-cell-td {
-    padding: 0;
-    height: 40px; /* Zmniejszona wysokość dla podzielonych komórek */
-}
-.split-cell {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    border: none;
-}
-/* Wyrównanie i rozmiar dla elementów wewnątrz podzielonych komórek */
-.split-cell > span, .split-cell > select, .split-cell > input {
-    height: 50%; /* Równy podział wysokości */
-    width: 100%;
-    border: none;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-}
-/* Linia oddzielająca obie połówki */
-.split-cell > *:first-child {
-    border-bottom: 1px solid #d1d5db;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #fdfdfd;
 }
 
-.cell-input {
-    width: 100%;
-    height: 100%;
-    border: none;
-    text-align: center;
-    background-color: transparent;
-    box-sizing: border-box;
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #e6e6e6;
+    padding: 10px 20px;
+    border-bottom: 2px solid #aaa;
 }
-.cell-input:focus {
-    outline: 1px solid #3b82f6;
-}
-.add-btn {
+
+.header-right {
+    font-size: 24px;
     cursor: pointer;
-    font-weight: bold;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    margin: 2px;
-    color: white;
-    user-select: none;
+    background: #fff;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    padding: 5px 10px;
 }
-.blue-plus { background-color: #3b82f6; }
-.green-plus { background-color: #22c55e; }
-.red-minus { background-color: #ef4444; }
 
-.oee-gray { color: #9ca3af; }
-.oee-red { color: #ef4444; }
-.oee-yellow { color: #f59e0b; }
-.oee-green { color: #22c55e; }
-
-/* Style dla modali */
-.modal {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 20;
-    transition: opacity 0.3s ease-in-out;
-    opacity: 0;
-    pointer-events: none;
-}
-.modal.open {
-    opacity: 1;
-    pointer-events: auto;
-}
-.modal-content {
-    background-color: white;
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    width: 100%;
-    max-width: 28rem;
-    transition: transform 0.3s ease-in-out;
-    transform: scale(0.95);
-}
-.modal.open .modal-content {
-    transform: scale(1);
-}
-.data-edit-table th, .data-edit-table td {
+.main-table {
+    border-collapse: collapse;
+    width: 95%;
+    margin: 20px auto;
     font-size: 14px;
-    padding: 8px;
 }
-.data-edit-table input, .data-edit-table select {
+
+.main-table th, .main-table td {
+    border: 1px solid #999;
     text-align: center;
+    padding: 4px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 800px;
+}
+
+.close {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
 }
