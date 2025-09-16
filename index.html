@@ -1,134 +1,207 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raport Produkcji KPI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Prosty formularz - Linia / Godziny</title>
+  <style>
+    :root{
+      --frame-bg: #fff;
+      --border: #000;
+      --muted: #666;
+      --table-border:#000;
+      --gap: 18px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* page frame similar to your screenshot */
+    body{
+      background: #f6f6f6;
+      margin: 20px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      min-height:90vh;
+    }
+
+    .page-frame{
+      width:820px;              /* adjust to taste */
+      min-height:420px;
+      background: var(--frame-bg);
+      border:3px solid var(--border);
+      padding:28px;
+      box-sizing:border-box;
+      position:relative;
+    }
+
+    /* top "Linia:" row */
+    .top-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:48px;
+      padding-right:40px;
+    }
+    .top-row label{
+      font-weight:600;
+      color:var(--muted);
+    }
+    .line-select{
+      margin-left:8px;
+      flex:1;
+      max-width:360px;
+      display:flex;
+      align-items:center;
+    }
+    .line-select select{
+      width:100%;
+      padding:8px 10px;
+      border:2px solid #222;
+      background:#fff;
+      appearance:none; /* hide default arrow on some browsers */
+      -webkit-appearance:none;
+      -moz-appearance:none;
+      font-size:14px;
+      position:relative;
+    }
+    /* add a little triangle using pseudo-element on container */
+    .line-select{
+      position:relative;
+    }
+    .line-select::after{
+      content:"\25BC";
+      position:absolute;
+      right:10px;
+      pointer-events:none;
+      font-size:12px;
+      color:#000;
+    }
+
+    /* center table area */
+    .center-area{
+      display:flex;
+      justify-content:center;
+    }
+
+    table.report{
+      border-collapse:collapse;
+      width:520px;
+      max-width:90%;
+      table-layout:fixed;
+      border:2px solid var(--table-border);
+    }
+
+    table.report th,
+    table.report td{
+      border:1px solid var(--table-border);
+      padding:8px;
+      text-align:center;
+      vertical-align:middle;
+      font-size:13px;
+    }
+
+    table.report th{
+      background:#f0f0f0;
+      font-weight:700;
+    }
+
+    /* layout columns roughly as in screenshot */
+    .col-godz{ width:80px; }
+    .col-oee{ width:80px; }
+    .col-kod{ width:240px; }
+    .col-cc{ width:70px; }
+
+    /* left cell with 6 - 7 aligned vertically */
+    .hours-cell{
+      padding:14px 6px;
+      font-weight:600;
+    }
+
+    /* stacked selects inside KOD column */
+    .kod-stack{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      align-items:stretch;
+      padding:6px;
+    }
+    .kod-stack select{
+      padding:8px 10px;
+      border:1px solid #222;
+      appearance:none;
+      -webkit-appearance:none;
+      -moz-appearance:none;
+      font-size:13px;
+      width:100%;
+      box-sizing:border-box;
+    }
+    /* add small triangles for each select */
+    .kod-stack select{ position:relative; }
+    .kod-stack{ position:relative; }
+    .kod-stack::after{ /* decorative only; not per-select arrows */
+      display:none;
+    }
+
+    /* small responsive tweak */
+    @media (max-width:560px){
+      .page-frame{ padding:12px; }
+      .top-row{ flex-direction:column; align-items:flex-start; gap:8px; }
+      .line-select{ max-width:100%; width:100%;}
+      table.report{ width:100%; }
+    }
+
+  </style>
 </head>
-<body class="p-4">
+<body>
+  <div class="page-frame" role="main" aria-label="Formularz">
+    <div class="top-row" style="justify-content:flex-start;">
+      <label for="linia">Linia:</label>
+      <div class="line-select">
+        <select id="linia" name="linia" aria-label="Wybierz linię">
+          <option>-- wybierz --</option>
+          <option>Linia 1</option>
+          <option>Linia 2</option>
+          <option>Linia 3</option>
+        </select>
+      </div>
+    </div>
 
-    <div id="app" class="space-y-4">
-        <header class="bg-white p-4 rounded-lg shadow-md flex items-center justify-between flex-wrap gap-4">
-            <div class="flex items-center gap-2">
-                <label for="report-date" class="font-semibold">DATA:</label>
-                <input type="date" id="report-date" class="header-input">
-            </div>
-            <div class="flex items-center gap-2">
-                <label for="line-select" class="font-semibold">LINIA:</label>
-                <select id="line-select" class="header-select">
-                    <option value="">Wybierz...</option>
+    <div class="center-area">
+      <table class="report" role="table" aria-label="Raport godzinowy">
+        <thead>
+          <tr>
+            <th class="col-godz">GODZ.</th>
+            <th class="col-oee">OEE</th>
+            <th class="col-kod">KOD</th>
+            <th class="col-cc">CC</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hours-cell">6 - 7</td>
+            <td><!-- OEE cell, pusta --></td>
+            <td>
+              <div class="kod-stack" aria-label="Wybierz kody">
+                <select name="kod_top" aria-label="Kod 1">
+                  <option>-- wybierz kod --</option>
+                  <option>KOD_A</option>
+                  <option>KOD_B</option>
+                  <option>KOD_C</option>
                 </select>
-            </div>
-            <div class="flex items-center gap-2">
-                <label for="shift-select" class="font-semibold">ZMIANA:</label>
-                <select id="shift-select" class="header-select">
-                    <option value="I">I</option>
-                    <option value="II">II</option>
-                    <option value="III">III</option>
+                <select name="kod_bottom" aria-label="Kod 2">
+                  <option>-- wybierz kod --</option>
+                  <option>KOD_1</option>
+                  <option>KOD_2</option>
+                  <option>KOD_3</option>
                 </select>
-            </div>
-            <div class="flex items-center gap-2">
-                <label for="brigade-select" class="font-semibold">BRYGADA:</label>
-                <select id="brigade-select" class="header-select">
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                    <option value="D">D</option>
-                    <option value="E">E</option>
-                    <option value="F">F</option>
-                </select>
-            </div>
-            <div class="flex items-center gap-2">
-                <label for="leader-input" class="font-semibold">LIDER:</label>
-                <input type="text" id="leader-input" class="header-input" placeholder="Wpisz nazwisko...">
-            </div>
-            <button id="menu-btn" class="bg-gray-700 text-white px-4 py-2 rounded-md font-semibold hover:bg-gray-800 transition">MENU</button>
-        </header>
-
-        <main class="bg-white p-4 rounded-lg shadow-md">
-            <div class="table-container">
-                <table id="production-table">
-                    <thead>
-                        <tr>
-                            <th rowspan="2" class="col-godz">GODZ</th>
-                            <th rowspan="2" class="col-oee">OEE</th>
-                            <th rowspan="2" class="col-osob-nominal">OSÓB NOMINAŁ</th>
-                            <th rowspan="2" class="col-cc-nominal">CZAS CYKLU NOMINAŁ (s)</th>
-                            <th rowspan="2" class="col-osob-real">OSÓB REAL</th>
-                            <th rowspan="2" class="col-cc-real">CC REAL (s)</th>
-                            <th rowspan="2" class="col-kod">KOD</th>
-                            <th rowspan="2" class="col-ilosc-plan">ILOŚĆ PLAN</th>
-                            <th rowspan="2" class="col-ilosc-max">ILOŚĆ MAX</th>
-                            <th rowspan="2" class="col-ok">OK</th>
-                            <th rowspan="2" class="col-nok">NOK</th>
-                            <th rowspan="2" class="col-czas-dostepny">CZAS DOSTĘPNY (min)</th>
-                            <th rowspan="2" class="col-postoje">POSTOJE (min)</th>
-                            <th rowspan="2" class="col-brak-wydajnosci">BRAK WYDAJNOŚCI (min)</th>
-                            <th rowspan="2" class="col-rozliczenie">ROZLICZENIE CZASU (min)</th>
-                            <th colspan="5" class="col-straty">STRATY</th>
-                        </tr>
-                        <tr>
-                            <th>POWÓD</th>
-                            <th>OPERACJA</th>
-                            <th>CZAS (min)</th>
-                            <th>ILOŚĆ ZDARZEŃ</th>
-                            <th>OPIS</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body">
-                        </tbody>
-                </table>
-            </div>
-        </main>
+              </div>
+            </td>
+            <td><!-- CC cell, pusta --></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <div id="menu-modal" class="modal">
-        <div class="modal-content text-center">
-            <h2 class="text-2xl font-bold mb-4">MENU GŁÓWNE</h2>
-            <div class="space-y-3">
-                <button id="save-report-btn" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Zapisz Raport</button>
-                <button id="data-modify-btn" class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition">Modyfikacja Danych</button>
-                <button id="close-menu-modal" class="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition mt-6">Zamknij</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="data-modal" class="modal">
-        <div class="modal-content w-full max-w-4xl">
-            <h2 class="text-2xl font-bold mb-4">Modyfikacja Danych Produktów</h2>
-            <div class="max-h-[60vh] overflow-y-auto">
-                <table class="w-full data-edit-table">
-                    <thead>
-                        <tr>
-                            <th>LINIA</th>
-                            <th>KOD</th>
-                            <th>CZAS CYKLU (s)</th>
-                            <th>OSÓB NOMINAŁ</th>
-                            <th>STRONA</th>
-                            <th>AKCJA</th>
-                        </tr>
-                    </thead>
-                    <tbody id="data-table-body">
-                        </tbody>
-                </table>
-            </div>
-            <div class="mt-4 flex justify-between">
-                <button id="add-data-row-btn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition font-semibold">Dodaj Wiersz</button>
-                <div>
-                    <button id="save-data-btn" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition font-semibold">Zapisz Zmiany</button>
-                    <button id="close-data-modal" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition ml-2">Anuluj</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-5 py-3 rounded-lg shadow-lg opacity-0 transition-opacity duration-300">
-      <p id="toast-message"></p>
-    </div>
-
-    <script src="script.js"></script>
+  </div>
 </body>
 </html>
