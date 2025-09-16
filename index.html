@@ -1,216 +1,319 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel AQA</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
-        }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Nagłówek raportu — statyczny</title>
+<style>
+  :root{
+    --black:#000;
+    --grid:#9ea6ad;
+    --head-bg:#fff;
+    --input-bg:#f7fbff;
+    --tv-bg:#f3f7ff;
+    --ok:#c8f7c9;
+    --nok:#ffdede;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{ margin:0; background:#fff; padding:18px; -webkit-font-smoothing:antialiased;}
 
-        .container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 2px solid black;
-            padding: 10px;
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+  /* outer frame (header only) */
+  .header-frame{
+    width:100%;
+    max-width:1700px;
+    margin:0 auto;
+    border:3px solid var(--black);
+    padding:12px 14px;
+    background:#fff;
+    border-radius:2px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  }
 
-        .section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0 15px;
-        }
+  /* layout grid: data | line | leader | status | kpi | comment | menu */
+  .hdr-grid{
+    display:grid;
+    grid-template-columns: 220px 220px 420px 78px 420px 420px 120px;
+    gap:12px;
+    align-items:start;
+  }
 
-        .label {
-            font-weight: bold;
-            text-decoration: underline;
-            margin-bottom: 5px;
-        }
+  /* small label above each control */
+  .lbl { font-size:11px; font-weight:800; color:#222; margin-bottom:6px; text-align:center; letter-spacing:0.6px; }
 
-        .dropdown-container {
-            border: 2px solid black;
-            border-radius: 5px;
-            padding: 5px;
-            background-color: #e0e0e0;
-            width: 150px;
-            text-align: center;
-            position: relative;
-        }
+  /* DATA and LINIA boxes */
+  .box {
+    border:1px solid var(--black);
+    padding:10px;
+    border-radius:6px;
+    background:var(--head-bg);
+    min-height:58px;
+  }
+  .box .control {
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
 
-        .dropdown-select {
-            width: 100%;
-            background-color: transparent;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
+  input[type="date"]{
+    padding:8px 10px;
+    border-radius:8px;
+    border:1px solid #bfc7ce;
+    background:var(--input-bg);
+    font-size:14px;
+    width:88%;
+  }
+  select {
+    padding:8px 10px;
+    border-radius:8px;
+    border:1px solid #bfc7ce;
+    background:var(--input-bg);
+    font-size:14px;
+    width:88%;
+  }
 
-        .table-section {
-            display: flex;
-            flex-direction: column;
-            margin-right: 20px;
-        }
+  /* Leader / BR. area (complex grid) */
+  .leader-box{
+    border:1px solid var(--black);
+    padding:8px;
+    border-radius:6px;
+    background:#fff;
+  }
+  .leader-top{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .leader-top .br {
+    border:1px solid var(--black);
+    padding:6px 8px;
+    min-width:40px;
+    text-align:center;
+    font-weight:900;
+    background:#fff;
+  }
+  .leader-top .title{
+    border:1px solid var(--black);
+    padding:6px 10px;
+    flex:1;
+    font-weight:800;
+    text-align:center;
+    background:#fff;
+  }
+  .leader-grid{
+    display:grid;
+    grid-template-columns:60px 1fr;
+    gap:6px;
+    margin-top:8px;
+  }
+  .leader-grid .key{ border:1px solid var(--grid); padding:6px; text-align:center; background:#fff; font-weight:700; }
+  .leader-grid .val{ border:1px solid var(--grid); padding:6px; background:#fff; }
 
-        .table-header {
-            display: flex;
-            align-items: flex-end;
-            margin-bottom: 5px;
-        }
+  /* STATUS vertical small box */
+  .status-box{
+    border:1px solid var(--black);
+    border-radius:4px;
+    height:86px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    background:#fff;
+  }
 
-        .table-header-cell {
-            font-weight: bold;
-            border: 1px solid black;
-            padding: 5px;
-            text-align: center;
-            background-color: #e0e0e0;
-        }
+  /* KPI small grid */
+  .kpi-box{
+    border:1px solid var(--black);
+    padding:6px;
+    border-radius:6px;
+    background:#fff;
+  }
+  .kpi-grid{
+    display:grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap:6px;
+    align-items:center;
+  }
+  .kpi-grid .kpi-label{
+    border:1px solid var(--grid);
+    padding:6px;
+    text-align:center;
+    font-weight:800;
+    background:#f8fbff;
+    font-size:12px;
+  }
+  .kpi-grid .kpi-val{
+    border:1px solid var(--grid);
+    padding:8px;
+    text-align:center;
+    font-weight:800;
+    background:#fff;
+  }
+  .kpi-grid .kpi-ok{ background:var(--ok); }
+  .kpi-grid .kpi-nok{ background:var(--nok); }
 
-        .table-row {
-            display: flex;
-        }
+  /* COMMENT area (to display on TV) */
+  .tv-box{
+    border:1px solid var(--black);
+    padding:8px;
+    border-radius:8px;
+    background:var(--tv-bg);
+  }
+  .tv-label{ font-weight:800; font-size:12px; text-align:left; margin-bottom:6px; }
+  .tv-input{
+    display:block;
+    width:100%;
+    height:52px;
+    border-radius:10px;
+    border:1px solid #bfc7ce;
+    background:#fff;
+    padding:10px;
+    font-size:14px;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.04);
+  }
 
-        .table-cell {
-            border: 1px solid black;
-            padding: 5px;
-            text-align: center;
-            width: 50px;
-        }
+  /* MENU plaque on right */
+  .menu-plaque{
+    border:1px solid var(--black);
+    background: linear-gradient(#f7f7f7,#e8e8e8);
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.08);
+    border-radius:4px;
+    height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    font-size:18px;
+    cursor:pointer;
+  }
 
-        .table-cell.wider {
-            width: 120px;
-        }
+  /* small text underlined italic for labels (like in image) */
+  .lbl.italic { font-style:italic; text-decoration:underline; font-weight:800; }
 
-        .status-header {
-            background-color: #e0e0e0;
-            font-weight: bold;
-            border: 1px solid black;
-            padding: 5px;
-            text-align: center;
-        }
-
-        .status-container {
-            display: flex;
-        }
-
-        .status-cell {
-            width: 30px;
-        }
-
-        .status-cell.ok { color: green; }
-        .status-cell.nok { color: red; }
-
-        .comment-section {
-            display: flex;
-            flex-direction: column;
-            margin-left: auto;
-            align-items: flex-end;
-        }
-
-        .comment-box {
-            border: 2px solid black;
-            border-radius: 25px;
-            width: 300px;
-            height: 50px;
-            padding: 10px;
-            margin-top: 5px;
-            background-color: #e0e0e0;
-        }
-
-        .menu-section {
-            margin-left: 20px;
-            display: flex;
-            align-items: center;
-        }
-
-        .menu-button {
-            border: 2px solid black;
-            background-color: #f0f0f0;
-            padding: 15px 30px;
-            cursor: pointer;
-            font-weight: bold;
-            border-radius: 5px;
-            white-space: nowrap;
-        }
-    </style>
+  /* responsive: allow scroll horizontally */
+  @media (max-width:1300px){
+    .hdr-grid{ grid-template-columns: 180px 180px 360px 64px 320px 300px 110px; gap:8px; }
+  }
+  @media (max-width:1000px){
+    .header-frame{ padding:10px; }
+    .hdr-grid{ grid-template-columns: 1fr; gap:10px; }
+    .menu-plaque{ justify-self:center; width:120px; }
+  }
+</style>
 </head>
 <body>
-
-    <div class="container">
-        <div class="section">
-            <span class="label">DATA</span>
-            <div class="dropdown-container">
-                <select class="dropdown-select">
-                    <option value="" disabled selected>Wybierz datę</option>
-                    <option value="data1">2025-09-16</option>
-                    <option value="data2">2025-09-17</option>
-                </select>
-            </div>
+  <div class="header-frame" role="banner" aria-label="Nagłówek raportu">
+    <div class="hdr-grid">
+      <!-- DATA -->
+      <div>
+        <div class="lbl italic">DATA</div>
+        <div class="box">
+          <div class="control">
+            <input id="dateInput" type="date" aria-label="Wybierz datę" />
+          </div>
         </div>
+      </div>
 
-        <div class="section">
-            <span class="label">LINIA</span>
-            <div class="dropdown-container">
-                <select class="dropdown-select">
-                    <option value="" disabled selected>Wybierz linię</option>
-                    <option value="linia1">Linia Produkcyjna 1</option>
-                    <option value="linia2">Linia Produkcyjna 2</option>
-                </select>
-            </div>
+      <!-- LINIA -->
+      <div>
+        <div class="lbl italic">LINIA</div>
+        <div class="box">
+          <div class="control">
+            <select id="lineSelect" aria-label="Wybierz linię">
+              <option value="">-- wybierz --</option>
+              <option>MP4</option>
+              <option>MP3</option>
+              <option>MP2</option>
+            </select>
+          </div>
         </div>
+      </div>
 
-        <div class="table-section">
-            <div class="table-header">
-                <div class="table-header-cell wider">NR. LIDER/Nazwisko Imię</div>
-                <div class="status-header">STATUS</div>
-                <div class="table-header-cell status-cell">Q</div>
-                <div class="table-header-cell status-cell">C</div>
-                <div class="table-header-cell status-cell">O</div>
-                <div class="table-header-cell status-cell">M</div>
-                <div class="table-header-cell status-cell">DL</div>
-                <div class="table-header-cell status-cell ok">OK</div>
-                <div class="table-header-cell status-cell nok">NOK</div>
-            </div>
-            <div class="table-row">
-                <div class="table-cell wider">Jan Kowalski</div>
-                <div class="table-cell status-cell"></div>
-                <div class="table-cell status-cell"></div>
-                <div class="table-cell status-cell"></div>
-                <div class="table-cell status-cell"></div>
-                <div class="table-cell status-cell"></div>
-                <div class="table-cell status-cell"></div>
-                <div class="table-cell status-cell"></div>
-            </div>
-            <div class="table-row">
-                <div class="table-cell wider">Anna Nowak</div>
-                <div class="table-cell status-cell"></div>
-                <div class="table-cell status-cell"></div>
-                <div class="table-cell status-cell"></div>
-                <div class="table-cell status-cell"></div>
-                <div class="table-cell status-cell"></div>
-                <div class="table-cell status-cell"></div>
-                <div class="table-cell status-cell"></div>
-            </div>
-        </div>
+      <!-- BR. / LIDER -->
+      <div>
+        <div class="lbl">BR. <span style="margin-left:8px; font-weight:700;">LIDER ( Nazwisko Imię )</span></div>
+        <div class="leader-box" role="group" aria-label="BR lider">
+          <div class="leader-top">
+            <div class="br">BR.</div>
+            <div class="title">LIDER ( Nazwisko Imię )</div>
+          </div>
 
-        <div class="comment-section">
-            <span class="label">KOMENTARZ DO WYŚWIETLANIA NA TV</span>
-            <div class="comment-box"></div>
+          <div class="leader-grid" style="margin-top:8px;">
+            <div class="key">C</div><div class="val">P.Zawadzka / Ł.Chowaniak</div>
+            <div class="key">B</div><div class="val">WITAJCIE</div>
+            <div class="key">A</div><div class="val">WITAJCIE</div>
+          </div>
         </div>
+      </div>
 
-        <div class="menu-section">
-            <button class="menu-button">MENU</button>
+      <!-- STATUS -->
+      <div>
+        <div class="lbl">STATUS</div>
+        <div class="status-box" role="status" aria-label="Status"> </div>
+      </div>
+
+      <!-- KPI grid -->
+      <div>
+        <div class="lbl"> </div>
+        <div class="kpi-box" aria-hidden="false">
+          <div class="kpi-grid" role="table" aria-label="KPI">
+            <div class="kpi-label">Q</div>
+            <div class="kpi-label">C</div>
+            <div class="kpi-label">D</div>
+            <div class="kpi-label">M</div>
+            <div class="kpi-label">DL</div>
+            <div class="kpi-label">OK</div>
+            <div class="kpi-label">NOK</div>
+
+            <div class="kpi-val"> </div>
+            <div class="kpi-val"> </div>
+            <div class="kpi-val"> </div>
+            <div class="kpi-val"> </div>
+            <div class="kpi-val"> </div>
+            <div class="kpi-val kpi-ok"> </div>
+            <div class="kpi-val kpi-nok"> </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Comment for TV -->
+      <div>
+        <div class="lbl">KOMENTARZ DO WYŚWIETLANIA NA TV</div>
+        <div class="tv-box">
+          <textarea class="tv-input" placeholder="Tutaj wpisz komentarz wyświetlany na telewizorze..."></textarea>
+        </div>
+      </div>
+
+      <!-- MENU plaque -->
+      <div>
+        <div class="lbl" style="visibility:hidden">MENU</div>
+        <div class="menu-plaque" role="button" tabindex="0" aria-label="Otwórz menu">
+          MENU
+        </div>
+      </div>
 
     </div>
+  </div>
 
+<script>
+  // ustaw datę dzisiejszą w polu date
+  (function setToday(){
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    const iso = yyyy + "-" + mm + "-" + dd;
+    const el = document.getElementById('dateInput');
+    if(el){
+      el.value = iso;
+    }
+  })();
+
+  // przykładowa obsługa klawiatury na MENU (tylko wizualnie)
+  const menu = document.querySelector('.menu-plaque');
+  menu.addEventListener('click', ()=> { menu.style.transform = 'translateY(2px)'; setTimeout(()=>menu.style.transform='none',120); });
+  menu.addEventListener('keydown', (e)=> { if(e.key === 'Enter' || e.key===' ') menu.click(); });
+</script>
 </body>
 </html>
